@@ -27,6 +27,6 @@
 
 ## 待決定 / Open questions
 
-- 項目正式中英文名稱
+- 項目英文名稱（暫定 HK Open Carbon Platform）
 - 維護者名單及聯絡方式
 - 顧問委員會成員

@@ -1,4 +1,4 @@
-# 香港開源碳核算數據庫 · HK Carbon DB
+# 香港開源碳核算平台 · HK Open Carbon Platform
 
 > 開源、免費、可溯源的香港本地碳排放系數庫與核算工具。
 > Open, free and fully sourced emission factors and carbon accounting tools for Hong Kong.

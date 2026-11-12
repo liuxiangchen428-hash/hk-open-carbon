@@ -9,7 +9,7 @@ International License (CC BY 4.0)**: https://creativecommons.org/licenses/by/4.0
 
 ## How to attribute / 如何標示出處
 
-> HK Carbon DB contributors, *HK Carbon DB* (version X.Y.Z), CC BY 4.0.
+> HK Open Carbon Platform contributors, *香港開源碳核算平台 HK Open Carbon Platform* (version X.Y.Z), CC BY 4.0.
 
 Please also cite the original source of each factor (the `source` field), as many
 values come from government or company publications.
