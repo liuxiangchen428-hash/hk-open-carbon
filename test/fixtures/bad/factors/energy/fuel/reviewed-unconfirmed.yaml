@@ -1,0 +1,12 @@
+id: hk.energy.fuel.unconfirmed.test
+name: { zh-Hant: 測試, en: Test }
+category: energy/fuel
+gas: CO2
+value: 1
+unit: kgCO2/TJ
+year: 2006
+region: GLOBAL
+source: { id: src-unconfirmed, page: 1 }
+quality: C
+status: reviewed
+reviewed_by: someone

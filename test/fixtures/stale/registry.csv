@@ -1,2 +1,2 @@
-id,title,publisher,year,url,type,license,url_verified,archived,notes
-src-ok,"A source",Someone,2024,https://example.org,guideline,CC BY,no,no,
+id,title,title_zh,publisher,edition,type,url,url_status,reuse,terms_url,used_for,checked_on,notes
+src-ok,"A source",,Someone,2024,guideline,https://example.org,found,open-attribution,,,2026-01-01,

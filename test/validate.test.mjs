@@ -27,6 +27,11 @@ test('bad fixtures produce the expected errors', () => {
     currentYear: 2026,
   });
   assert.ok(has(errors, 'duplicate source id "src-ok"'));
+  assert.ok(has(errors, 'url_status "maybe"'));
+  assert.ok(has(errors, 'reuse "free"'));
+  assert.ok(has(errors, 'checked_on must be YYYY-MM-DD'));
+  assert.ok(has(errors, 'reviewed-unconfirmed.yaml', 'confirmed source link'));
+  assert.ok(has(warnings, 'restricted-source.yaml', 'restrict commercial reuse'));
   assert.ok(has(errors, 'missing-source.yaml', 'src-not-registered'));
   assert.ok(has(errors, 'bad-unit.yaml', 'not allowed'));
   assert.ok(has(errors, 'bad-unit.yaml', 'page or table'));

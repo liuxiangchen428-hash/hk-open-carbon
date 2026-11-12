@@ -9,6 +9,10 @@ import addFormats from 'ajv-formats';
 import yaml from 'js-yaml';
 
 const STALE_AFTER_YEARS = 2;
+const REQUIRED_SOURCE_COLUMNS = ['title', 'publisher', 'type', 'url', 'url_status', 'reuse', 'checked_on'];
+// See sources/README.md for what each value means.
+const URL_STATUS = new Set(['found', 'inferred', 'homepage', 'to-check']);
+const REUSE = new Set(['open-attribution', 'noncommercial-or-permission', 'quote-with-attribution', 'reference-only', 'check', 'n/a']);
 
 /** Minimal RFC 4180 CSV parser (quoted fields, escaped quotes, newlines in quotes). */
 export function parseCsv(text) {
@@ -83,15 +87,16 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
 
   // --- sources registry ---
   const sources = parseCsv(readFileSync(registryPath, 'utf8'));
-  const sourceIds = new Set();
+  const sourceById = new Map();
   sources.forEach((s, i) => {
     const where = `${relative(process.cwd(), registryPath)} row ${i + 2}`;
     if (!/^src-[a-z0-9-]+$/.test(s.id)) err(where, `invalid source id "${s.id}"`);
-    if (sourceIds.has(s.id)) err(where, `duplicate source id "${s.id}"`);
-    sourceIds.add(s.id);
-    if (!s.title) err(where, 'missing title');
-    if (!s.publisher) err(where, 'missing publisher');
-    if (!s.license) err(where, 'missing license note');
+    if (sourceById.has(s.id)) err(where, `duplicate source id "${s.id}"`);
+    sourceById.set(s.id, s);
+    for (const col of REQUIRED_SOURCE_COLUMNS) if (!s[col]) err(where, `missing ${col}`);
+    if (s.url_status && !URL_STATUS.has(s.url_status)) err(where, `url_status "${s.url_status}" must be one of ${[...URL_STATUS].join(', ')}`);
+    if (s.reuse && !REUSE.has(s.reuse)) err(where, `reuse "${s.reuse}" must be one of ${[...REUSE].join(', ')}`);
+    if (s.checked_on && !/^\d{4}-\d{2}-\d{2}$/.test(s.checked_on)) err(where, 'checked_on must be YYYY-MM-DD');
   });
 
   // --- factors ---
@@ -122,7 +127,13 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
       err(rel, `unit "${f.unit}" does not match gas ${f.gas}`);
     }
 
-    if (!sourceIds.has(f.source.id)) err(rel, `source "${f.source.id}" not in sources/registry.csv`);
+    const src = sourceById.get(f.source.id);
+    if (!src) err(rel, `source "${f.source.id}" not in sources/registry.csv`);
+    else if (f.status === 'reviewed' && src.url_status !== 'found') {
+      err(rel, `reviewed factor needs a confirmed source link (source "${src.id}" url_status is "${src.url_status}")`);
+    } else if (src.reuse === 'noncommercial-or-permission') {
+      warn(rel, `source "${src.id}" may restrict commercial reuse; get written permission or use an open copy before release (data is CC BY 4.0)`);
+    }
     if (!f.source.page && !f.source.table) err(rel, 'source needs a page or table so the value can be checked');
 
     if (f.status !== 'deprecated' && f.region !== 'GLOBAL' && f.year < currentYear - STALE_AFTER_YEARS) {
