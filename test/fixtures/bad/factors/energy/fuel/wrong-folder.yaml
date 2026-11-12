@@ -1,0 +1,12 @@
+id: hk.transport.rail.mtr.test
+name: { zh-Hant: 測試, en: Test }
+category: transport/rail
+gas: CO2e
+gwp: AR5
+value: 1
+unit: kgCO2e/pkm
+year: 2015
+region: HK
+source: { id: src-ok, page: 3 }
+quality: B
+status: draft

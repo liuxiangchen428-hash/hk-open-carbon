@@ -1,0 +1,21 @@
+{
+  "name": "hk-carbon-db",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Open, sourced emission factors and carbon accounting tools for Hong Kong",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test \"test/**/*.test.mjs\""
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "js-yaml": "^4.3.2"
+  }
+}

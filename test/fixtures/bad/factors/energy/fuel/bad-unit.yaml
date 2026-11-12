@@ -1,0 +1,11 @@
+id: hk.energy.fuel.petrol.test
+name: { zh-Hant: 測試, en: Test }
+category: energy/fuel
+gas: CO2
+value: 1
+unit: kgCO2e/gallon
+year: 2006
+region: GLOBAL
+source: { id: src-ok }
+quality: C
+status: draft

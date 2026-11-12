@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "factor.schema.json",
+  "title": "Emission factor / 排放系數",
+  "description": "One emission factor record. One YAML file under data/factors/ holds exactly one record.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "category", "gas", "value", "unit", "year", "region", "source", "quality", "status"],
+  "properties": {
+    "id": {
+      "description": "Stable unique id: dot-separated lowercase segments, e.g. hk.energy.fuel.diesel.ipcc2006",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+){2,}$"
+    },
+    "name": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zh-Hant", "en"],
+      "properties": {
+        "zh-Hant": { "type": "string", "minLength": 1 },
+        "zh-Hans": { "type": "string", "minLength": 1 },
+        "en": { "type": "string", "minLength": 1 }
+      }
+    },
+    "category": {
+      "description": "Path from schema/categories.yaml, e.g. energy/fuel",
+      "type": "string",
+      "pattern": "^[a-z-]+(/[a-z-]+)*$"
+    },
+    "gas": {
+      "description": "Which gas the value covers. CO2e means all gases converted with the GWP set in gwp.",
+      "enum": ["CO2", "CH4", "N2O", "HFC", "PFC", "SF6", "CO2e"]
+    },
+    "gwp": {
+      "description": "GWP set used when gas is CO2e",
+      "enum": ["AR4", "AR5", "AR6"]
+    },
+    "value": { "type": "number", "exclusiveMinimum": 0 },
+    "unit": {
+      "description": "Emission per activity unit. Allowed units are listed in schema/units.yaml.",
+      "type": "string"
+    },
+    "year": {
+      "description": "Reference year the factor describes (not the publication year)",
+      "type": "integer",
+      "minimum": 1990,
+      "maximum": 2100
+    },
+    "region": {
+      "description": "HK = all Hong Kong; HK-CLP / HK-HKE = CLP or HK Electric supply area; GLOBAL = international default",
+      "enum": ["HK", "HK-CLP", "HK-HKE", "GLOBAL"]
+    },
+    "scope": {
+      "description": "GHG Protocol scope this factor is normally used for",
+      "enum": [1, 2, 3]
+    },
+    "boundary": {
+      "description": "System boundary of the factor",
+      "enum": ["combustion", "location-based", "market-based", "cradle-to-gate", "cradle-to-grave", "well-to-wheel", "tank-to-wheel"]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "description": "Must exist in sources/registry.csv", "type": "string", "pattern": "^src-[a-z0-9-]+$" },
+        "page": { "type": ["string", "integer"] },
+        "table": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "derivation": {
+      "description": "Required when the value is not copied as-is from the source: show the arithmetic.",
+      "type": "string"
+    },
+    "quality": {
+      "description": "A HK government; B HK utility/company/institution; C international default or peer-reviewed; D estimate. See methodology/data-quality.md",
+      "enum": ["A", "B", "C", "D"]
+    },
+    "status": {
+      "description": "draft = entered, not yet cross-checked; reviewed = checked by a second person; deprecated = superseded",
+      "enum": ["draft", "reviewed", "deprecated"]
+    },
+    "reviewed_by": { "type": "string" },
+    "superseded_by": { "type": "string" },
+    "valid_from": { "type": "string", "format": "date" },
+    "valid_to": { "type": "string", "format": "date" },
+    "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "notes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "zh-Hant": { "type": "string" },
+        "en": { "type": "string" }
+      }
+    }
+  },
+  "allOf": [
+    { "if": { "properties": { "gas": { "const": "CO2e" } } }, "then": { "required": ["gwp"] } },
+    { "if": { "properties": { "status": { "const": "reviewed" } } }, "then": { "required": ["reviewed_by"] } },
+    { "if": { "properties": { "status": { "const": "deprecated" } } }, "then": { "required": ["superseded_by"] } }
+  ]
+}

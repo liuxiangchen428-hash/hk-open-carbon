@@ -1,0 +1,21 @@
+id: hk.energy.fuel.natural-gas.ipcc2006
+name:
+  zh-Hant: 天然氣燃燒二氧化碳排放系數（IPCC 預設值）
+  en: Natural gas combustion CO2 factor (IPCC default)
+category: energy/fuel
+gas: CO2
+value: 56100
+unit: kgCO2/TJ
+year: 2006
+region: GLOBAL
+scope: 1
+boundary: combustion
+source:
+  id: src-ipcc-2006-v2
+  table: "Volume 2, Chapter 1, Table 1.4"
+quality: C
+status: draft
+tags: [ipcc-default]
+notes:
+  zh-Hant: IPCC 第一層級預設值，僅含 CO2。有香港本地系數時應優先使用本地數值。
+  en: IPCC Tier 1 default, CO2 only. Prefer a Hong Kong value once one is entered.

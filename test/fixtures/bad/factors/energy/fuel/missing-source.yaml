@@ -1,0 +1,11 @@
+id: hk.energy.fuel.diesel.test
+name: { zh-Hant: 測試, en: Test }
+category: energy/fuel
+gas: CO2
+value: 1
+unit: kgCO2/TJ
+year: 2006
+region: GLOBAL
+source: { id: src-not-registered, page: 1 }
+quality: C
+status: draft

@@ -1,0 +1,52 @@
+# 分類體系 / Category tree
+# A factor's `category` must be one of the leaf paths below, e.g. energy/fuel.
+# Add new categories here first (with both names), then use them in data.
+
+energy:
+  name: { zh-Hant: 能源, en: Energy }
+  children:
+    electricity: { name: { zh-Hant: 電力, en: Electricity } }
+    town-gas: { name: { zh-Hant: 煤氣, en: Town gas } }
+    fuel: { name: { zh-Hant: 燃料, en: Fuels } }
+
+transport:
+  name: { zh-Hant: 交通, en: Transport }
+  children:
+    rail: { name: { zh-Hant: 鐵路, en: Rail } }
+    bus: { name: { zh-Hant: 巴士及小巴, en: Bus and minibus } }
+    ferry: { name: { zh-Hant: 渡輪, en: Ferry } }
+    tram: { name: { zh-Hant: 電車, en: Tram } }
+    road-private: { name: { zh-Hant: 私家車及的士, en: Private car and taxi } }
+    air: { name: { zh-Hant: 航空, en: Aviation } }
+
+waste:
+  name: { zh-Hant: 廢物, en: Waste }
+  children:
+    landfill: { name: { zh-Hant: 堆填, en: Landfill } }
+    incineration: { name: { zh-Hant: 焚化及轉廢為能, en: Incineration and waste-to-energy } }
+    recycling: { name: { zh-Hant: 回收, en: Recycling } }
+
+buildings:
+  name: { zh-Hant: 建築, en: Buildings }
+  children:
+    refrigerant: { name: { zh-Hant: 製冷劑, en: Refrigerants } }
+    materials: { name: { zh-Hant: 建築材料, en: Construction materials } }
+
+water:
+  name: { zh-Hant: 食水及污水, en: Water and sewage }
+  children:
+    fresh-water: { name: { zh-Hant: 食水, en: Fresh water } }
+    sewage: { name: { zh-Hant: 污水處理, en: Sewage treatment } }
+
+food:
+  name: { zh-Hant: 食物, en: Food }
+  children:
+    meat: { name: { zh-Hant: 肉類, en: Meat } }
+    plant: { name: { zh-Hant: 植物性食物, en: Plant-based food } }
+    dairy: { name: { zh-Hant: 奶類及蛋, en: Dairy and eggs } }
+
+materials:
+  name: { zh-Hant: 材料及消費品, en: Materials and goods }
+  children:
+    paper: { name: { zh-Hant: 紙張, en: Paper } }
+    plastic: { name: { zh-Hant: 塑膠, en: Plastics } }

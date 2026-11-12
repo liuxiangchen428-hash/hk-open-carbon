@@ -1,0 +1,22 @@
+# 允許的單位 / Allowed units
+# Format: <emission mass><gas>/<activity unit>. Keep this list short; add a unit
+# only together with a factor that needs it.
+
+emission:
+  - kgCO2
+  - kgCH4
+  - kgN2O
+  - kgCO2e
+  - tCO2e
+
+activity:
+  - kWh       # 電力
+  - MJ        # 煤氣 (Towngas bills are in MJ)
+  - TJ        # IPCC fuel defaults
+  - L         # 液體燃料
+  - kg
+  - t
+  - m3
+  - pkm       # 乘客公里 passenger-km
+  - vkm       # 車輛公里 vehicle-km
+  - unit

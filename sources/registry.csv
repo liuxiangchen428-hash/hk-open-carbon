@@ -1,0 +1,10 @@
+id,title,publisher,year,url,type,license,url_verified,archived,notes
+src-ipcc-2006-v2,"2006 IPCC Guidelines for National Greenhouse Gas Inventories, Volume 2: Energy",IPCC,2006,https://www.ipcc-nggip.iges.or.jp/public/2006gl/vol2.html,guideline,"Free to use with attribution",no,no,"Ch.1 Table 1.4 default CO2 factors for combustion"
+src-epd-hk-ghg-inventory,"Hong Kong Greenhouse Gas Emissions inventory 香港溫室氣體排放清單",Environmental Protection Department 環境保護署,,https://www.epd.gov.hk/,inventory,"HK Government copyright; check terms",no,no,"TODO: find exact page and latest year"
+src-emsd-epd-building-ghg-2010,"Guidelines to Account for and Report on Greenhouse Gas Emissions and Removals for Buildings in Hong Kong 香港建築物溫室氣體排放及減除的審計和報告指引",EMSD 機電工程署 & EPD 環境保護署,2010,https://www.emsd.gov.hk/,guideline,"HK Government copyright; check terms",no,no,"TODO: exact URL; core local method for scope 1 and 2"
+src-emsd-energy-end-use,"Hong Kong Energy End-use Data 香港能源最終用途數據",EMSD 機電工程署,,https://www.emsd.gov.hk/,statistics,"HK Government copyright; check terms",no,no,"Annual; TODO: exact URL"
+src-censtatd-energy,"Hong Kong Energy Statistics 香港能源統計",Census and Statistics Department 政府統計處,,https://www.censtatd.gov.hk/,statistics,"HK Government copyright; check terms",no,no,"Quarterly and annual; TODO: exact URL"
+src-clp-sr,"CLP Sustainability Report 中電可持續發展報告",CLP Power 中華電力,,https://www.clpgroup.com/,company-report,"Quote with attribution",no,no,"Grid emission factor per year; one row per report year once entered"
+src-hke-sr,"HK Electric Sustainability Report 港燈可持續發展報告",HK Electric 港燈,,https://www.hkelectric.com/,company-report,"Quote with attribution",no,no,"Grid emission factor per year; one row per report year once entered"
+src-towngas-sr,"Towngas Sustainability Report 煤氣可持續發展報告",Hong Kong and China Gas 香港中華煤氣,,https://www.towngas.com/,company-report,"Quote with attribution",no,no,"Town gas emission factor"
+src-datagovhk,"DATA.GOV.HK 資料一線通",Digital Policy Office 數字政策辦公室,,https://data.gov.hk/,open-data-portal,"DATA.GOV.HK terms of use",no,no,"Raw activity data"

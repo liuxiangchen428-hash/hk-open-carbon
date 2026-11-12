@@ -1,0 +1,11 @@
+id: hk.transport.rail.dup.test
+name: { zh-Hant: 測試 }
+category: transport/rail
+gas: CO2
+value: -5
+unit: kgCO2/pkm
+year: 2020
+region: Kowloon
+source: { id: src-ok, page: 1 }
+quality: E
+status: draft

@@ -1,0 +1,3 @@
+id,title,publisher,year,url,type,license,url_verified,archived,notes
+src-ok,"A source",Someone,2024,https://example.org,guideline,CC BY,no,no,
+src-ok,"Duplicate id",Someone,2024,https://example.org,guideline,CC BY,no,no,

@@ -1,0 +1,11 @@
+id: hk.transport.rail.nogwp.test
+name: { zh-Hant: 測試, en: Test }
+category: transport/rail
+gas: CO2e
+value: 1
+unit: kgCO2e/pkm
+year: 2015
+region: HK
+source: { id: src-ok, page: 3 }
+quality: B
+status: draft
