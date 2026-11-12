@@ -1,0 +1,52 @@
+name: archive-sources
+
+# Records Internet Archive snapshots for every source in sources/registry.csv.
+# Run it by hand from the Actions tab, or let it run on the 1st of each month.
+
+on:
+  workflow_dispatch:
+    inputs:
+      save:
+        description: "Ask the Internet Archive to save sources that have no snapshot"
+        type: boolean
+        default: true
+  schedule:
+    - cron: "17 3 1 * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: archive-sources
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Look up or save snapshots
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.save }}" = "true" ]; then
+            node scripts/archive-sources.mjs --save --refresh-days 365
+          else
+            node scripts/archive-sources.mjs
+          fi
+      - run: npm run validate
+      - name: Commit updated registry
+        run: |
+          if git diff --quiet sources/registry.csv; then
+            echo "No changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sources/registry.csv
+          git commit -m "Update Internet Archive links for sources"
+          git push

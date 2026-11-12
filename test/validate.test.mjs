@@ -60,3 +60,23 @@ test('CSV parser handles quotes, commas and escaped quotes', () => {
   const rows = parseCsv('a,b\n"x, y","say ""hi"""\n');
   assert.deepEqual(rows, [{ a: 'x, y', b: 'say "hi"' }]);
 });
+
+test('CSV writer round-trips through the parser', async () => {
+  const { toCsv, waybackTimestampToDate } = await import('../scripts/lib/csv.mjs');
+  const rows = [{ a: 'x, y', b: 'say "hi"' }, { a: 'plain', b: '' }];
+  assert.deepEqual(parseCsv(toCsv(['a', 'b'], rows)), rows);
+  assert.equal(waybackTimestampToDate('20240131235959'), '2024-01-31');
+  assert.equal(waybackTimestampToDate(''), '');
+});
+
+test('archive_url format is checked', () => {
+  const dir = join(root, 'test', 'fixtures', 'archive');
+  const { errors } = validateRepo({
+    schemaDir,
+    factorsDir: join(dir, 'factors'),
+    registryPath: join(dir, 'registry.csv'),
+  });
+  assert.ok(has(errors, 'row 2', 'archive_url must look like'));
+  assert.ok(has(errors, 'row 3', 'archived_on must be YYYY-MM-DD'));
+  assert.equal(errors.length, 2);
+});

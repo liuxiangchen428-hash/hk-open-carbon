@@ -97,6 +97,10 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
     if (s.url_status && !URL_STATUS.has(s.url_status)) err(where, `url_status "${s.url_status}" must be one of ${[...URL_STATUS].join(', ')}`);
     if (s.reuse && !REUSE.has(s.reuse)) err(where, `reuse "${s.reuse}" must be one of ${[...REUSE].join(', ')}`);
     if (s.checked_on && !/^\d{4}-\d{2}-\d{2}$/.test(s.checked_on)) err(where, 'checked_on must be YYYY-MM-DD');
+    if (s.archive_url && !/^https:\/\/web\.archive\.org\/web\/\d{14}\//.test(s.archive_url)) {
+      err(where, 'archive_url must look like https://web.archive.org/web/<14-digit timestamp>/<url>');
+    }
+    if (s.archive_url && !/^\d{4}-\d{2}-\d{2}$/.test(s.archived_on ?? '')) err(where, 'archived_on must be YYYY-MM-DD when archive_url is set');
   });
 
   // --- factors ---

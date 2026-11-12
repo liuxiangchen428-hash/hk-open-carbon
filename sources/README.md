@@ -19,6 +19,8 @@ Every factor's `source.id` must be registered in `registry.csv`.
 | `used_for` | 用途，例如 `factors:electricity`、`inventory`、`org-toolkit` |
 | `checked_on` | 最後核對日期 YYYY-MM-DD |
 | `notes` | 數據在文件哪裏、要注意甚麼 |
+| `archive_url` | Internet Archive 存檔連結（自動填寫，見下文） |
+| `archived_on` | 存檔日期 YYYY-MM-DD |
 
 ### `url_status`
 
@@ -51,6 +53,25 @@ Every factor's `source.id` must be registered in `registry.csv`.
 1. **優先用 DATA.GOV.HK 上的同一份數據**，例如機電署《香港能源最終用途數據》已在 DATA.GOV.HK 發佈。
 2. 單一數值屬事實，一般不受版權保護，但為穩妥起見，正式發佈 v0.1 前，**去信環保署、機電署及環境及生態局**，說明這是非牟利開源項目，申請書面許可。
 3. 未取得許可前，校驗會對使用這些來源的系數發出警告。
+
+## 存檔 / Archiving
+
+原始連結可能失效，所以每個來源都在 Internet Archive（Wayback Machine）保留一份存檔。本倉庫不放第三方 PDF，只記錄存檔連結。
+
+存檔由 GitHub Actions 自動完成（`.github/workflows/archive-sources.yml`）：
+
+- **每月 1 日**自動運行：查詢每個來源的最新存檔；沒有存檔或存檔超過一年的，請求 Internet Archive 重新存檔。
+- **手動運行**：GitHub 倉庫 → Actions → archive-sources → Run workflow。
+- 結果會自動寫入 `archive_url`、`archived_on` 並提交。
+
+本機亦可運行（需要能連上 archive.org）：
+
+```bash
+node scripts/archive-sources.mjs            # 只查詢現有存檔
+node scripts/archive-sources.mjs --save     # 沒有存檔的就請求存檔
+```
+
+部分網站（例如需要登入或阻擋爬蟲的頁面）可能無法存檔，結果會顯示 `missing`，需人手處理。
 
 ## 待辦 / To do
 

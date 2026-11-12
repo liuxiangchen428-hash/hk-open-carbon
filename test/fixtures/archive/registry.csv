@@ -1,0 +1,4 @@
+id,title,publisher,type,url,url_status,reuse,checked_on,archive_url,archived_on
+src-a,A,P,guideline,https://example.org/a,found,check,2026-01-01,https://example.org/copy,2026-01-01
+src-b,B,P,guideline,https://example.org/b,found,check,2026-01-01,https://web.archive.org/web/20260101000000/https://example.org/b,
+src-c,C,P,guideline,https://example.org/c,found,check,2026-01-01,https://web.archive.org/web/20260101000000/https://example.org/c,2026-01-01

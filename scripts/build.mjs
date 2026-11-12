@@ -6,6 +6,7 @@ import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { validateRepo } from './lib/validate.mjs';
+import { csvField as esc } from './lib/csv.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { errors, factors, sources } = validateRepo({
@@ -28,10 +29,6 @@ const records = factors
 
 const csvCols = ['id', 'name_zh_hant', 'name_en', 'category', 'gas', 'gwp', 'value', 'unit', 'year', 'region',
   'scope', 'boundary', 'source_id', 'source_page', 'source_table', 'quality', 'status'];
-const esc = (v) => {
-  const s = v === undefined || v === null ? '' : String(v);
-  return /[",\n\r]/.test(s) ? `"${s.replaceAll('"', '""')}"` : s;
-};
 const csv = [csvCols.join(',')]
   .concat(records.map((f) => [f.id, f.name['zh-Hant'], f.name.en, f.category, f.gas, f.gwp, f.value, f.unit,
     f.year, f.region, f.scope, f.boundary, f.source.id, f.source.page, f.source.table, f.quality, f.status]
