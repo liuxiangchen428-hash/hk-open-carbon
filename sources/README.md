@@ -81,6 +81,7 @@ node scripts/archive-sources.mjs --save     # 沒有存檔的就請求存檔
 - [ ] 渠務署最新可持續發展報告
 - [ ] 煤氣：香港煤氣的排放系數在哪一頁
 - [ ] 九巴：改用 HKEXnews 上的年報連結
+- [ ] 煤氣 2024 ESG 報告（HKEXnews PDF）及 Poore & Nemecek 論文無法自動存檔，需人手處理
 - [ ] 運輸署：2021 年後是否仍出版《運輸資料年報》
 - [ ] 確認 IPCC、英國政府系數、Poore & Nemecek 數據的再使用條款
 - [ ] 去信相關部門申請書面許可（需要項目負責人）
