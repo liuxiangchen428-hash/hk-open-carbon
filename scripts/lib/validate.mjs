@@ -110,7 +110,7 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
     const rel = relative(factorsDir, file).split(sep).join('/');
     let f;
     try {
-      f = yaml.load(readFileSync(file, 'utf8'));
+      f = yaml.load(readFileSync(file, 'utf8'), { schema: yaml.CORE_SCHEMA }); // keep dates as strings
     } catch (e) {
       err(rel, `YAML parse error: ${e.message.split('\n')[0]}`);
       continue;
@@ -139,6 +139,17 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
       warn(rel, `source "${src.id}" may restrict commercial reuse; get written permission or use an open copy before release (data is CC BY 4.0)`);
     }
     if (!f.source.page && !f.source.table) err(rel, 'source needs a page or table so the value can be checked');
+
+    // Double-entry check: every recorded reading must match the stored value.
+    const checks = f.verification ?? [];
+    checks.forEach((v, i) => {
+      if (v.value !== f.value) err(rel, `verification[${i}] by ${v.by} read ${v.value}, but value is ${f.value}; resolve the mismatch against the source`);
+    });
+    if (f.status === 'reviewed') {
+      const distinct = new Set(checks.map((v) => `${v.by}|${v.method}`));
+      if (checks.length < 2 || distinct.size < 2) err(rel, 'reviewed factor needs two verification entries that differ in by or method');
+      if (!checks.some((v) => v.by === 'maintainer')) err(rel, 'reviewed factor needs a verification entry by the maintainer');
+    }
 
     if (f.status !== 'deprecated' && f.region !== 'GLOBAL' && f.year < currentYear - STALE_AFTER_YEARS) {
       warn(rel, `factor year ${f.year} is more than ${STALE_AFTER_YEARS} years old; add a newer one or deprecate`);

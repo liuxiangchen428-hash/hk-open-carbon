@@ -85,6 +85,30 @@
     "superseded_by": { "type": "string" },
     "valid_from": { "type": "string", "format": "date" },
     "valid_to": { "type": "string", "format": "date" },
+    "verification": {
+      "description": "Independent checks of the value against the source. Each entry records who read the value, how, and what they got. Every value must equal `value`; `status: reviewed` needs two entries that differ in `by` or `method`, at least one by the maintainer. See methodology/verification.md.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["by", "method", "date", "value"],
+        "properties": {
+          "by": {
+            "description": "maintainer = the human project lead; claude = AI assistant; contributor:<github-handle> = anyone else",
+            "type": "string",
+            "pattern": "^(maintainer|claude|contributor:[A-Za-z0-9-]+)$"
+          },
+          "method": {
+            "description": "pdf-visual = read on the rendered page; text-extract = read from extracted text; recalculation = recomputed from other published numbers",
+            "enum": ["pdf-visual", "text-extract", "recalculation"]
+          },
+          "date": { "type": "string", "format": "date" },
+          "value": { "type": "number" },
+          "page": { "type": ["string", "integer"] },
+          "note": { "type": "string" }
+        }
+      }
+    },
     "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
     "notes": {
       "type": "object",
@@ -97,7 +121,7 @@
   },
   "allOf": [
     { "if": { "properties": { "gas": { "const": "CO2e" } } }, "then": { "required": ["gwp"] } },
-    { "if": { "properties": { "status": { "const": "reviewed" } } }, "then": { "required": ["reviewed_by"] } },
+    { "if": { "properties": { "status": { "const": "reviewed" } } }, "then": { "required": ["verification"] } },
     { "if": { "properties": { "status": { "const": "deprecated" } } }, "then": { "required": ["superseded_by"] } }
   ]
 }

@@ -9,4 +9,6 @@ region: GLOBAL
 source: { id: src-unconfirmed, page: 1 }
 quality: C
 status: reviewed
-reviewed_by: someone
+verification:
+  - { by: maintainer, method: pdf-visual, date: 2026-01-01, value: 1 }
+  - { by: claude, method: text-extract, date: 2026-01-01, value: 1 }

@@ -80,3 +80,16 @@ test('archive_url format is checked', () => {
   assert.ok(has(errors, 'row 3', 'archived_on must be YYYY-MM-DD'));
   assert.equal(errors.length, 2);
 });
+
+test('double-entry verification is enforced', () => {
+  const dir = join(root, 'test', 'fixtures', 'verify');
+  const { errors } = validateRepo({
+    schemaDir,
+    factorsDir: join(dir, 'factors'),
+    registryPath: join(dir, 'registry.csv'),
+  });
+  assert.ok(has(errors, 'mismatch.yaml', 'read 10, but value is 100'));
+  assert.ok(has(errors, 'one-check.yaml', 'two verification entries'));
+  assert.ok(has(errors, 'no-maintainer.yaml', 'by the maintainer'));
+  assert.ok(!errors.some((e) => e.includes('good.yaml')), 'a correctly verified factor passes');
+});

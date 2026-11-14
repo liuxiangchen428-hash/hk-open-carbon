@@ -20,7 +20,7 @@
 | status | 含義 |
 | --- | --- |
 | `draft` | 已錄入，未經第二人核對 |
-| `reviewed` | 已由另一位審核員對照原始文件核對（須填 `reviewed_by`） |
+| `reviewed` | 已獨立讀取兩次並一致，其中一次由維護者核對（見 [verification.md](verification.md)） |
 | `deprecated` | 已被取代（須填 `superseded_by`） |
 
 ## 過時提示 / Staleness

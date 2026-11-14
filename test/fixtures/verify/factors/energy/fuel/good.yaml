@@ -1,0 +1,14 @@
+id: hk.energy.fuel.good.test
+name: { zh-Hant: 測試, en: Test }
+category: energy/fuel
+gas: CO2
+value: 100
+unit: kgCO2/TJ
+year: 2006
+region: GLOBAL
+source: { id: src-ok, page: 1 }
+quality: C
+status: reviewed
+verification:
+  - { by: claude, method: text-extract, date: 2026-01-01, value: 100 }
+  - { by: maintainer, method: pdf-visual, date: 2026-01-02, value: 100 }
