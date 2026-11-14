@@ -54,7 +54,8 @@ for (const id of ids) {
     const archiveRaw = src.archive_url ? src.archive_url.replace(/\/web\/(\d{14})\//, '/web/$1id_/') : '';
     // Try the original link first; if the site refuses (common for bot-blocking
     // sites), fall back to the Internet Archive copy.
-    const candidates = useArchive ? [archiveRaw] : [src.url, archiveRaw];
+    const archivePlain = src.archive_url || '';
+    const candidates = useArchive ? [archiveRaw, archivePlain] : [src.url, archiveRaw, archivePlain];
     const tries = candidates.filter(Boolean);
     if (!tries.length) throw new Error(useArchive ? 'no archive_url recorded' : 'no url');
     let res;
@@ -63,9 +64,9 @@ for (const id of ids) {
       try {
         res = await fetch(u, { headers: { 'User-Agent': UA }, redirect: 'follow' });
         meta.attempts.push(`${u} -> HTTP ${res.status}`);
-        if (res.ok) { meta.url = u; meta.from_archive = u === archiveRaw; break; }
+        if (res.ok) { meta.url = u; meta.from_archive = u !== src.url; break; }
       } catch (e) {
-        meta.attempts.push(`${u} -> ${e.message}`);
+        meta.attempts.push(`${u} -> ${e.message}${e.cause ? ` (${e.cause.code ?? ''} ${e.cause.message ?? ''})` : ''}`);
         res = null;
       }
     }
