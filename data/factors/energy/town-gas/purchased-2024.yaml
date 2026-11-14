@@ -27,6 +27,12 @@ verification:
     value: 0.548
     page: "55 (report p.106)"
     note: Read from extracted text of the 2024 ESG report. The page is an infographic and the extracted layout is jumbled; checked by addition (production 0.548 + customer-side 2.553 = total 3.101 kg CO2e per unit).
+  - by: claude
+    method: pdf-visual
+    date: 2026-11-14
+    value: 0.548
+    page: "55 (report p.106)"
+    note: Read from a screenshot of report pages 106-107 supplied by the maintainer; matches the text extract.
 tags: [towngas]
 notes:
   zh-Hant: 煤氣公司公佈的香港煤氣生產環節排放，每單位煤氣 0.548 kg CO2e（亦列為每度 0.04 kg CO2e）。煤氣 1 單位 = 48 兆焦耳。對應 2010 年指引表 6 的「購買煤氣」間接排放；在建築物內燃燒煤氣的排放須另計（範圍 1）。
