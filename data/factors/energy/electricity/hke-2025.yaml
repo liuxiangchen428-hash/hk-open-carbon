@@ -13,16 +13,22 @@ scope: 2
 boundary: location-based
 source:
   id: src-hke-sr-2025-statistics
-  page: "TBC"
-  table: "Key Statistics > Environment > CO2e per electricity unit sold (kg/kWh)"
+  page: "1 (report p.118)"
+  table: "Performance Data Summary > GHG Emissions > CO2e per electricity unit sold (kg/kWh)"
 quality: B
-status: draft
+status: reviewed
 verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 0.59
+    page: "1 (report p.118)"
+    note: Read from extracted text of the archived 2025 statistics PDF.
   - by: maintainer
     method: pdf-visual
     date: 2026-11-14
     value: 0.59
-    note: Value given by the maintainer from the 2025 report; page number to be confirmed.
+    note: Value given by the maintainer from the 2025 report.
 tags: [grid-factor]
 notes:
   zh-Hant: 港燈範圍 1 加範圍 2 排放除以售電量。適用於港島、鴨脷洲及南丫島（港燈供電區）的範圍 2 核算。

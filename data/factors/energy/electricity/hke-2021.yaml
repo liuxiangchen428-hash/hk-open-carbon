@@ -16,8 +16,14 @@ source:
   page: "1 (report p.94)"
   table: "Key Statistics > Environment > CO2e per electricity unit sold (kg/kWh)"
 quality: B
-status: draft
+status: reviewed
 verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 0.71
+    page: "1 (report p.94)"
+    note: Read from extracted text of the archived 2022 Key Statistics PDF; the 2023 statistics (src-hke-sr-2023-statistics) also list 0.71.
   - by: claude
     method: pdf-visual
     date: 2026-11-14
