@@ -78,7 +78,7 @@ for (const line of lines) {
   if (current) buf.push(line);
 }
 
-if (!flag('--keep-log')) {
+if (!flag('--keep-log') && run.conclusion === 'success') {
   try {
     gh('api', '-X', 'DELETE', `repos/${REPO}/actions/runs/${run.id}/logs`);
     console.error('deleted the run log on GitHub');
