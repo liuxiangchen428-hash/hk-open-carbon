@@ -1,0 +1,28 @@
+id: hk.transport.rail.mtr-co2-per-pkm.2023
+name:
+  zh-Hant: 港鐵每乘客公里二氧化碳排放（2023 年）
+  en: MTR CO2 per passenger-km (2023)
+category: transport/rail
+gas: CO2
+value: 35.05
+unit: gCO2/pkm
+year: 2023
+region: HK
+scope: 3
+source:
+  id: src-mtr-performance-metrics-2025
+  page: "42 (report p.42)"
+  table: "COMET Benchmarking Results 2024 > Environment > CO2 per passenger km (MTR bar)"
+quality: B
+status: draft
+verification:
+  - by: claude
+    method: pdf-visual
+    date: 2026-11-14
+    value: 35.05
+    page: "42 (report p.42)"
+    note: Read the MTR bar label from a screenshot of the chart supplied by the maintainer.
+tags: [mtr, comet-benchmark]
+notes:
+  zh-Hant: 港鐵在國際地鐵基準組織 COMET 的對比數據。原圖沒有標示單位；按數量級判斷為每乘客公里克數（與學術研究的 55–71 克/乘客公里同一量級），此判斷經維護者同意。只計 CO2。乘客乘搭港鐵屬範圍 3（商務差旅或員工通勤）。
+  en: MTR's figure in the COMET metro benchmarking programme. The chart does not print a unit; grams per passenger-km is inferred from the magnitude (same order as an academic estimate of 55-71 g/pkm), as agreed by the maintainer. CO2 only. For passengers this is scope 3 (business travel or commuting).

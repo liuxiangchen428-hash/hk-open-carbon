@@ -1,0 +1,31 @@
+id: hk.transport.bus.tih-per-trip.2024
+name:
+  zh-Hant: 九巴及龍運巴士每程排放（2024 年，推算值）
+  en: KMB and LWB bus emissions per passenger trip (2024, derived)
+category: transport/bus
+gas: CO2e
+gwp: not-stated
+value: 0.522
+unit: kgCO2e/trip
+year: 2024
+region: HK
+scope: 3
+boundary: tank-to-wheel
+source:
+  id: src-tih-ar-2025-full
+  page: "90 (report p.88); 116-117 (report p.114-115)"
+  table: "Performance Statistics > GHG Emissions of Bus (Scope 1); KMB and LWB operating data > Passenger volume"
+derivation: "516,151 tCO2e (GHG Emissions of Bus, Scope 1) ÷ (940.3 million KMB + 48.3 million LWB = 988.6 million passenger trips) = 0.522 kg CO2e per trip (rounded to 3 decimals)"
+quality: D
+status: draft
+verification:
+  - by: claude
+    method: recalculation
+    date: 2026-11-14
+    value: 0.522
+    page: "90 (report p.88); 116-117 (report p.114-115)"
+    note: Computed from figures in the same report; the report does not publish a per-trip figure. Approved by the maintainer as a D-level derived value.
+tags: [bus, derived]
+notes:
+  zh-Hant: 推算值：載通國際巴士總排放（範圍 1）除以九巴加龍運的乘客人次。總排放可能包括集團的非專營巴士，結果或會略為偏高。只計巴士燃料（不含車站、車廠用電）。乘客乘搭巴士屬範圍 3。
+  en: Derived value. TIH bus scope 1 emissions divided by KMB plus LWB passenger trips. Total emissions may include the group's non-franchised buses, so the result may be slightly high. Bus fuel only (excludes depot and station electricity). For passengers this is scope 3.

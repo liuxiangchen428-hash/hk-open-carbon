@@ -6,6 +6,7 @@ emission:
   - kgCO2
   - kgCH4
   - kgN2O
+  - gCO2      # e.g. MTR (COMET) CO2 per passenger-km
   - gCH4      # small CH4 / N2O factors are published in grams
   - gN2O
   - kgCO2e
@@ -23,3 +24,4 @@ activity:
   - vkm       # 車輛公里 vehicle-km
   - Mvkm      # 百萬車輛公里 million vehicle-km (as published by bus operators)
   - unit
+  - trip      # 乘客每程 passenger trip
