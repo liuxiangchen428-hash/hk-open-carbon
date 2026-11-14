@@ -1,0 +1,30 @@
+id: hk.water.sewage.dsd.2021
+name:
+  zh-Hant: 污水處理用電排放系數（2021/22 年度）
+  en: Electricity for sewage processing, emission factor (2021/22)
+category: water/sewage
+gas: CO2e
+gwp: not-stated
+value: 0.21
+unit: kgCO2e/m3
+year: 2021
+region: HK
+scope: 3
+boundary: location-based
+source:
+  id: src-carbon-audit-excel-template
+  page: "sheet Table 9"
+  table: "GHG Emission Factor (in kg CO2-e/m3) for sewage processing by Drainage Services Department, column 2021/22"
+quality: A
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 0.21
+    page: "sheet Table 9"
+    note: Read from the archived government carbon audit Excel template (cached cell values), column 2021/22.
+tags: [water, fiscal-year]
+notes:
+  zh-Hant: 財政年度 2021/22（4 月至翌年 3 月）。渠務署處理污水所用電力的排放，按食水用量（立方米）計算。範本的預設用法：一般商業、住宅及機構用途按 100% 食水進入污水系統（×1.0）；食肆及飲食服務按 70%（×0.7）。範本註明數值按渠務署可持續發展報告每年更新。
+  en: Financial year 2021/22 (April to March). Emissions from the electricity the Drainage Services Department uses to treat sewage, per cubic metre of fresh water used. Template default — other commercial, residential and institutional premises assume 100% of fresh water enters the sewer (x1.0); restaurants and catering 70% (x0.7). The template notes the factor is updated each year from the DSD Sustainability Report.

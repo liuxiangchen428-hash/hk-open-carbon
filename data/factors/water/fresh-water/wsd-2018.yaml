@@ -1,0 +1,30 @@
+id: hk.water.fresh-water.wsd.2018
+name:
+  zh-Hant: 食水處理及供應用電排放系數（2018/19 年度）
+  en: Electricity for fresh water processing and supply, emission factor (2018/19)
+category: water/fresh-water
+gas: CO2e
+gwp: not-stated
+value: 0.424
+unit: kgCO2e/m3
+year: 2018
+region: HK
+scope: 3
+boundary: location-based
+source:
+  id: src-carbon-audit-excel-template
+  page: "sheet Table 8"
+  table: "GHG Emission Factor (in kg CO2-e/m3) for fresh water processing by Water Supplies Department, column 2018/19"
+quality: A
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 0.424
+    page: "sheet Table 8"
+    note: Read from the archived government carbon audit Excel template (cached cell values), column 2018/19.
+tags: [water, fiscal-year]
+notes:
+  zh-Hant: 財政年度 2018/19（4 月至翌年 3 月）。水務署處理及輸送食水所用電力的排放，按用水量（立方米，以水費單計）計算。範本註明數值按水務署年報每年更新。
+  en: Financial year 2018/19 (April to March). Emissions from the electricity the Water Supplies Department uses to treat and supply fresh water, per cubic metre on the water bill. The template notes the factor is updated each year from the WSD Annual Report.
