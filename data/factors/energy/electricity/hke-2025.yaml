@@ -1,0 +1,29 @@
+id: hk.energy.electricity.hke.2025
+name:
+  zh-Hant: 港燈售電排放強度（2025 年）
+  en: HK Electric CO2e per unit of electricity sold (2025)
+category: energy/electricity
+gas: CO2e
+gwp: not-stated
+value: 0.59
+unit: kgCO2e/kWh
+year: 2025
+region: HK-HKE
+scope: 2
+boundary: location-based
+source:
+  id: src-hke-sr-2025-statistics
+  page: "TBC"
+  table: "Key Statistics > Environment > CO2e per electricity unit sold (kg/kWh)"
+quality: B
+status: draft
+verification:
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-14
+    value: 0.59
+    note: Value given by the maintainer from the 2025 report; page number to be confirmed.
+tags: [grid-factor]
+notes:
+  zh-Hant: 港燈範圍 1 加範圍 2 排放除以售電量。適用於港島、鴨脷洲及南丫島（港燈供電區）的範圍 2 核算。
+  en: HK Electric scope 1 plus scope 2 emissions per unit of electricity sold. Use for scope 2 in the HK Electric supply area (Hong Kong Island, Ap Lei Chau, Lamma).

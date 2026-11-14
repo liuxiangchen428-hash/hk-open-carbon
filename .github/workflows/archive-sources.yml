@@ -38,6 +38,7 @@ jobs:
       - name: Look up or save snapshots
         env:
           ONLY: ${{ inputs.only }}
+          NODE_OPTIONS: --max-http-header-size=1048576
         run: |
           args=""
           if [ -n "$ONLY" ]; then args="--only $ONLY"; fi

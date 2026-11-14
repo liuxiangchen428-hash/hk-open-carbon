@@ -46,4 +46,6 @@ jobs:
           IDS: ${{ inputs.ids }}
           PAGES: ${{ inputs.pages }}
           USE_ARCHIVE: ${{ inputs.use_archive }}
+          # Internet Archive responses can carry very large headers.
+          NODE_OPTIONS: --max-http-header-size=1048576
         run: node scripts/ci-fetch-sources.mjs
