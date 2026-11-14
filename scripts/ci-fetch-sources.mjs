@@ -121,4 +121,6 @@ for (const id of ids) {
 }
 console.log(`::${stopToken}::`);
 console.log(`fetched ${ids.length - failures} of ${ids.length}`);
-process.exit(failures === ids.length ? 1 : 0);
+// Set the exit code instead of calling process.exit(), which can cut off large
+// pending writes to stdout when it is a pipe.
+process.exitCode = failures === ids.length ? 1 : 0;
