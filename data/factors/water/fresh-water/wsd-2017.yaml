@@ -16,7 +16,7 @@ source:
   page: "sheet Table 8"
   table: "GHG Emission Factor (in kg CO2-e/m3) for fresh water processing by Water Supplies Department, column 2017/18"
 quality: A
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -24,6 +24,12 @@ verification:
     value: 0.404
     page: "sheet Table 8"
     note: Read from the archived government carbon audit Excel template (cached cell values), column 2017/18.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-14
+    value: 0.404
+    page: "sheet Table 8"
+    note: Checked by the maintainer in the archived Excel template.
 tags: [water, fiscal-year]
 notes:
   zh-Hant: 財政年度 2017/18（4 月至翌年 3 月）。水務署處理及輸送食水所用電力的排放，按用水量（立方米，以水費單計）計算。範本註明數值按水務署年報每年更新。

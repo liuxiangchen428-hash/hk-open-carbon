@@ -16,7 +16,7 @@ source:
   page: "sheet Table 9"
   table: "GHG Emission Factor (in kg CO2-e/m3) for sewage processing by Drainage Services Department, column 2021/22"
 quality: A
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -24,6 +24,12 @@ verification:
     value: 0.21
     page: "sheet Table 9"
     note: Read from the archived government carbon audit Excel template (cached cell values), column 2021/22.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-14
+    value: 0.21
+    page: "sheet Table 9"
+    note: Checked by the maintainer in the archived Excel template.
 tags: [water, fiscal-year]
 notes:
   zh-Hant: 財政年度 2021/22（4 月至翌年 3 月）。渠務署處理污水所用電力的排放，按食水用量（立方米）計算。範本的預設用法：一般商業、住宅及機構用途按 100% 食水進入污水系統（×1.0）；食肆及飲食服務按 70%（×0.7）。範本註明數值按渠務署可持續發展報告每年更新。
