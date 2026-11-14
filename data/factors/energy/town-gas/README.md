@@ -6,9 +6,9 @@ One towngas unit = 48 MJ (recorded in `unit_definition` on every per-unit factor
 | 系列 | 年份 | 來源 | 用途 | 狀態 |
 | --- | --- | --- | --- | --- |
 | `hk-guideline-2010/purchased-<年>` | 2005–2008 | 2010 年指引表 6（第 37 頁） | 歷史數據（標籤 `historical`），只用於核算當年排放 | reviewed |
-| `purchased.<年>` | 2021–2023、2025 | 煤氣 2021、2022、2023、2025 ESG 報告 | 購買煤氣的間接排放（煤氣生產過程，範圍 2） | draft |
+| `purchased.<年>` | 2021–2023、2025 | 煤氣 2021、2022、2023、2025 ESG 報告 | 購買煤氣的間接排放（煤氣生產過程，範圍 2） | reviewed |
 | `purchased.<年>` | 2024 | 煤氣 2024 ESG 報告第 106 頁 | 購買煤氣的間接排放（煤氣生產過程，範圍 2） | reviewed |
-| `combustion-co2e.<年>` | 2023、2025 | 煤氣 2023、2025 ESG 報告 | 用戶端燃燒（範圍 1） | draft |
+| `combustion-co2e.<年>` | 2023、2025 | 煤氣 2023、2025 ESG 報告 | 用戶端燃燒（範圍 1） | reviewed |
 | `combustion-co2e.<年>` | 2024 | 煤氣 2024 ESG 報告第 106 頁 | 用戶端燃燒（範圍 1） | reviewed |
 | `hk-guideline-2010/combustion-<氣體>-emsd2010` | — | 2010 年指引表 1-1 至 1-3（第 28 頁） | 燃燒的 CO2、CH4、N2O 分項系數（範圍 1） | reviewed |
 

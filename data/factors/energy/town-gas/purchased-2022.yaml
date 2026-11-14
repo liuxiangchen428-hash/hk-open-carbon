@@ -19,7 +19,7 @@ source:
   page: "20 (report p.38-39)"
   table: "Text: carbon intensity of Hong Kong gas production"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -27,6 +27,12 @@ verification:
     value: 0.576
     page: "20 (report p.38-39)"
     note: Read from extracted text of the 2022 ESG report ("0.576 kg CO2e per unit of town gas - a decrease of 25% compared to the 2005 baseline").
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-14
+    value: 0.576
+    page: "20 (report p.38-39)"
+    note: Checked by the maintainer on the report page (screenshot shared in the working session).
 tags: [towngas]
 notes:
   zh-Hant: 煤氣公司公佈的香港煤氣生產環節排放，每單位煤氣 0.576 kg CO2e。煤氣 1 單位 = 48 兆焦耳。對應 2010 年指引表 6 的「購買煤氣」間接排放；在建築物內燃燒煤氣的排放須另計（範圍 1）。
