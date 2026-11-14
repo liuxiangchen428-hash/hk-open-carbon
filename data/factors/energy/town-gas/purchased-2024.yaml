@@ -19,7 +19,7 @@ source:
   page: "55 (report p.106)"
   table: "Hong Kong Town Gas GHG Emissions Data > Gas Production"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -33,6 +33,12 @@ verification:
     value: 0.548
     page: "55 (report p.106)"
     note: Read from a screenshot of report pages 106-107 supplied by the maintainer; matches the text extract.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-14
+    value: 0.548
+    page: "55 (report p.106)"
+    note: Checked by the maintainer on report page 106.
 tags: [towngas]
 notes:
   zh-Hant: 煤氣公司公佈的香港煤氣生產環節排放，每單位煤氣 0.548 kg CO2e（亦列為每度 0.04 kg CO2e）。煤氣 1 單位 = 48 兆焦耳。對應 2010 年指引表 6 的「購買煤氣」間接排放；在建築物內燃燒煤氣的排放須另計（範圍 1）。

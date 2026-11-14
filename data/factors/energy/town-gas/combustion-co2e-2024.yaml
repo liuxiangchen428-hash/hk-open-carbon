@@ -19,7 +19,7 @@ source:
   page: "55 (report p.106)"
   table: "Hong Kong Town Gas GHG Emissions Data > Gas Consumption (customer-side)"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -33,6 +33,12 @@ verification:
     value: 2.553
     page: "55 (report p.106)"
     note: Read from a screenshot of report pages 106-107 supplied by the maintainer; matches the text extract.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-14
+    value: 2.553
+    page: "55 (report p.106)"
+    note: Checked by the maintainer on report page 106.
 tags: [towngas]
 notes:
   zh-Hant: 煤氣公司公佈的用戶端燃燒排放，每單位煤氣 2.553 kg CO2e（亦列為每度 0.19 kg CO2e）。與 2010 年指引的燃燒系數（CO2 2.549 kg/單位，另加少量 CH4、N2O）相近。生產加燃燒合計每單位 3.101 kg CO2e。
