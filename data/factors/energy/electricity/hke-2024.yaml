@@ -16,7 +16,7 @@ source:
   page: "1 (report p.104)"
   table: "Performance Data Summary > GHG Emissions > CO2e per electricity unit sold (kg/kWh)"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -24,6 +24,12 @@ verification:
     value: 0.60
     page: "1 (report p.104)"
     note: Read from the Sustainability Report 2024 performance data table (archived copy).
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-14
+    value: 0.60
+    page: "1 (report p.104)"
+    note: Checked by the maintainer against the archived source.
 tags: [grid-factor]
 notes:
   zh-Hant: 港燈範圍 1 加範圍 2 排放除以售電量（報告註 6）。適用於港島、鴨脷洲及南丫島（港燈供電區）的範圍 2 核算。
