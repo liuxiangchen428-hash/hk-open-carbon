@@ -1,0 +1,30 @@
+id: hk.waste.landfill.paper.emsd2010
+name:
+  zh-Hant: 紙張廢物棄置堆填區排放系數（2010 年指引）
+  en: Paper waste disposed at landfill, emission factor (2010 HK guidelines)
+category: waste/landfill
+gas: CO2e
+gwp: not-stated
+value: 4.8
+unit: kgCO2e/kg
+year: 2010
+region: HK
+scope: 3
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 24
+  table: "Section (vi) GHG Emissions from Paper Waste Disposed at Landfills: E = (Ps + Pi - Pr - Pe) x Emission Factor (estimated at 4.8 kg CO2-e / kg)"
+quality: A
+status: draft
+update_frequency: irregular
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 4.8
+    page: 24
+    note: Read from extracted text of the 2010 building GHG guidelines. EPD's Guide to Low Carbon Office (src-epd-carbon-audit-guidebook-office, PDF p.44, guide p.40, Table 7) uses the same 4.8.
+tags: [hk-guideline-2010, paper]
+notes:
+  zh-Hant: 香港官方簡化系數：假設紙張在堆填區分解產生的甲烷全部在當期排放，而且未扣除堆填區收集及利用沼氣的部分，所以是偏保守（偏高）的估算。用法：排放 = （期初存紙 + 期內購入 − 回收 − 期末存紙）× 4.8。環保署 2024 年上載的《低碳辦公室指南》仍採用同一數值。
+  en: Simplified official factor. Assumes all methane from paper decomposing at landfill is emitted in the reporting period and does not deduct landfill gas collected and used, so it is a conservative (high) estimate. Emissions = (paper in stock at start + purchased - recycled - in stock at end) x 4.8. EPD's Guide to Low Carbon Office (uploaded 2024) uses the same value.
