@@ -57,7 +57,16 @@ while (run.status !== 'completed') {
 console.error(`run ${run.id} finished: ${run.conclusion}`);
 
 const jobs = JSON.parse(gh('api', `repos/${REPO}/actions/runs/${run.id}/jobs`)).jobs;
-const raw = gh('api', `repos/${REPO}/actions/jobs/${jobs[0].id}/logs`);
+// GitHub may still be assembling a large log right after the run ends; re-read
+// it until every requested document's end marker is present.
+let raw = '';
+for (let i = 0; i < 12; i++) {
+  raw = gh('api', `repos/${REPO}/actions/jobs/${jobs[0].id}/logs`);
+  const ended = ids.filter((id) => raw.includes(`===HKOC-END ${id}===`)).length;
+  if (ended === ids.length) break;
+  console.error(`log incomplete (${ended}/${ids.length} documents), waiting...`);
+  await sleep(15_000);
+}
 // Each log line starts with an ISO timestamp and a space.
 const lines = raw.split('\n').map((l) => l.replace(/^\d{4}-\d{2}-\d{2}T[\d:.]+Z ?/, ''));
 
@@ -78,7 +87,12 @@ for (const line of lines) {
   if (current) buf.push(line);
 }
 
-if (!flag('--keep-log') && run.conclusion === 'success') {
+for (const id of ids) {
+  if (!results.some((r) => r.id === id)) results.push({ id, ok: false, error: 'not found in the run log (log incomplete or document too large; try --pages)' });
+}
+const allOk = results.every((r) => r.ok);
+
+if (!flag('--keep-log') && run.conclusion === 'success' && allOk) {
   try {
     gh('api', '-X', 'DELETE', `repos/${REPO}/actions/runs/${run.id}/logs`);
     console.error('deleted the run log on GitHub');
