@@ -1,0 +1,30 @@
+id: hk.energy.fuel.gas-oil.mobile.co2.emsd2010
+name:
+  zh-Hant: 船用輕油流動燃燒源二氧化碳排放系數（2010 年指引）
+  en: Gas oil (ships) mobile combustion CO2 emission factor (2010 HK guidelines)
+category: energy/fuel
+gas: CO2
+value: 2.645
+unit: kgCO2/L
+year: 2010
+region: HK
+scope: 1
+boundary: combustion
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 30
+  table: "Table 2-1 CO2 emission factor (mobile combustion sources)"
+quality: A
+status: draft
+update_frequency: irregular
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 2.645
+    page: 30
+    note: Read from extracted text of the 2010 building GHG guidelines PDF.
+tags: [hk-guideline-2010]
+notes:
+  zh-Hant: 香港機電署及環保署 2010 年建築物溫室氣體指引的本地系數，適用於流動燃燒源。
+  en: Local factor from the 2010 EMSD/EPD building GHG guidelines, for mobile combustion.

@@ -105,6 +105,8 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
 
   // --- factors ---
   const factors = [];
+  const restricted = new Map(); // source id -> number of factors using it
+  const gwpUnknown = new Map(); // source id -> number of factors with gwp: not-stated
   const files = walk(factorsDir, '.yaml');
   for (const file of files) {
     const rel = relative(factorsDir, file).split(sep).join('/');
@@ -136,7 +138,7 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
     else if (f.status === 'reviewed' && src.url_status !== 'found') {
       err(rel, `reviewed factor needs a confirmed source link (source "${src.id}" url_status is "${src.url_status}")`);
     } else if (src.reuse === 'noncommercial-or-permission') {
-      warn(rel, `source "${src.id}" may restrict commercial reuse; get written permission or use an open copy before release (data is CC BY 4.0)`);
+      restricted.set(src.id, (restricted.get(src.id) ?? 0) + 1);
     }
     if (!f.source.page && !f.source.table) err(rel, 'source needs a page or table so the value can be checked');
 
@@ -151,8 +153,16 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
       if (!checks.some((v) => v.by === 'maintainer')) err(rel, 'reviewed factor needs a verification entry by the maintainer');
     }
 
-    if (f.gwp === 'not-stated') warn(rel, 'source does not state its GWP set; record it if a methodology document says');
+    if (f.gwp === 'not-stated') gwpUnknown.set(f.source.id, (gwpUnknown.get(f.source.id) ?? 0) + 1);
     factors.push({ ...f, _file: rel });
+  }
+
+  for (const [id, n] of restricted) {
+    warn('sources/registry.csv', `${n} factor(s) use "${id}", whose terms may restrict commercial reuse; consider asking for permission before release (data is CC BY 4.0)`);
+  }
+
+  for (const [id, n] of gwpUnknown) {
+    warn('sources/registry.csv', `${n} factor(s) from "${id}" have gwp: not-stated; record the GWP set if a methodology document gives it`);
   }
 
   // --- staleness: only the newest year of each series matters ---
@@ -164,7 +174,7 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
     if (!newest.has(series) || newest.get(series).year < f.year) newest.set(series, f);
   }
   for (const f of newest.values()) {
-    if (f.status !== 'deprecated' && f.region !== 'GLOBAL' && f.year < currentYear - STALE_AFTER_YEARS) {
+    if (f.status !== 'deprecated' && f.region !== 'GLOBAL' && f.update_frequency !== 'irregular' && f.year < currentYear - STALE_AFTER_YEARS) {
       warn(f._file, `factor year ${f.year} is more than ${STALE_AFTER_YEARS} years old; add a newer one or deprecate`);
     }
   }

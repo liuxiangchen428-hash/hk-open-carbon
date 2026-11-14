@@ -64,8 +64,9 @@
       ]
     },
     "gwp": {
-      "description": "GWP set used when gas is CO2e. not-stated = the source does not say which set it used (validator warns).",
+      "description": "GWP set used when gas is CO2e (AR2 = IPCC Second Assessment, e.g. CH4 21, N2O 310 as in the 2010 HK building guidelines). not-stated = the source does not say which set it used (validator warns).",
       "enum": [
+        "AR2",
         "AR4",
         "AR5",
         "AR6",
@@ -240,6 +241,22 @@
           "type": "string"
         }
       }
+    },
+    "gwp_used": {
+      "description": "For a single-gas factor (CH4, N2O) whose source also states the GWP to convert it, record that set here.",
+      "enum": [
+        "AR2",
+        "AR4",
+        "AR5",
+        "AR6"
+      ]
+    },
+    "update_frequency": {
+      "description": "annual = the source re-publishes this every year (validator warns when the newest year is old); irregular = a fixed value in a guideline that is revised occasionally. Default annual.",
+      "enum": [
+        "annual",
+        "irregular"
+      ]
     }
   },
   "allOf": [

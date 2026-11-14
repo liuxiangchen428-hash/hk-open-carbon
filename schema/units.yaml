@@ -6,6 +6,8 @@ emission:
   - kgCO2
   - kgCH4
   - kgN2O
+  - gCH4      # small CH4 / N2O factors are published in grams
+  - gN2O
   - kgCO2e
   - tCO2e
 
