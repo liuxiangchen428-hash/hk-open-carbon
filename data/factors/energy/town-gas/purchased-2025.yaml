@@ -16,7 +16,7 @@ scope: 2
 boundary: location-based
 source:
   id: src-towngas-esg-2025
-  page: "31"
+  page: "31 (report p.58-59)"
   table: "Hong Kong Town Gas Carbon Intensity > Gas Production"
 quality: B
 status: draft
@@ -25,7 +25,7 @@ verification:
     method: text-extract
     date: 2026-11-14
     value: 0.534
-    page: "31"
+    page: "31 (report p.58-59)"
     note: Read from extracted text of the 2025 ESG report (Hong Kong Town Gas Carbon Intensity); production 0.534 + customer side 2.553 = total 3.087.
 tags: [towngas]
 notes:

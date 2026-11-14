@@ -16,7 +16,7 @@ scope: 1
 boundary: combustion
 source:
   id: src-towngas-esg-2023
-  page: "23"
+  page: "23 (report p.44-45)"
   table: "Hong Kong Town Gas Emissions > Gas Consumption (customer-side)"
 quality: B
 status: draft
@@ -25,7 +25,7 @@ verification:
     method: text-extract
     date: 2026-11-14
     value: 2.553
-    page: "23"
+    page: "23 (report p.44-45)"
     note: Read from extracted text of the 2023 ESG report (Hong Kong Town Gas Emissions); production 0.549 + customer side 2.553 = total 3.102.
 tags: [towngas]
 notes:

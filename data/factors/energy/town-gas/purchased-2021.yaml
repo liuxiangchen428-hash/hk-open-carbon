@@ -16,7 +16,7 @@ scope: 2
 boundary: location-based
 source:
   id: src-towngas-esg-2021
-  page: "34"
+  page: "34 (report p.67-68)"
   table: "Text: carbon intensity of Hong Kong gas production"
 quality: B
 status: draft
@@ -25,7 +25,7 @@ verification:
     method: text-extract
     date: 2026-11-14
     value: 0.588
-    page: "34"
+    page: "34 (report p.67-68)"
     note: Read from extracted text of the 2021 ESG report ("0.588 kgCO2e per unit of town gas, a drop of 23% compared with our 2005 baseline").
 tags: [towngas]
 notes:
