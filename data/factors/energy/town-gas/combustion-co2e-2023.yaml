@@ -1,0 +1,33 @@
+id: hk.energy.town-gas.combustion-co2e.2023
+name:
+  zh-Hant: 煤氣燃燒排放系數（2023 年，用戶端）
+  en: Towngas combustion emission factor, customer side (2023)
+category: energy/town-gas
+gas: CO2e
+gwp: not-stated
+value: 2.553
+unit: kgCO2e/unit
+unit_definition:
+  zh-Hant: 煤氣 1 單位 = 48 兆焦耳（MJ）熱值，以煤氣錶讀數計（2010 年指引第 37 頁）
+  en: One towngas unit = 48 MJ of heat value, as registered by the gas meter (2010 guidelines, p.37)
+year: 2023
+region: HK
+scope: 1
+boundary: combustion
+source:
+  id: src-towngas-esg-2023
+  page: "23"
+  table: "Hong Kong Town Gas Emissions > Gas Consumption (customer-side)"
+quality: B
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 2.553
+    page: "23"
+    note: Read from extracted text of the 2023 ESG report (Hong Kong Town Gas Emissions); production 0.549 + customer side 2.553 = total 3.102.
+tags: [towngas]
+notes:
+  zh-Hant: 煤氣公司公佈的用戶端燃燒排放，每單位煤氣 2.553 kg CO2e。與 2010 年指引的燃燒系數（CO2 2.549 kg/單位，另加少量 CH4、N2O）相近。生產加燃燒合計每單位 3.102 kg CO2e。
+  en: Customer-side combustion emissions published by the Hong Kong and China Gas Company, 2.553 kg CO2e per unit. Close to the 2010 guidelines' combustion factor (CO2 2.549 kg/unit plus small CH4 and N2O). Production plus combustion is 3.102 kg CO2e per unit.

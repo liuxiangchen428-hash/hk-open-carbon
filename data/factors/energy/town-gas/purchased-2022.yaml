@@ -1,0 +1,33 @@
+id: hk.energy.town-gas.purchased.2022
+name:
+  zh-Hant: 購買煤氣的間接排放系數（2022 年，生產過程）
+  en: Towngas purchased, indirect emission factor from production (2022)
+category: energy/town-gas
+gas: CO2e
+gwp: not-stated
+value: 0.576
+unit: kgCO2e/unit
+unit_definition:
+  zh-Hant: 煤氣 1 單位 = 48 兆焦耳（MJ）熱值，以煤氣錶讀數計（2010 年指引第 37 頁）
+  en: One towngas unit = 48 MJ of heat value, as registered by the gas meter (2010 guidelines, p.37)
+year: 2022
+region: HK
+scope: 2
+boundary: location-based
+source:
+  id: src-towngas-esg-2022
+  page: "20"
+  table: "Text: carbon intensity of Hong Kong gas production"
+quality: B
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 0.576
+    page: "20"
+    note: Read from extracted text of the 2022 ESG report ("0.576 kg CO2e per unit of town gas - a decrease of 25% compared to the 2005 baseline").
+tags: [towngas]
+notes:
+  zh-Hant: 煤氣公司公佈的香港煤氣生產環節排放，每單位煤氣 0.576 kg CO2e。煤氣 1 單位 = 48 兆焦耳。對應 2010 年指引表 6 的「購買煤氣」間接排放；在建築物內燃燒煤氣的排放須另計（範圍 1）。
+  en: Emissions from producing town gas in Hong Kong as published by the Hong Kong and China Gas Company, 0.576 kg CO2e per unit. One unit = 48 MJ. Same scope as the purchased-towngas factor in Table 6 of the 2010 guidelines; on-site combustion is counted separately (scope 1).
