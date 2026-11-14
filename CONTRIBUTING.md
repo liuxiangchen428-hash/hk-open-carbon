@@ -15,18 +15,19 @@ Open an issue and pick a form; a maintainer will enter the data for you.
    `schema/categories.yaml` 中的葉節點。One YAML file per factor.
 3. **照抄原文**：數值必須與原始文件一致，並填 `source.page` 或 `source.table`。
    如需換算，在 `derivation` 寫出算式。Copy the value exactly; show any arithmetic in `derivation`.
-4. **新系數一律 `status: draft`**。Every new factor starts as `draft`.
-5. 運行 `npm run validate` 和 `npm test`，全部通過後才提交 PR，並填寫 PR 模板中的檢查清單。
+4. **記錄你的讀數**：在 `verification` 加一項，寫明你是誰、怎樣讀到、日期和數值，見
+   [methodology/verification.md](methodology/verification.md)。Record your reading in `verification`.
+5. **新系數一律 `status: draft`**。Every new factor starts as `draft`.
+6. 運行 `npm run validate` 和 `npm test`，全部通過後才提交 PR，並填寫 PR 模板中的檢查清單。
 
 ## 審核規則 / Review rules
 
-完整規則（角色、決策方式、過渡安排、利益衝突）見 [GOVERNANCE.md](GOVERNANCE.md)。
-Full rules are in GOVERNANCE.md.
+本項目由一名維護者在 AI 助手協助下維護，完整規則見 [GOVERNANCE.md](GOVERNANCE.md)。
+The project has one maintainer assisted by AI; full rules are in GOVERNANCE.md.
 
-- 涉及 `data/` 的 PR 需最少一名數據審核員（DA）批准。
-  PRs that touch `data/` need approval from at least one data reviewer.
-- 審核員對照原始文件逐項核對後，可把 `status` 改為 `reviewed` 並填寫 `reviewed_by`。
-  提交者不能審核自己的數據。Authors cannot review their own data.
+- 數值要獨立讀取兩次並一致，其中一次由維護者目視核對，才可改為 `status: reviewed`。
+  A value becomes `reviewed` after two matching readings, one by the maintainer.
+- 外部 PR 由維護者審閱後合併。External PRs are reviewed and merged by the maintainer.
 - 數值更新不要覆蓋舊年份：新增一個新年份的檔案；舊系數若被取代，標記
   `status: deprecated` 及 `superseded_by`。Never overwrite past years; add a new file.
 

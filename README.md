@@ -5,6 +5,12 @@
 
 **狀態 / Status:** 第 0 階段（項目準備）· Phase 0 (setup). 數據仍是草稿，未可用於正式披露。Data is draft and not yet fit for formal reporting.
 
+## 誰在維護 / Who maintains this
+
+本項目由**一名維護者**在 **AI 助手（Claude）** 協助下開發和維護。每個數值都獨立讀取兩次並自動比對，其中一次由維護者對照原文核對，才會標為「已審核」；其餘數據標為「草稿」。詳見 [GOVERNANCE.md](GOVERNANCE.md) 及 [methodology/verification.md](methodology/verification.md)。
+
+This project is built and maintained by one person with help from an AI assistant (Claude). Each value is read twice and compared automatically; it is marked "reviewed" only after the maintainer has checked it against the source. Everything else is marked "draft".
+
 ## 這是甚麼 / What this is
 
 香港的碳數據散落在環保署、機電署、中電、港燈、煤氣等不同報告裏。本項目把這些數據整理成：
@@ -66,7 +72,7 @@ status: draft
 
 ## 參與 / Contributing
 
-歡迎提交數據、修正或程式碼。請先閱讀 [CONTRIBUTING.md](CONTRIBUTING.md)；決策及合併規則見 [GOVERNANCE.md](GOVERNANCE.md)，維護者名單見 [MAINTAINERS.md](MAINTAINERS.md)。
+歡迎提交數據、修正或程式碼。請先閱讀 [CONTRIBUTING.md](CONTRIBUTING.md)；決策及審核規則見 [GOVERNANCE.md](GOVERNANCE.md)。
 
 ## 授權 / License
 
