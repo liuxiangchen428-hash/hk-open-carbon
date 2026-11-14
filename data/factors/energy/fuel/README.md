@@ -2,8 +2,8 @@
 
 | 系列 | 來源 | 內容 | 狀態 |
 | --- | --- | --- | --- |
-| `hk-guideline-2010/*-stationary-*` | `src-emsd-epd-building-ghg-2010` 表 1-1 至 1-3（第 28 頁） | 柴油、石油氣、火水、木炭的 CO2、CH4、N2O 固定燃燒系數（15 個） | draft |
-| `hk-guideline-2010/*-mobile-*` | 同上，表 2-1（第 30 頁） | 柴油、無鉛汽油、石油氣（每公升及每公斤）、船用輕油、火水的 CO2 流動燃燒系數 | draft |
+| `hk-guideline-2010/*-stationary-*` | `src-emsd-epd-building-ghg-2010` 表 1-1 至 1-3（第 28 頁） | 柴油、石油氣、火水、木炭的 CO2、CH4、N2O 固定燃燒系數（15 個） | reviewed |
+| `hk-guideline-2010/*-mobile-*` | 同上，表 2-1（第 30 頁） | 柴油、無鉛汽油、石油氣（每公升及每公斤）、船用輕油、火水的 CO2 流動燃燒系數 | reviewed |
 | `*.ipcc2006` | `src-ipcc-2006-v2` 表 1.4 | IPCC 預設 CO2 系數（kg/TJ），作國際參考 | draft |
 
 說明：

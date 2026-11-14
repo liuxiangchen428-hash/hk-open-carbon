@@ -16,7 +16,7 @@ source:
   page: 28
   table: "Table 1-3 N2O emission factor by fuel type (stationary combustion sources)"
 quality: A
-status: draft
+status: reviewed
 update_frequency: irregular
 verification:
   - by: claude
@@ -25,6 +25,12 @@ verification:
     value: 0.0076
     page: 28
     note: Read from extracted text of the 2010 building GHG guidelines PDF.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-14
+    value: 0.0076
+    page: 28
+    note: Checked by the maintainer against the guidelines PDF.
 tags: [hk-guideline-2010]
 notes:
   zh-Hant: 香港機電署及環保署 2010 年建築物溫室氣體指引的本地系數，適用於固定燃燒源。 指引換算 CO2e 時採用 CH4 GWP 21、N2O GWP 310（IPCC 第二次評估報告）。

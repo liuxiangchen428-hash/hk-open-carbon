@@ -32,7 +32,7 @@ Claude 每次開始工作前先讀這份文件。它記錄項目背景、已作�
 
 - **階段**：第 0 階段（項目準備）。
 - **已完成**：授權；來源登記 43 個（含再使用條款）；Internet Archive 存檔（41/43）；治理文件；Issue 表單、PR 模板、CODEOWNERS；fetch-sources 讀取流程；兩次錄入核對。
-- **數據**：電力 11 個（reviewed）；燃料及煤氣 27 個（draft，等維護者核對）：2010 年指引的固定及流動燃燒系數、煤氣 2005–2008 及 2024 年；另有 4 個 IPCC 預設值（draft）。各資料夾的 README 列出待辦。
+- **數據**：電力 11 個（reviewed）；燃料及煤氣 27 個：2010 年指引的 25 個已 reviewed；煤氣 2024 年 2 個 draft（Claude 已讀兩次，等維護者確認數值）；另有 4 個 IPCC 預設值（draft）。各資料夾的 README 列出待辦。
 - **讀取原文的經驗**：港燈官網擋 GitHub，會自動改用存檔；Internet Archive 回應頭很大，工作流程已設 `--max-http-header-size`。維護者也可以直接發 PDF 截圖，Claude 看圖算一次讀數（`method: pdf-visual`）。
 - **待維護者決定**：英文名、公開聯絡郵箱、何時公開倉庫、是否邀請顧問。
 - **已知待辦**：見 `sources/README.md` 的待辦清單。

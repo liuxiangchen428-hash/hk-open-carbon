@@ -19,7 +19,7 @@ source:
   page: 37
   table: "Table 6 note: GHG Emission Factor (in kg CO2-e / Unit of Towngas purchased)"
 quality: A
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -27,6 +27,12 @@ verification:
     value: 0.735
     page: 37
     note: Read from extracted text of the 2010 building GHG guidelines PDF.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-14
+    value: 0.735
+    page: 37
+    note: Checked by the maintainer against the guidelines PDF.
 tags: [hk-guideline-2010, historical]
 notes:
   zh-Hant: 歷史數據：只用於核算當年的排放；核算近年排放請用最新年份的系數。只計煤氣公司生產煤氣的排放（數據由煤氣公司提供，載於 2010 年指引）。煤氣 1 單位 = 48 兆焦耳。在建築物內燃燒煤氣的直接排放須另按燃燒系數計算（範圍 1）。
