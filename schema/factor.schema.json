@@ -75,7 +75,8 @@
     },
     "value": {
       "type": "number",
-      "exclusiveMinimum": 0
+      "minimum": 0,
+      "description": "The value as published. Zero is allowed when the source publishes 0 (it means 'counts as zero', not 'no data')."
     },
     "unit": {
       "description": "Emission per activity unit. Allowed units are listed in schema/units.yaml.",
@@ -257,6 +258,23 @@
         "annual",
         "irregular"
       ]
+    },
+    "unit_definition": {
+      "description": "Definition of a non-standard activity unit, e.g. one towngas unit = 48 MJ.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "zh-Hant",
+        "en"
+      ],
+      "properties": {
+        "zh-Hant": {
+          "type": "string"
+        },
+        "en": {
+          "type": "string"
+        }
+      }
     }
   },
   "allOf": [
