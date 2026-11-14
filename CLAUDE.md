@@ -34,7 +34,7 @@ Claude 每次開始工作前先讀這份文件。它記錄項目背景、已作�
 
 - **階段**：第 0 階段（項目準備）。
 - **已完成**：授權；來源登記 43 個（含再使用條款）；Internet Archive 存檔（41/43）；治理文件；Issue 表單、PR 模板、CODEOWNERS；fetch-sources 讀取流程；兩次錄入核對。
-- **數據**：電力 11 個（reviewed）；燃料及煤氣 33 個，全部 reviewed（2010 年指引 25 個；煤氣 2021–2025 年生產 5 個、燃燒 3 個）；另有 4 個 IPCC 預設值（draft）。交通 9 個（draft）：港鐵 2020–2024 每乘客公里 CO2、載通國際巴士每百萬車公里（2024–2025）及每程推算值（2024–2025），見 `data/factors/transport/README.md`。各資料夾的 README 列出待辦。
+- **數據**：電力 11 個（reviewed）；燃料及煤氣 33 個，全部 reviewed（2010 年指引 25 個；煤氣 2021–2025 年生產 5 個、燃燒 3 個）；另有 4 個 IPCC 預設值（draft）。交通 9 個（draft）：港鐵 2020–2024 每乘客公里 CO2、載通國際巴士每百萬車公里（2024–2025）及每程推算值（2024–2025），見 `data/factors/transport/README.md`（交通暫停，維護者決定先做其他）。廢物 1 個（紙張堆填 4.8，draft）；香港沒有公佈每噸廢物的本地系數，見 `data/factors/waste/README.md`。各資料夾的 README 列出待辦。
 - **讀取原文的經驗**：港燈官網擋 GitHub，會自動改用存檔；Internet Archive 回應頭很大，工作流程已設 `--max-http-header-size`。維護者也可以直接發 PDF 截圖，Claude 看圖算一次讀數（`method: pdf-visual`）。港交所 PDF 文件名只是編號，先用 `--pages 1-3` 確認公司和年份再錄入；公司自己的報告列表頁（例如 `src-towngas-esg-reports-page`）通常有直接連結。
 - **待維護者決定**：英文名、公開聯絡郵箱、何時公開倉庫、是否邀請顧問。
 - **已知待辦**：見 `sources/README.md` 的待辦清單。
