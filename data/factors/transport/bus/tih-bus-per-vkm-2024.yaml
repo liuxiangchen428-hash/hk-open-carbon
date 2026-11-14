@@ -1,0 +1,30 @@
+id: hk.transport.bus.tih-per-vkm.2024
+name:
+  zh-Hant: 載通國際巴士每百萬車公里排放（範圍 1，2024 年）
+  en: Transport International Holdings bus emissions per million vehicle-km (scope 1, 2024)
+category: transport/bus
+gas: CO2e
+gwp: not-stated
+value: 1383
+unit: tCO2e/Mvkm
+year: 2024
+region: HK
+scope: 1
+boundary: tank-to-wheel
+source:
+  id: src-tih-ar-2025-full
+  page: "90 (report p.88)"
+  table: "Performance Statistics > Environmental > GHG Emissions of Bus (Scope 1) Intensity (tCO2e per million km)"
+quality: B
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 1383
+    page: "90 (report p.88)"
+    note: Read from extracted text of the TIH 2025 annual report (FY 2024 column).
+tags: [bus]
+notes:
+  zh-Hant: 巴士每行駛 1 公里的排放（約 1.383 kg CO2e），屬車輛排放，不是每位乘客的排放。涵蓋載通國際旗下巴士業務；報告未說明包括哪幾家公司（集團亦經營非專營巴士）。
+  en: Emissions per kilometre driven by a bus (about 1.383 kg CO2e per vehicle-km), not per passenger. Covers Transport International Holdings' bus operations; the report does not say which companies are included (the group also runs non-franchised buses).

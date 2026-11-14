@@ -21,4 +21,5 @@ activity:
   - m3
   - pkm       # 乘客公里 passenger-km
   - vkm       # 車輛公里 vehicle-km
+  - Mvkm      # 百萬車輛公里 million vehicle-km (as published by bus operators)
   - unit
