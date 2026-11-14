@@ -1,0 +1,28 @@
+id: hk.energy.electricity.clp.2023
+name:
+  zh-Hant: 中電售電排放強度（2023 年）
+  en: CLP Power Hong Kong emission intensity of electricity sold (2023)
+category: energy/electricity
+gas: CO2e
+gwp: not-stated
+value: 0.39
+unit: kgCO2e/kWh
+year: 2023
+region: HK-CLP
+scope: 2
+boundary: location-based
+source:
+  id: src-clp-esg-data-hub-2025
+  table: "Environment > Greenhouse gas emissions intensity > CLP Power Hong Kong – GHG emissions intensity of electricity sold"
+quality: B
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 0.39
+    note: Read from the ESG data hub table (2025 report), row "CO2e emissions intensity of electricity sold by CLP Power Hong Kong (kg CO2e/kWh)".
+tags: [grid-factor]
+notes:
+  zh-Hant: 售予中華電力本地客戶的全部電量，未扣除可再生能源證書（REC）。適用於九龍、新界及大部分離島（中電供電區）的範圍 2 核算。
+  en: All electricity sold to CLP Power Hong Kong customers, before Renewable Energy Certificate (REC) adjustment. Use for scope 2 in the CLP supply area (Kowloon, New Territories, most outlying islands).

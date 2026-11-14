@@ -1,0 +1,12 @@
+id: hk.energy.town-gas.example.2018
+name: { zh-Hant: 測試舊系數, en: Old test factor }
+category: energy/town-gas
+gas: CO2e
+gwp: AR5
+value: 1
+unit: kgCO2e/MJ
+year: 2018
+region: HK
+source: { id: src-ok, page: 10 }
+quality: B
+status: draft

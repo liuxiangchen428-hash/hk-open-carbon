@@ -151,10 +151,22 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
       if (!checks.some((v) => v.by === 'maintainer')) err(rel, 'reviewed factor needs a verification entry by the maintainer');
     }
 
-    if (f.status !== 'deprecated' && f.region !== 'GLOBAL' && f.year < currentYear - STALE_AFTER_YEARS) {
-      warn(rel, `factor year ${f.year} is more than ${STALE_AFTER_YEARS} years old; add a newer one or deprecate`);
-    }
+    if (f.gwp === 'not-stated') warn(rel, 'source does not state its GWP set; record it if a methodology document says');
     factors.push({ ...f, _file: rel });
+  }
+
+  // --- staleness: only the newest year of each series matters ---
+  // A series is the id without its last segment when that segment is a year,
+  // e.g. hk.energy.electricity.clp.2024 -> hk.energy.electricity.clp
+  const newest = new Map();
+  for (const f of factors) {
+    const series = /\.\d{4}$/.test(f.id) ? f.id.replace(/\.\d{4}$/, '') : f.id;
+    if (!newest.has(series) || newest.get(series).year < f.year) newest.set(series, f);
+  }
+  for (const f of newest.values()) {
+    if (f.status !== 'deprecated' && f.region !== 'GLOBAL' && f.year < currentYear - STALE_AFTER_YEARS) {
+      warn(f._file, `factor year ${f.year} is more than ${STALE_AFTER_YEARS} years old; add a newer one or deprecate`);
+    }
   }
 
   // --- cross-record checks ---

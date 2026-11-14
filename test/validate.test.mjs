@@ -53,7 +53,8 @@ test('stale local factors raise a warning, not an error', () => {
     currentYear: 2026,
   });
   assert.deepEqual(errors, []);
-  assert.ok(has(warnings, 'more than 2 years old'));
+  assert.ok(has(warnings, 'old.yaml', 'more than 2 years old'));
+  assert.ok(!warnings.some((w) => w.startsWith('energy/town-gas/older.yaml')), 'older years in a series are not flagged');
 });
 
 test('CSV parser handles quotes, commas and escaped quotes', () => {
