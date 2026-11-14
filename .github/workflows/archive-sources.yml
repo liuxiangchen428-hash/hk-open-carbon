@@ -10,6 +10,10 @@ on:
         description: "Ask the Internet Archive to save sources that have no snapshot"
         type: boolean
         default: true
+      only:
+        description: "Only these source ids, comma-separated (optional)"
+        required: false
+        default: ""
   schedule:
     - cron: "17 3 1 * *"
 
@@ -32,11 +36,15 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Look up or save snapshots
+        env:
+          ONLY: ${{ inputs.only }}
         run: |
+          args=""
+          if [ -n "$ONLY" ]; then args="--only $ONLY"; fi
           if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.save }}" = "true" ]; then
-            node scripts/archive-sources.mjs --save --refresh-days 365
+            node scripts/archive-sources.mjs --save --refresh-days 365 $args
           else
-            node scripts/archive-sources.mjs
+            node scripts/archive-sources.mjs $args
           fi
       - run: npm run validate
       - name: Commit updated registry

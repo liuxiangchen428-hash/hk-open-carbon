@@ -70,7 +70,7 @@ const tooOld = (d) => refreshDays !== null && (!d || (Date.now() - Date.parse(d)
 let found = 0, saved = 0, missing = 0, failed = 0;
 
 for (const r of rows) {
-  if (only && r.id !== only) continue;
+  if (only && !only.split(',').includes(r.id)) continue;
   if (!/^https?:\/\//.test(r.url)) continue;
   try {
     let snap = await lookup(r.url);
