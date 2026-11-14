@@ -1,0 +1,34 @@
+id: hk.energy.town-gas.combustion-co2e.2022
+name:
+  zh-Hant: 煤氣燃燒排放系數（2022 年，用戶端，推算值）
+  en: Towngas combustion emission factor, customer side (2022, derived)
+category: energy/town-gas
+gas: CO2e
+gwp: not-stated
+value: 2.553
+unit: kgCO2e/unit
+unit_definition:
+  zh-Hant: 煤氣 1 單位 = 48 兆焦耳（MJ）熱值，以煤氣錶讀數計（2010 年指引第 37 頁）
+  en: One towngas unit = 48 MJ of heat value, as registered by the gas meter (2010 guidelines, p.37)
+year: 2022
+region: HK
+scope: 1
+boundary: combustion
+source:
+  id: src-towngas-esg-2022
+  page: "20 (report p.38-39) and 41 (report p.80-81)"
+  table: "Scope 3 Category 11 (Hong Kong gas production GHG emissions) and Key Statistics: Town gas sales (Hong Kong)"
+derivation: "1,457 ktCO2e (Scope 3 Category 11, Hong Kong) ÷ (27,398 million MJ town gas sold in Hong Kong ÷ 48 MJ per unit = 570.79 million units) = 2.553 kg CO2e per unit (rounded to 3 decimals)"
+quality: D
+status: draft
+verification:
+  - by: claude
+    method: recalculation
+    date: 2026-11-14
+    value: 2.553
+    page: "20 (report p.38-39) and 41 (report p.80-81)"
+    note: Computed from two figures in the same report. The report does not publish a per-unit customer-side figure for this year.
+tags: [towngas, derived]
+notes:
+  zh-Hant: 推算值：報告未直接公佈每單位用戶端燃燒排放，由香港用戶燃燒煤氣的總排放（範圍 3 第 11 類）除以香港售氣量得出。結果與 2010 年指引燃燒系數（2.549）及 2023–2025 年報告公佈的 2.553 一致。
+  en: Derived value. The report does not publish a per-unit customer-side figure; it is total Hong Kong customer combustion emissions (Scope 3 Category 11) divided by Hong Kong town gas sales. Consistent with the 2010 guidelines' combustion factor (2.549) and the 2.553 published for 2023-2025.
