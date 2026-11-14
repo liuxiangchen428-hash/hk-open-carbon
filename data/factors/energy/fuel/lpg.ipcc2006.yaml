@@ -11,10 +11,18 @@ region: GLOBAL
 scope: 1
 boundary: combustion
 source:
-  id: src-ipcc-2006-v2
-  table: "Volume 2, Chapter 1, Table 1.4"
+  id: src-ipcc-2006-v2-ch1
+  page: "23 (report p.1.23)"
+  table: "Table 1.4 Default CO2 emission factors for combustion, default value (kg/TJ)"
 quality: C
 status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-14
+    value: 63100
+    page: "23 (report p.1.23)"
+    note: Read from extracted text of Volume 2 Chapter 1 (Table 1.4).
 tags: [ipcc-default]
 notes:
   zh-Hant: IPCC 第一層級預設值，僅含 CO2。有香港本地系數時應優先使用本地數值。
