@@ -1,0 +1,44 @@
+name: fetch-sources
+run-name: "fetch-sources ${{ inputs.ids }} [${{ inputs.token }}]"
+
+# Downloads source documents listed in sources/registry.csv and prints their
+# text into this run's log, so a working session without direct internet
+# access can read them (scripts/fetch-source.mjs reads the log, then deletes
+# it). Nothing is committed and no file is stored.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ids:
+        description: "Source ids, comma-separated (e.g. src-eeb-cap2050,src-clp-co2-intensity)"
+        required: true
+      pages:
+        description: "PDF page range, e.g. 10-25 (optional; default all pages)"
+        required: false
+        default: ""
+      use_archive:
+        description: "Download the Internet Archive copy instead of the original link"
+        type: boolean
+        default: false
+      token:
+        description: "Run label used by scripts/fetch-source.mjs to find this run"
+        required: false
+        default: "manual"
+
+permissions:
+  contents: read
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PDF tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils > /dev/null
+      - name: Fetch and print sources
+        env:
+          IDS: ${{ inputs.ids }}
+          PAGES: ${{ inputs.pages }}
+          USE_ARCHIVE: ${{ inputs.use_archive }}
+        run: node scripts/ci-fetch-sources.mjs
