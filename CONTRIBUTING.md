@@ -15,6 +15,9 @@
 
 ## 審核規則 / Review rules
 
+完整規則（角色、決策方式、過渡安排、利益衝突）見 [GOVERNANCE.md](GOVERNANCE.md)。
+Full rules are in GOVERNANCE.md.
+
 - 涉及 `data/` 的 PR 需最少一名數據審核員（DA）批准。
   PRs that touch `data/` need approval from at least one data reviewer.
 - 審核員對照原始文件逐項核對後，可把 `status` 改為 `reviewed` 並填寫 `reviewed_by`。

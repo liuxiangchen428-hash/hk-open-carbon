@@ -66,7 +66,7 @@ status: draft
 
 ## 參與 / Contributing
 
-歡迎提交數據、修正或程式碼。請先閱讀 [CONTRIBUTING.md](CONTRIBUTING.md)。
+歡迎提交數據、修正或程式碼。請先閱讀 [CONTRIBUTING.md](CONTRIBUTING.md)；決策及合併規則見 [GOVERNANCE.md](GOVERNANCE.md)，維護者名單見 [MAINTAINERS.md](MAINTAINERS.md)。
 
 ## 授權 / License
 
