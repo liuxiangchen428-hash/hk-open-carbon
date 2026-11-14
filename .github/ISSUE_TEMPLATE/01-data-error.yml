@@ -1,0 +1,54 @@
+name: 報告數據錯誤 / Report a data error
+description: 某個系數或來源的數值、單位、年份或連結有誤 / A factor or source looks wrong
+title: "[數據錯誤] "
+labels: ["data", "bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        多謝幫忙核對！請盡量附上原始文件的頁碼，方便審核員確認。
+        Thanks for checking. Please include the page number in the original document.
+  - type: input
+    id: factor_id
+    attributes:
+      label: 系數 id 或來源 id / Factor or source id
+      placeholder: hk.energy.fuel.diesel.ipcc2006 或 / or src-clp-co2-intensity
+    validations:
+      required: true
+  - type: dropdown
+    id: problem
+    attributes:
+      label: 問題類型 / Problem
+      multiple: true
+      options:
+        - 數值錯誤 / Wrong value
+        - 單位錯誤 / Wrong unit
+        - 年份或地區錯誤 / Wrong year or region
+        - 來源或頁碼錯誤 / Wrong source or page
+        - 連結失效 / Broken link
+        - 已過時，有更新數據 / Outdated, newer data exists
+        - 其他 / Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: 現時內容與正確內容 / What it says now and what it should say
+      placeholder: |
+        現時 / Now: 74100 kgCO2/TJ
+        應為 / Should be: ...
+    validations:
+      required: true
+  - type: input
+    id: evidence
+    attributes:
+      label: "證據：文件連結及頁碼或表號 / Evidence: document link and page or table"
+    validations:
+      required: true
+  - type: checkboxes
+    id: coi
+    attributes:
+      label: 利益衝突聲明 / Conflict of interest
+      description: 見 GOVERNANCE.md 第 5 節 / See GOVERNANCE.md section 5
+      options:
+        - label: 這個系數與我任職或代表的機構有關 / This factor relates to an organisation I work for or represent

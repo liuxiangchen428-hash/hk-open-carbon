@@ -1,0 +1,30 @@
+name: 程式或網站問題 / Bug in code or website
+description: 計算器、網站或腳本出錯 / Something in the calculator, site or scripts is broken
+title: "[問題] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: 發生了甚麼？/ What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 重現步驟 / Steps to reproduce
+      placeholder: |
+        1. 打開 ...
+        2. 輸入 ...
+        3. 看到 ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 預期結果 / What you expected
+  - type: input
+    id: env
+    attributes:
+      label: 瀏覽器或系統 / Browser or system
+      placeholder: 例如 iPhone Safari、Windows Chrome、Node 22

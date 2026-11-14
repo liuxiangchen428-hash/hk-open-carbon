@@ -1,0 +1,11 @@
+# 自動請求審核 / Automatic review requests. See GOVERNANCE.md section 3.
+# 加入數據審核員後，把他們的 GitHub 帳號加到 data/ 和 sources/ 兩行。
+# Add data reviewers to the data/ and sources/ lines when they join.
+
+*                     @liuxiangchen428-hash
+/data/                @liuxiangchen428-hash
+/sources/             @liuxiangchen428-hash
+/schema/              @liuxiangchen428-hash
+/GOVERNANCE.md        @liuxiangchen428-hash
+/LICENSE              @liuxiangchen428-hash
+/DATA_LICENSE.md      @liuxiangchen428-hash

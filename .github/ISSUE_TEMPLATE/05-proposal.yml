@@ -1,0 +1,39 @@
+name: 提案 / Proposal
+description: 改動數據格式、分類、單位、質素等級、授權或治理規則 / Change the schema, categories, units, quality levels, license or governance
+title: "[提案] "
+labels: ["proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提案須公示一段時間才可合併（見 GOVERNANCE.md 第 2 節）：數據格式類 7 天，授權及治理類 14 天。
+        Proposals need a notice period before merging (GOVERNANCE.md section 2): 7 days for schema changes, 14 days for license or governance.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 類別 / Kind
+      options:
+        - 數據格式、分類、單位、質素等級 / Schema, categories, units, quality levels（7 天 / days）
+        - 授權、治理、項目範圍 / License, governance, scope（14 天 / days）
+        - 新功能或計算方法 / New feature or calculation method（3 天 / days）
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建議內容 / What do you propose?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: 原因 / Why?
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: 對現有數據或用戶的影響 / Impact on existing data or users
+      description: 要改哪些檔案？會否令舊版本不兼容？/ Which files change? Is it a breaking change?
+    validations:
+      required: true

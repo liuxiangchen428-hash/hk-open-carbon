@@ -2,6 +2,11 @@
 
 多謝你願意幫忙！Thank you for helping.
 
+## 不會用 Git？/ Not using Git?
+
+直接開 Issue，選擇對應表格就可以：報告數據錯誤、建議新系數、建議新來源、程式或網站問題、提案。維護者會幫你錄入。
+Open an issue and pick a form; a maintainer will enter the data for you.
+
 ## 新增或修改系數 / Adding or changing a factor
 
 1. **先登記來源**：在 `sources/registry.csv` 加一行（如來源未登記）。id 格式 `src-xxx`。
@@ -11,7 +16,7 @@
 3. **照抄原文**：數值必須與原始文件一致，並填 `source.page` 或 `source.table`。
    如需換算，在 `derivation` 寫出算式。Copy the value exactly; show any arithmetic in `derivation`.
 4. **新系數一律 `status: draft`**。Every new factor starts as `draft`.
-5. 運行 `npm run validate` 和 `npm test`，全部通過後才提交 PR。
+5. 運行 `npm run validate` 和 `npm test`，全部通過後才提交 PR，並填寫 PR 模板中的檢查清單。
 
 ## 審核規則 / Review rules
 

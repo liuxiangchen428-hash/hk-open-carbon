@@ -1,0 +1,35 @@
+name: 建議新來源 / Suggest a new source
+description: 推薦一份可用的報告、統計或數據集 / Recommend a report, statistic or dataset
+title: "[新來源] "
+labels: ["data", "source"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: 文件名稱 / Title
+    validations:
+      required: true
+  - type: input
+    id: publisher
+    attributes:
+      label: 出版機構 / Publisher
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: 連結 / Link
+      description: 盡量直達文件，不要只給首頁 / Link to the document itself, not a homepage
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: 裏面有甚麼數據？/ What data does it contain?
+      placeholder: 例如：第 45 頁表 3，2019-2024 年每乘客公里排放 / e.g. table 3 on p.45, emissions per passenger-km 2019-2024
+    validations:
+      required: true
+  - type: input
+    id: terms
+    attributes:
+      label: 使用條款（如知道）/ Terms of use (if known)

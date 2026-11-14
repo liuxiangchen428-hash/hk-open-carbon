@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 貢獻指南 / Contributing guide
+    url: https://github.com/liuxiangchen428-hash/hk-open-carbon/blob/main/CONTRIBUTING.md
+    about: 提交前請先閱讀 / Please read before opening an issue.

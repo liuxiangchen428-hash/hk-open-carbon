@@ -1,0 +1,70 @@
+name: 建議新系數 / Suggest a new factor
+description: 建議加入一個香港適用的排放系數 / Propose an emission factor for Hong Kong
+title: "[新系數] "
+labels: ["data", "new-factor"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        如果你會用 Git，也可以直接提交 PR（見 CONTRIBUTING.md）。不會的話填這個表格就可以，維護者會幫你錄入。
+        If you use Git, you can open a PR directly (see CONTRIBUTING.md). Otherwise fill in this form.
+  - type: input
+    id: name
+    attributes:
+      label: 名稱 / Name
+      placeholder: 例如：港鐵每乘客公里排放 / e.g. MTR emissions per passenger-km
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: 分類 / Category
+      description: 見 schema/categories.yaml；找不到合適分類可選「其他」/ Pick "Other" if none fits
+      options:
+        - 能源 Energy
+        - 交通 Transport
+        - 廢物 Waste
+        - 建築 Buildings
+        - 食水及污水 Water and sewage
+        - 食物 Food
+        - 材料及消費品 Materials and goods
+        - 其他 Other
+    validations:
+      required: true
+  - type: input
+    id: value
+    attributes:
+      label: 數值及單位 / Value and unit
+      placeholder: 例如 0.38 kgCO2e/kWh
+    validations:
+      required: true
+  - type: input
+    id: year_region
+    attributes:
+      label: 年份及適用地區 / Year and region
+      placeholder: 例如 2024，中電供電區 / e.g. 2024, CLP supply area
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: 來源文件連結 / Source document link
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: 頁碼或表號 / Page or table
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: 備註 / Notes
+      description: 是否需要換算？包含哪些氣體？系統邊界？/ Any conversion? Which gases? System boundary?
+  - type: checkboxes
+    id: coi
+    attributes:
+      label: 利益衝突聲明 / Conflict of interest
+      options:
+        - label: 這個系數與我任職或代表的機構有關 / This factor relates to an organisation I work for or represent
