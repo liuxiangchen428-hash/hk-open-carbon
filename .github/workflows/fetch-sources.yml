@@ -39,8 +39,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Install PDF tools
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils > /dev/null
+      - name: Install PDF and spreadsheet tools
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils > /dev/null
+          python3 -m pip install --quiet openpyxl
       - name: Fetch and print sources
         env:
           IDS: ${{ inputs.ids }}

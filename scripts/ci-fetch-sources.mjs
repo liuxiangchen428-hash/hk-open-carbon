@@ -87,7 +87,14 @@ for (const id of ids) {
 
     let text;
     const isPdf = buf.subarray(0, 5).toString('latin1') === '%PDF-';
-    if (isPdf) {
+    const isZip = buf.subarray(0, 2).toString('latin1') === 'PK';
+    const looksXlsx = isZip && (/spreadsheet|excel/i.test(meta.content_type) || /\.xlsx(\?|$)/i.test(meta.final_url));
+    if (looksXlsx) {
+      const file = join(work, `${id}.xlsx`);
+      writeFileSync(file, buf);
+      text = execFileSync('python3', [new URL('./ci/xlsx_to_text.py', import.meta.url).pathname, file], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
+      meta.kind = 'xlsx';
+    } else if (isPdf) {
       const file = join(work, `${id}.pdf`);
       writeFileSync(file, buf);
       const info = execFileSync('pdfinfo', [file], { encoding: 'utf8' });
