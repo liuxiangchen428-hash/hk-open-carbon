@@ -32,10 +32,16 @@ console.log(`::stop-commands::${stopToken}`);
 const registry = new Map(parseCsv(readFileSync('sources/registry.csv', 'utf8')).map((r) => [r.id, r]));
 const work = mkdtempSync(join(tmpdir(), 'hkoc-'));
 
-function htmlToText(html) {
+function htmlToText(html, base) {
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
+    // Keep link targets so documents linked from a listing page can be found.
+    .replace(/<a\b[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi, (_, href, text) => {
+      let abs = href;
+      try { abs = new URL(href, base).href; } catch {}
+      return `${text} [${abs}]`;
+    })
     .replace(/<(br|\/p|\/div|\/tr|\/h\d|\/li)[^>]*>/gi, '\n')
     .replace(/<\/t[dh]>/gi, '\t')
     .replace(/<[^>]+>/g, '')
@@ -98,7 +104,7 @@ for (const id of ids) {
       text = text.split('\f').map((p, i) => `\n---- page ${start + i} ----\n${p}`).join('');
       meta.kind = 'pdf';
     } else {
-      text = htmlToText(buf.toString('utf8'));
+      text = htmlToText(buf.toString('utf8'), meta.final_url);
       meta.kind = 'html';
     }
     meta.ok = true;
