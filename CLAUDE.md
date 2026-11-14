@@ -55,6 +55,7 @@ GitHub 只能用 REST API（`gh api ...`），GraphQL 在此環境不可用，�
 1. **數值必須來自原文**：用 `fetch-source.mjs` 取得原文，記錄頁碼或表號，不要用搜尋摘要或記憶中的數字。
 2. **錄入時加第一次讀數**：`verification` 加 `{ by: claude, method: text-extract, date, value, page }`，`status` 保持 `draft`。不可替維護者加 `by: maintainer` 的讀數。
 3. **新來源先登記** `sources/registry.csv`，再錄入系數。
+3a. **頁碼同時寫 PDF 頁碼和報告印刷頁碼**，格式 `"34 (report p.67-68)"`；給維護者核對時也兩個都說。很多報告一頁 PDF 是兩頁跨頁。
 4. 每完成一項就運行 `npm run validate` 和 `npm test`，提交並推送到 `main`；提交訊息結尾加上署名行。
 5. 不要把第三方 PDF 或大段原文提交進倉庫；`.cache/` 已被 git 忽略。
 6. 對外行動（寫信、公開倉庫、改倉庫設定、刪除東西）先問維護者。
