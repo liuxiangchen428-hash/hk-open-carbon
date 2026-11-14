@@ -17,7 +17,7 @@ import { join } from 'node:path';
 import { parseCsv } from './lib/validate.mjs';
 
 const UA = 'Mozilla/5.0 (compatible; hk-open-carbon source fetcher; +https://github.com/liuxiangchen428-hash/hk-open-carbon)';
-const MAX_BYTES = 60 * 1024 * 1024;
+const MAX_BYTES = 200 * 1024 * 1024;
 
 const ids = (process.env.IDS ?? '').split(',').map((s) => s.trim()).filter(Boolean);
 const pages = (process.env.PAGES ?? '').trim();
@@ -50,16 +50,29 @@ for (const id of ids) {
   const meta = { id, ok: false };
   try {
     if (!src) throw new Error('id not in sources/registry.csv');
-    const url = useArchive ? src.archive_url : src.url;
-    if (!url) throw new Error(useArchive ? 'no archive_url recorded' : 'no url');
     // Wayback "id_" form returns the original bytes without the archive banner.
-    const fetchUrl = useArchive ? url.replace(/\/web\/(\d{14})\//, '/web/$1id_/') : url;
-    meta.url = url;
-    const res = await fetch(fetchUrl, { headers: { 'User-Agent': UA }, redirect: 'follow' });
+    const archiveRaw = src.archive_url ? src.archive_url.replace(/\/web\/(\d{14})\//, '/web/$1id_/') : '';
+    // Try the original link first; if the site refuses (common for bot-blocking
+    // sites), fall back to the Internet Archive copy.
+    const candidates = useArchive ? [archiveRaw] : [src.url, archiveRaw];
+    const tries = candidates.filter(Boolean);
+    if (!tries.length) throw new Error(useArchive ? 'no archive_url recorded' : 'no url');
+    let res;
+    meta.attempts = [];
+    for (const u of tries) {
+      try {
+        res = await fetch(u, { headers: { 'User-Agent': UA }, redirect: 'follow' });
+        meta.attempts.push(`${u} -> HTTP ${res.status}`);
+        if (res.ok) { meta.url = u; meta.from_archive = u === archiveRaw; break; }
+      } catch (e) {
+        meta.attempts.push(`${u} -> ${e.message}`);
+        res = null;
+      }
+    }
+    if (!res?.ok) throw new Error(`all downloads failed (${meta.attempts.join('; ')})`);
     meta.http_status = res.status;
     meta.final_url = res.url;
     meta.content_type = res.headers.get('content-type') ?? '';
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const buf = Buffer.from(await res.arrayBuffer());
     if (buf.length > MAX_BYTES) throw new Error(`file too large (${buf.length} bytes)`);
     meta.bytes = buf.length;
