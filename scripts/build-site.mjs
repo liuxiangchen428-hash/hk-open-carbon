@@ -1,0 +1,95 @@
+#!/usr/bin/env node
+// Build the static website into site-dist/.
+//
+//   npm run site            build
+//   npm run site -- --serve build, then serve on http://localhost:4173
+//
+// The site is plain HTML/CSS/JS with no runtime dependencies. Data is
+// validated first; the build stops on validation errors.
+
+import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createServer } from 'node:http';
+import { extname, join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import yaml from 'js-yaml';
+import { validateRepo } from './lib/validate.mjs';
+import { layout } from '../site/src/layout.mjs';
+import { pages } from '../site/src/pages.mjs';
+
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const out = join(root, 'site-dist');
+const factorsDir = join(root, 'data', 'factors');
+
+const { errors, factors, sources } = validateRepo({
+  schemaDir: join(root, 'schema'),
+  factorsDir,
+  registryPath: join(root, 'sources', 'registry.csv'),
+});
+if (errors.length) {
+  for (const e of errors) console.error(`error    ${e}`);
+  console.error('\nSite build stopped: fix validation errors first (npm run validate).');
+  process.exit(1);
+}
+
+// Keep each value exactly as written (e.g. "0.60", "74100"), so the site shows
+// the published precision rather than JavaScript's number formatting.
+const rawValue = (file) => {
+  const m = readFileSync(join(factorsDir, file), 'utf8').match(/^value:\s*(\S+)\s*$/m);
+  return m ? m[1] : null;
+};
+
+const categoryTree = yaml.load(readFileSync(join(root, 'schema', 'categories.yaml'), 'utf8'));
+const categories = [];
+for (const [key, node] of Object.entries(categoryTree)) {
+  for (const [child, leaf] of Object.entries(node.children ?? {})) {
+    categories.push({ id: `${key}/${child}`, group: key, groupName: node.name, name: leaf.name });
+  }
+}
+
+const usedSources = new Set(factors.map((f) => f.source.id));
+const data = {
+  built: new Date().toISOString().slice(0, 10),
+  version: JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version,
+  categories,
+  factors: factors
+    .map(({ _file, ...f }) => ({ ...f, value_text: rawValue(_file) ?? String(f.value), file: `data/factors/${_file}` }))
+    .sort((a, b) => a.category.localeCompare(b.category) || a.id.localeCompare(b.id)),
+  sources: sources.map((s) => ({ ...s, used: usedSources.has(s.id) })),
+};
+
+rmSync(out, { recursive: true, force: true });
+mkdirSync(join(out, 'assets'), { recursive: true });
+mkdirSync(join(out, 'api', 'v1'), { recursive: true });
+cpSync(join(root, 'site', 'assets'), join(out, 'assets'), { recursive: true });
+
+writeFileSync(join(out, 'assets', 'data.json'), JSON.stringify(data));
+// Public, stable API files (same content as the release bundle).
+writeFileSync(join(out, 'api', 'v1', 'factors.json'), JSON.stringify(data.factors.map(({ value_text, file, ...f }) => f), null, 2));
+writeFileSync(join(out, 'api', 'v1', 'sources.json'), JSON.stringify(sources, null, 2));
+
+const stats = {
+  factors: data.factors.length,
+  reviewed: data.factors.filter((f) => f.status === 'reviewed').length,
+  sources: data.sources.filter((s) => s.used).length,
+  built: data.built,
+};
+for (const page of pages) {
+  writeFileSync(join(out, page.file), layout({ ...page, body: page.body(stats), stats }));
+}
+writeFileSync(join(out, '.nojekyll'), '');
+console.log(`Built site-dist/ with ${stats.factors} factors (${stats.reviewed} reviewed) and ${pages.length} pages.`);
+
+if (process.argv.includes('--serve')) {
+  const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml' };
+  createServer((req, res) => {
+    let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+    if (p.endsWith('/')) p += 'index.html';
+    try {
+      const body = readFileSync(join(out, p));
+      res.writeHead(200, { 'Content-Type': types[extname(p)] ?? 'application/octet-stream' });
+      res.end(body);
+    } catch {
+      res.writeHead(404).end('Not found');
+    }
+  }).listen(4173, () => console.log('Serving on http://localhost:4173'));
+}

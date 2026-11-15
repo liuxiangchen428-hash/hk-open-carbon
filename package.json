@@ -11,7 +11,8 @@
   "scripts": {
     "validate": "node scripts/validate.mjs",
     "build": "node scripts/build.mjs",
-    "test": "node --test \"test/**/*.test.mjs\""
+    "test": "node --test \"test/**/*.test.mjs\"",
+    "site": "node scripts/build-site.mjs"
   },
   "devDependencies": {
     "ajv": "^8.20.0",
