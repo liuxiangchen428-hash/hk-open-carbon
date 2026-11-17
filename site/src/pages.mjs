@@ -2,24 +2,24 @@
 // rendered in the browser by assets/app.js from assets/data.json.
 import { t } from './layout.mjs';
 
-const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
-
 const index = (s) => `
 <section class="hero">
   <div class="wrap">
     <div class="hero-top">
-      <div>
-        <p class="eyebrow">${t('香港本地排放系數庫', 'Hong Kong emission factor library')}</p>
-        <h1>${t('每一個數字，<span class="nb">都找得到出處。</span>', 'Every number, <span class="nb">traceable to its source.</span>')}</h1>
-      </div>
-      <dl class="hero-stats">
-        <div><dt>${t('系數', 'Factors')}</dt><dd>${s.factors}</dd></div>
-        <div><dt>${t('已審核', 'Reviewed')}</dt><dd>${pct(s.reviewed, s.factors)}%</dd></div>
-        <div><dt>${t('來源', 'Sources')}</dt><dd>${s.sources}</dd></div>
-      </dl>
+      <p class="eyebrow">${t('香港本地排放系數庫', 'Hong Kong emission factor library')}</p>
+      <h1>${t('每一個數字，<span class="nb">都找得到出處。</span>', 'Every number, <span class="nb">traceable to its source.</span>')}</h1>
     </div>
-    <p class="feature-label">${t('最新關鍵系數', 'Key factors, latest year')}</p>
-    <div class="features" id="features" aria-live="polite"></div>
+    <div class="dash" id="dash">
+      <div class="dash-tabs" id="dash-tabs" role="tablist" aria-label="${'Key factors'}"></div>
+      <div class="dash-panel">
+        <div class="dash-head">
+          <div><p class="dash-title" id="dash-title"></p><p class="dash-sub" id="dash-sub"></p></div>
+          <div class="dash-actions" id="dash-actions"></div>
+        </div>
+        <div class="dash-chart" id="dash-chart"></div>
+        <div class="dash-foot" id="dash-foot"></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -52,6 +52,11 @@ const index = (s) => `
     </div>
     <div class="filter-block about-data">
       <p class="filter-title">${t('關於數據', 'About the data')}</p>
+      <dl class="mini-stats">
+        <div><dt>${t('系數', 'Factors')}</dt><dd>${s.factors}</dd></div>
+        <div><dt>${t('已審核', 'Reviewed')}</dt><dd>${s.reviewed}</dd></div>
+        <div><dt>${t('來源', 'Sources')}</dt><dd>${s.sources}</dd></div>
+      </dl>
       <p>${t(
         '整理自政府指引及公用事業、營運商公開報告。每個數值附原文頁碼與存檔，並經兩次獨立核對。',
         'Compiled from HK government guidelines and published utility and operator reports. Each value cites its page and archive copy and is read twice.',
