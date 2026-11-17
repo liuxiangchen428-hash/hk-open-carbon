@@ -89,9 +89,59 @@
     return s;
   }
 
+  /* ---------- featured figures (home hero) ---------- */
+  const FEATURED = [
+    { series: 'hk.energy.electricity.clp', label: ['中電 · 每度電', 'CLP · per kWh'] },
+    { series: 'hk.energy.electricity.hke', label: ['港燈 · 每度電', 'HK Electric · per kWh'] },
+    { series: 'hk.energy.town-gas.purchased', label: ['煤氣生產 · 每單位', 'Town gas production · per unit'] },
+    { series: 'hk.water.fresh-water.wsd', label: ['食水供應 · 每立方米', 'Fresh water · per m³'] },
+  ];
+  function sparkline(values) {
+    const w = 132, h = 36, pad = 4;
+    const min = Math.min(...values), max = Math.max(...values);
+    const span = max - min || 1;
+    const pts = values.map((v, i) => [
+      pad + (i * (w - pad * 2)) / Math.max(1, values.length - 1),
+      h - pad - ((v - min) / span) * (h - pad * 2),
+    ]);
+    const line = pts.map((p) => p.map((n) => n.toFixed(1)).join(',')).join(' ');
+    const area = `${pad},${h} ${line} ${(w - pad).toFixed(1)},${h}`;
+    const [lx, ly] = pts[pts.length - 1];
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" aria-hidden="true">
+      <polygon points="${area}" class="spark-area"/>
+      <polyline points="${line}" class="spark-line"/>
+      <circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="3" class="spark-dot"/></svg>`;
+  }
+  function renderFeatures() {
+    const el = $('#features');
+    if (!el) return;
+    el.innerHTML = FEATURED.map(({ series, label }) => {
+      const items = DATA.factors
+        .filter((f) => f.id.startsWith(`${series}.`) && /\.\d{4}$/.test(f.id) && !f.tags?.includes('historical'))
+        .sort((a, b) => a.year - b.year)
+        .slice(-5);
+      if (!items.length) return '';
+      const last = items[items.length - 1];
+      const prev = items[items.length - 2];
+      let delta = '';
+      if (prev && prev.value) {
+        const d = ((last.value - prev.value) / prev.value) * 100;
+        const cls = d < -0.05 ? 'down' : d > 0.05 ? 'up' : 'flat';
+        const sign = d < -0.05 ? '↓' : d > 0.05 ? '↑' : '→';
+        delta = `<span class="delta ${cls}">${sign} ${Math.abs(d).toFixed(1)}% <span>${esc(L(`對比 ${yearFmt(prev)}`, `vs ${yearFmt(prev)}`))}</span></span>`;
+      }
+      return `<a class="feature" href="#f=${encodeURIComponent(last.id)}">
+        <span class="f-label">${esc(L(...label))}</span>
+        <span class="f-value"><span class="num">${esc(last.value_text)}</span><span class="u">${esc(unitFmt(last.unit).split(' / ')[0])}</span></span>
+        <span class="f-foot"><span class="f-year">${esc(yearFmt(last))}</span>${delta}</span>
+        ${items.length > 1 ? sparkline(items.map((x) => x.value)) : ''}
+      </a>`;
+    }).join('');
+  }
+
   /* ---------- factor browser ---------- */
   const page = document.body.dataset.page;
-  if (page === 'index') dataReady.then(initBrowser);
+  if (page === 'index') dataReady.then(() => { renderFeatures(); rerender.push(renderFeatures); initBrowser(); });
   if (page === 'sources') dataReady.then(initSources);
 
   function initBrowser() {

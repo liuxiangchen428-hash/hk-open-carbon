@@ -6,20 +6,20 @@ const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
 
 const index = (s) => `
 <section class="hero">
-  <div class="wrap hero-inner">
-    <div class="hero-copy">
-      <p class="eyebrow">${t('香港本地排放系數庫', 'Hong Kong emission factor library')}</p>
-      <h1>${t('每一個數字，<br>都找得到出處。', 'Every number,<br>traceable to its source.')}</h1>
-      <p class="lede">${t(
-        '整理自政府指引、公用事業及營運商公開報告的碳排放系數。每個數值都附原文頁碼與存檔，並經兩次獨立核對。',
-        'Emission factors compiled from Hong Kong government guidelines and published utility and operator reports. Every value cites its page and archive copy, and is read twice independently.',
-      )}</p>
+  <div class="wrap">
+    <div class="hero-top">
+      <div>
+        <p class="eyebrow">${t('香港本地排放系數庫', 'Hong Kong emission factor library')}</p>
+        <h1>${t('每一個數字，<span class="nb">都找得到出處。</span>', 'Every number, <span class="nb">traceable to its source.</span>')}</h1>
+      </div>
+      <dl class="hero-stats">
+        <div><dt>${t('系數', 'Factors')}</dt><dd>${s.factors}</dd></div>
+        <div><dt>${t('已審核', 'Reviewed')}</dt><dd>${pct(s.reviewed, s.factors)}%</dd></div>
+        <div><dt>${t('來源', 'Sources')}</dt><dd>${s.sources}</dd></div>
+      </dl>
     </div>
-    <dl class="hero-stats">
-      <div><dt>${t('排放系數', 'Factors')}</dt><dd>${s.factors}</dd></div>
-      <div><dt>${t('已審核', 'Reviewed')}</dt><dd>${pct(s.reviewed, s.factors)}<small>%</small></dd></div>
-      <div><dt>${t('引用來源', 'Sources cited')}</dt><dd>${s.sources}</dd></div>
-    </dl>
+    <p class="feature-label">${t('最新關鍵系數', 'Key factors, latest year')}</p>
+    <div class="features" id="features" aria-live="polite"></div>
   </div>
 </section>
 
@@ -50,6 +50,14 @@ const index = (s) => `
         <div><dt><span class="q q-D">D</span></dt><dd>${t('推算值', 'Derived')}</dd></div>
       </dl>
     </div>
+    <div class="filter-block about-data">
+      <p class="filter-title">${t('關於數據', 'About the data')}</p>
+      <p>${t(
+        '整理自政府指引及公用事業、營運商公開報告。每個數值附原文頁碼與存檔，並經兩次獨立核對。',
+        'Compiled from HK government guidelines and published utility and operator reports. Each value cites its page and archive copy and is read twice.',
+      )}</p>
+      <a href="methodology.html">${t('了解核對方法 →', 'How values are checked →')}</a>
+    </div>
   </aside>
 
   <div class="results">
@@ -69,14 +77,14 @@ const index = (s) => `
 `;
 
 const sources = () => `
-<section class="page-head wrap">
+<section class="page-head"><div class="wrap">
   <p class="eyebrow">${t('來源登記', 'Source registry')}</p>
   <h1>${t('來源', 'Sources')}</h1>
   <p class="lede">${t(
     '本平台使用或計劃使用的全部文件。每份文件都記錄出版機構、原始連結、Internet Archive 存檔及再使用條款。',
     'Every document the platform uses or plans to use, with publisher, original link, Internet Archive copy and reuse terms.',
   )}</p>
-</section>
+</div></section>
 <section class="wrap">
   <div class="source-tools">
     <label class="search">
@@ -100,14 +108,14 @@ const sources = () => `
 `;
 
 const methodology = () => `
-<section class="page-head wrap">
+<section class="page-head"><div class="wrap">
   <p class="eyebrow">${t('方法', 'Methodology')}</p>
   <h1>${t('數據怎樣來、怎樣核對', 'Where the data comes from, and how it is checked')}</h1>
   <p class="lede">${t(
     '本平台由一名維護者在 AI 助手協助下維護。為了在人手有限的情況下保證準確，我們用公開、可重複的規則處理每一個數值。',
     'The platform is maintained by one person with help from an AI assistant. To stay accurate with a small team, every value goes through the same open, repeatable rules.',
   )}</p>
-</section>
+</div></section>
 
 <section class="wrap prose">
   <div class="steps">
