@@ -69,7 +69,7 @@ ${body}
     <div class="footer-meta">
       <p>${t('數據', 'Data')} <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · ${t('程式碼', 'Code')} Apache-2.0</p>
       <p>${t('數據版本', 'Data version')} ${stats.built} · <a href="api/v1/factors.json">JSON</a> · <a href="${REPO}">GitHub</a></p>
-      <p>${t('聯絡', 'Contact')} <a href="mailto:xiangchenliu@ln.hk">xiangchenliu@ln.hk</a></p>
+      <p>${t('聯絡', 'Contact')} <a href="mailto:liuxiangchen428@gmail.com">liuxiangchen428@gmail.com</a></p>
     </div>
   </div>
 </footer>
