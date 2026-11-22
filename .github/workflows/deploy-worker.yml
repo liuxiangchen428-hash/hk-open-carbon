@@ -46,6 +46,7 @@ jobs:
           sub=$(curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s).result.subdomain)}catch{console.log("")}})')
           url="https://hkoc-assistant.$sub.workers.dev"
           echo "WORKER_URL=$url"
-          curl -s -o /dev/null -w "health %{http_code}\n" "$url/health" || true
+          sleep 15
+          curl -s -w "\nhealth %{http_code}\n" "$url/health" || true
           curl -s -X POST "$url/chat" -H "Origin: https://liuxiangchen428-hash.github.io" -H "Content-Type: application/json" \
-            -d '{"lang":"zh","messages":[{"role":"user","content":"中電 2025 年每度電排放多少？"}]}' | head -c 600; echo
+            -d '{"lang":"zh","messages":[{"role":"user","content":"中電 2025 年每度電排放多少？"}]}' -w "\nchat %{http_code}\n" | head -c 900; echo

@@ -4,6 +4,7 @@
 name = "hkoc-assistant"
 main = "src/index.mjs"
 compatibility_date = "2025-06-01"
+compatibility_flags = ["global_fetch_strictly_public"]
 workers_dev = true
 
 [ai]

@@ -9,7 +9,7 @@ const hits = new Map(); // best-effort per-IP limit within one isolate
 async function loadData(env) {
   if (cache.data && Date.now() - cache.at < 3600_000) return cache.data;
   const res = await fetch(env.DATA_URL, { cf: { cacheTtl: 3600, cacheEverything: true } });
-  if (!res.ok) throw new Error(`data ${res.status}`);
+  if (!res.ok) throw new Error(`data ${res.status}: ${(await res.text()).slice(0, 80)}`);
   cache = { at: Date.now(), data: await res.json() };
   return cache.data;
 }
@@ -42,10 +42,24 @@ function limited(ip, perMinute) {
 
 export default {
   async fetch(request, env) {
+    try {
+      return await handle(request, env);
+    } catch (e) {
+      return json({ error: 'internal', message: String(e?.message ?? e).slice(0, 200) }, 500, cors(request.headers.get('Origin') ?? '', env).headers);
+    }
+  },
+};
+
+async function handle(request, env) {
     const url = new URL(request.url);
     const { ok, headers } = cors(request.headers.get('Origin') ?? '', env);
     if (request.method === 'OPTIONS') return new Response(null, { status: ok ? 204 : 403, headers });
-    if (url.pathname === '/health') return json({ ok: true }, 200, headers);
+    if (url.pathname === '/health') {
+      // Also report whether the site data can be read (no question content involved).
+      let dataStatus = 'unchecked';
+      try { const d = await loadData(env); dataStatus = `ok, ${d.factors?.length ?? 0} factors`; } catch (e) { dataStatus = String(e?.message ?? e).slice(0, 120); }
+      return json({ ok: true, data: dataStatus, models: String(env.MODELS ?? '') }, 200, headers);
+    }
     if (url.pathname !== '/chat' || request.method !== 'POST') return json({ error: 'not found' }, 404, headers);
     if (!ok) return json({ error: 'origin not allowed' }, 403, headers);
     if (limited(request.headers.get('CF-Connecting-IP') ?? 'x', Number(env.PER_MINUTE ?? 8))) return json({ error: 'rate', message: 'too many questions, try again in a minute' }, 429, headers);
@@ -74,5 +88,4 @@ export default {
       }
     }
     return json({ error: 'model', message: lastErr.slice(0, 200) }, 502, headers);
-  },
-};
+}
