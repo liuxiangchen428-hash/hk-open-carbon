@@ -37,10 +37,10 @@ export function layout({ file, title, description, body, stats }) {
 <meta name="description" content="${description}">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=${stats.v}">
 <script>try{var l=localStorage.getItem('hkoc-lang');if(l)document.documentElement.dataset.lang=l;}catch(e){}</script>
 </head>
-<body data-page="${file.replace('.html', '')}"${AI_ENDPOINT ? ` data-ai="${AI_ENDPOINT}"` : ''}>
+<body data-page="${file.replace('.html', '')}" data-v="${stats.v}"${AI_ENDPOINT ? ` data-ai="${AI_ENDPOINT}"` : ''}>
 <a class="skip" href="#main">${t('跳到內容', 'Skip to content')}</a>
 <header class="site-header">
   <div class="wrap header-inner">
@@ -77,7 +77,7 @@ ${body}
     </div>
   </div>
 </footer>
-<script src="assets/app.js" defer></script>
+<script src="assets/app.js?v=${stats.v}" defer></script>
 </body>
 </html>
 `;

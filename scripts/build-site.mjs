@@ -9,6 +9,7 @@
 
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
+import { createHash } from 'node:crypto';
 import { extname, join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
@@ -78,6 +79,10 @@ const stats = {
   sources: data.sources.filter((s) => s.used).length,
   built: data.built,
 };
+// Version tag for asset URLs, so browsers fetch new CSS/JS/data after each change instead of a cached copy.
+const hash = createHash('sha256');
+for (const f of ['style.css', 'app.js', 'data.json']) hash.update(readFileSync(join(out, 'assets', f)));
+stats.v = hash.digest('hex').slice(0, 10);
 for (const page of pages) {
   writeFileSync(join(out, page.file), layout({ ...page, body: page.body(stats), stats }));
 }

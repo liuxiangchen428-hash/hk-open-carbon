@@ -56,7 +56,7 @@
 
   /* ---------- data ---------- */
   let DATA;
-  const dataReady = fetch('assets/data.json').then((r) => r.json()).then((d) => (DATA = d));
+  const dataReady = fetch(`assets/data.json?v=${document.body.dataset.v || ''}`).then((r) => r.json()).then((d) => (DATA = d));
   const sourceById = () => new Map(DATA.sources.map((s) => [s.id, s]));
   const isYearly = (f) => /\.\d{4}$/.test(f.id);
   const seriesOf = (f) => f.id.replace(/\.\d{4}$/, '');
