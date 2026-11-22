@@ -78,13 +78,13 @@ node scripts/archive-sources.mjs --save     # 沒有存檔的就請求存檔
 
 ## 待辦 / To do
 
-- [ ] 找出 2024 年溫室氣體清單數據表 PDF（cnsd.gov.hk）
-- [ ] 2010 年建築物指引的 PDF 直接連結及頁碼
-- [ ] 水務署年報：每立方米食水的耗電量
-- [ ] 渠務署最新可持續發展報告
-- [ ] 煤氣：香港煤氣的排放系數在哪一頁
-- [ ] 九巴：改用 HKEXnews 上的年報連結
-- [ ] 煤氣 2024 ESG 報告（HKEXnews PDF）及 Poore & Nemecek 論文無法自動存檔，需人手處理
-- [ ] 運輸署：2021 年後是否仍出版《運輸資料年報》
-- [ ] 確認 IPCC、英國政府系數、Poore & Nemecek 數據的再使用條款
+- [x] 2024 年溫室氣體清單數據表（`src-eeb-ghg-data-tables-2024`，經存檔讀取，2026-11-22）
+- [x] 2010 年建築物指引的 PDF 直接連結及頁碼（`src-emsd-epd-building-ghg-2010`）
+- [x] 水務署每立方米食水耗電量：改用政府碳審計範本的食水系數（`src-carbon-audit-excel-template`），2022/23 以後按維護者決定暫不推算
+- [x] 渠務署最新報告：2024-25 年度 ESG 報告（`src-dsd-esg-2024-25`，2026-11-22 登記）
+- [x] 煤氣系數頁碼（2021–2025 年報告，見 `data/factors/energy/town-gas/`）
+- [x] 九巴：改用載通國際在港交所的年報（`src-tih-ar-2025`、`src-tih-ar-2025-full`）
+- [x] 運輸署《運輸資料年報》：2022–2024 年版仍有出版（2026-11-22 查）
+- [ ] 未有存檔、需人手處理的來源：Poore & Nemecek 論文；2026-11-22 再次請求存檔的有 `src-datagovhk-ghg-by-sector`、`src-tih-ar-2025-full`、`src-ipcc-2006-v2-ch1`、`src-hke-sr-2016-statistics`、`src-clp-sr-2015`（中電網站擋 GitHub，可能存不到）
+- [ ] 確認再使用條款（`reuse: check`）：IPCC 指南、溫室氣體議定書 GWP 表、英國政府系數、Poore & Nemecek、建造業議會碳評估工具
 - [ ] （建議）公開前去信相關部門請求確認（需要維護者）
