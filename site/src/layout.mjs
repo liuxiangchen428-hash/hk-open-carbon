@@ -2,6 +2,8 @@
 // Static text is written in both languages; CSS shows one based on
 // <html data-lang="zh"|"en"> (set by assets/app.js, remembered per browser).
 
+import { AI_ENDPOINT } from './config.mjs';
+
 export const t = (zh, en) => `<span class="l-zh">${zh}</span><span class="l-en">${en}</span>`;
 
 const REPO = 'https://github.com/liuxiangchen428-hash/hk-open-carbon';
@@ -35,7 +37,7 @@ export function layout({ file, title, description, body, stats }) {
 <link rel="stylesheet" href="assets/style.css">
 <script>try{var l=localStorage.getItem('hkoc-lang');if(l)document.documentElement.dataset.lang=l;}catch(e){}</script>
 </head>
-<body data-page="${file.replace('.html', '')}">
+<body data-page="${file.replace('.html', '')}"${AI_ENDPOINT ? ` data-ai="${AI_ENDPOINT}"` : ''}>
 <a class="skip" href="#main">${t('跳到內容', 'Skip to content')}</a>
 <header class="site-header">
   <div class="wrap header-inner">

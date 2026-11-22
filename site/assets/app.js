@@ -280,6 +280,7 @@
   if (page === 'sources') dataReady.then(initSources);
   if (page === 'inventory') dataReady.then(initInventory);
   if (page === 'calculator') dataReady.then(initCalculator);
+  if (document.body.dataset.ai) initAssistant(document.body.dataset.ai);
 
   function initBrowser() {
     const state = { cat: 'all', status: 'all', q: '', charts: new Set() };
@@ -1058,4 +1059,91 @@
     rerender.push(render);
     render();
   }
+
+  /* ---------- AI assistant ---------- */
+  function initAssistant(endpoint) {
+    const msgs = []; // this page view only; nothing is stored
+    const examples = [
+      ['我住港島，每月用電 300 度，一年排放多少？', 'I live on Hong Kong Island and use 300 kWh a month. What are my yearly emissions?'],
+      ['煤氣每月 30 度，排放怎樣計？', 'How do I count emissions from 30 units of town gas a month?'],
+      ['香港離 2035 年目標還差多少？', 'How far is Hong Kong from its 2035 target?'],
+    ];
+    const box = document.createElement('div');
+    box.className = 'ai';
+    box.innerHTML = `
+      <button type="button" class="ai-fab" aria-expanded="false" aria-controls="ai-panel">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h7A2.5 2.5 0 0 1 16 5.5v5a2.5 2.5 0 0 1-2.5 2.5H9l-3.5 3v-3A2.5 2.5 0 0 1 4 10.5z"/></svg>
+        <span class="l-zh">AI 助手</span><span class="l-en">Ask AI</span>
+      </button>
+      <section class="ai-panel" id="ai-panel" role="dialog" aria-label="AI" hidden>
+        <header class="ai-head">
+          <div><p class="ai-title"><span class="l-zh">AI 助手</span><span class="l-en">AI assistant</span></p>
+          <p class="ai-sub"><span class="l-zh">只按本平台已審核的系數回答</span><span class="l-en">Answers from this platform's reviewed factors only</span></p></div>
+          <button type="button" class="ai-x" data-ai-close aria-label="Close">×</button>
+        </header>
+        <div class="ai-log" id="ai-log" aria-live="polite"></div>
+        <form class="ai-form" id="ai-form">
+          <textarea id="ai-in" rows="2" maxlength="600" required></textarea>
+          <button type="submit" class="ai-send"><span class="l-zh">發送</span><span class="l-en">Send</span></button>
+        </form>
+        <p class="ai-note"><span class="l-zh">由開源模型（經 Cloudflare Workers AI）回答，可能出錯，請核對所引系數。問題會送到 Cloudflare 處理，本平台不會記錄；請勿輸入個人資料。</span><span class="l-en">Answered by an open model on Cloudflare Workers AI. It can be wrong, so check the cited factors. Your question is processed by Cloudflare and not kept by this platform; do not enter personal data.</span></p>
+      </section>`;
+    document.body.append(box);
+    const fab = $('.ai-fab', box), panel = $('#ai-panel', box), log = $('#ai-log', box), form = $('#ai-form', box), input = $('#ai-in', box);
+
+    const link = (txt) => esc(txt)
+      .replace(/\[(hk\.[a-z0-9.\-]+)\]/g, (m, id) => `<a href="index.html#f=${encodeURIComponent(id)}" class="ai-cite">${id}</a>`)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+    function render(pending) {
+      input.placeholder = L('輸入問題，例如：港島用電 300 度的排放', 'Ask, e.g. emissions of 300 kWh on Hong Kong Island');
+      if (!msgs.length && !pending) {
+        log.innerHTML = `<p class="ai-hello">${esc(L('可以問我香港的排放系數和計算方法。試試：', 'Ask me about Hong Kong emission factors and how to use them. Try:'))}</p>
+          <div class="ai-ex">${examples.map((e, i) => `<button type="button" data-ex="${i}">${esc(L(...e))}</button>`).join('')}</div>`;
+        return;
+      }
+      log.innerHTML = msgs.map((m) => `<div class="ai-msg ${m.role}${m.error ? ' err' : ''}">${m.role === 'user' ? esc(m.content).replace(/\n/g, '<br>') : link(m.content)}</div>`).join('')
+        + (pending ? `<div class="ai-msg assistant pending"><span></span><span></span><span></span></div>` : '');
+      log.scrollTop = log.scrollHeight;
+    }
+    async function ask(q) {
+      q = q.trim();
+      if (!q) return;
+      msgs.push({ role: 'user', content: q });
+      input.value = '';
+      render(true);
+      form.classList.add('busy');
+      try {
+        const res = await fetch(endpoint.replace(/\/$/, '') + '/chat', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lang: lang(), messages: msgs.filter((m) => !m.error).map(({ role, content }) => ({ role, content })) }),
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          const why = res.status === 429 ? L('問得太快了，請一分鐘後再試。', 'Too many questions; please try again in a minute.')
+            : body.error === 'quota' ? L('今日的免費額度已用完，請明天再試。', 'Today’s free allowance is used up; please try again tomorrow.')
+            : L('暫時未能回答，請稍後再試。', 'Could not answer right now; please try again later.');
+          msgs.push({ role: 'assistant', content: why, error: true });
+        } else {
+          msgs.push({ role: 'assistant', content: body.answer });
+        }
+      } catch {
+        msgs.push({ role: 'assistant', content: L('連線失敗，請稍後再試。', 'Connection failed; please try again later.'), error: true });
+      }
+      form.classList.remove('busy');
+      render(false);
+    }
+    const open = (v) => { panel.hidden = !v; fab.setAttribute('aria-expanded', String(v)); box.classList.toggle('open', v); if (v) { render(false); input.focus(); } };
+    fab.addEventListener('click', () => open(panel.hidden));
+    box.addEventListener('click', (e) => {
+      if (e.target.closest('[data-ai-close]')) open(false);
+      const ex = e.target.closest('[data-ex]');
+      if (ex) ask(L(...examples[+ex.dataset.ex]));
+    });
+    form.addEventListener('submit', (e) => { e.preventDefault(); if (!form.classList.contains('busy')) ask(input.value); });
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); form.requestSubmit(); } });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) open(false); });
+    rerender.push(() => { if (!panel.hidden) render(false); });
+  }
+
 })();

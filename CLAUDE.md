@@ -17,6 +17,7 @@ Claude 每次開始工作前先讀這份文件。它記錄項目背景、已作�
 
 | 日期 | 決定 | 原因 |
 | --- | --- | --- |
+| 2026-11-22 | 網站加 AI 助手：Cloudflare Worker（`worker/`）+ Workers AI 開源模型（免費額度），只按已審核系數回答並引用系數編號；問題送 Cloudflare 處理、不記錄，網頁註明；`site/src/config.mjs` 的 `AI_ENDPOINT` 為空時不顯示按鈕 | 維護者選擇做法一（免費、可換模型） |
 | 2026-11-22 | 英文名定為 HK Open Carbon Platform；公開聯絡郵箱 xiangchenliu@ln.hk；倉庫公開並以 GitHub Pages 部署網站；顧問及去信之後再定 | 維護者決定 |
 | 2026-11-22 | 4 個 IPCC 預設燃料系數保留；公開前與去信政府部門一併去信 IPCC 請求許可。再使用條款已讀原文：英國政府系數 OGL v3（可商用）；IPCC、溫室氣體議定書、建造業議會限制商業用途；Poore & Nemecek 只作參考 | 維護者選擇保留國際參考值 |
 | 2026-11-22 | 港燈 2006–2013 年不錄入 | 舊報告找不到可用連結；有 2010 年指引的 2002–2008 年數值 |
@@ -49,6 +50,7 @@ Claude 每次開始工作前先讀這份文件。它記錄項目背景、已作�
 - **排放清單**：`data/inventory/hk-ghg.csv`，1990–2024 年分項、總數、人均、碳強度（reviewed）；來源為 cnsd.gov.hk 2024 年數據表（政府網站擋 GitHub，經存檔讀取）。製冷劑 GWP 52 個（reviewed）。
 - **網站**：已完成（系數庫、計算器、排放清單、來源與方法四頁，方法併入來源頁，舊連結 methodology.html 自動轉址；繁中/英文；深淺色；手機版）。首頁為互動走勢面板（4 個關鍵系數分頁、懸停讀數、對比按鈕）；系數卡片可切換列表／柱狀圖；詳情有試算及歷年圖。維護者要求：高級但不花哨，首頁不放統計數字（已移到側欄）。原始碼在 `site/`，建置腳本 `scripts/build-site.mjs`，無外部依賴。已部署到 GitHub Pages（見下）。截圖檢查用 Playwright；此環境只有無襯線中文字型，標題在截圖中不會顯示襯線體。
 - **公開**：2026-11-22 倉庫公開，網站以 GitHub Pages 部署（`.github/workflows/pages.yml`，推送到 main 自動更新）。聯絡郵箱 xiangchenliu@ln.hk。
+- **AI 助手**：程式已寫好（`worker/`、網頁對話框），等維護者開 Cloudflare 賬戶並在 GitHub 加 secrets `CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID`，再由 `deploy-worker` 工作流程部署，然後填 `AI_ENDPOINT`。
 - **待維護者決定**：是否邀請顧問；去信政府部門及 IPCC（見 `sources/README.md`），維護者說之後再說。
 - **已知待辦**：見 `sources/README.md` 的待辦清單。
 

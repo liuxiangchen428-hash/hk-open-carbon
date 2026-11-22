@@ -1,0 +1,17 @@
+# AI assistant for the HK Open Carbon Platform website (Cloudflare Workers + Workers AI).
+# Deploy: GitHub Actions workflow "deploy-worker" (needs repository secrets
+# CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID), or `npx wrangler deploy` in this folder.
+name = "hkoc-assistant"
+main = "src/index.mjs"
+compatibility_date = "2025-06-01"
+workers_dev = true
+
+[ai]
+binding = "AI"
+
+[vars]
+# Tried in order; the next one is used if a model fails. Change here to switch models.
+MODELS = "@cf/qwen/qwen3-30b-a3b-fp8,@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+DATA_URL = "https://liuxiangchen428-hash.github.io/hk-open-carbon/assets/data.json"
+ALLOWED_ORIGINS = "https://liuxiangchen428-hash.github.io,http://localhost:4173"
+PER_MINUTE = "8"
