@@ -1,5 +1,5 @@
 // Data validation for hk-carbon-db.
-// Returns { errors, warnings, factors, sources } so the CLI, the build and the
+// Returns { errors, warnings, factors, sources, inventory } so the CLI, the build and the
 // tests all share one implementation.
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -7,6 +7,7 @@ import { join, relative, sep } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import yaml from 'js-yaml';
+import { validateInventory } from './inventory.mjs';
 
 const STALE_AFTER_YEARS = 2;
 const REQUIRED_SOURCE_COLUMNS = ['title', 'publisher', 'type', 'url', 'url_status', 'reuse', 'checked_on'];
@@ -69,7 +70,7 @@ function leafCategories(tree, prefix = '') {
  * @param {string} opts.registryPath sources/registry.csv
  * @param {number} [opts.currentYear]
  */
-export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear = new Date().getFullYear() }) {
+export function validateRepo({ schemaDir, factorsDir, registryPath, inventoryDir, currentYear = new Date().getFullYear() }) {
   const errors = [];
   const warnings = [];
   const err = (file, msg) => errors.push(`${file}: ${msg}`);
@@ -189,5 +190,14 @@ export function validateRepo({ schemaDir, factorsDir, registryPath, currentYear 
     if (f.superseded_by && !byId.has(f.superseded_by)) err(f._file, `superseded_by "${f.superseded_by}" does not exist`);
   }
 
-  return { errors, warnings, factors, sources };
+  // --- inventory tables (data/inventory/) ---
+  let inventory = [];
+  if (inventoryDir) {
+    const inv = validateInventory({ dir: inventoryDir, sources });
+    errors.push(...inv.errors);
+    warnings.push(...inv.warnings);
+    inventory = inv.tables;
+  }
+
+  return { errors, warnings, factors, sources, inventory };
 }

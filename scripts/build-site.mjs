@@ -20,10 +20,11 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = join(root, 'site-dist');
 const factorsDir = join(root, 'data', 'factors');
 
-const { errors, factors, sources } = validateRepo({
+const { errors, factors, sources, inventory } = validateRepo({
   schemaDir: join(root, 'schema'),
   factorsDir,
   registryPath: join(root, 'sources', 'registry.csv'),
+  inventoryDir: join(root, 'data', 'inventory'),
 });
 if (errors.length) {
   for (const e of errors) console.error(`error    ${e}`);
@@ -47,6 +48,7 @@ for (const [key, node] of Object.entries(categoryTree)) {
 }
 
 const usedSources = new Set(factors.map((f) => f.source.id));
+for (const t of inventory) for (const c of [...Object.values(t.columns), ...(t.targets ?? [])]) usedSources.add(c.source);
 const data = {
   built: new Date().toISOString().slice(0, 10),
   version: JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version,
@@ -55,6 +57,7 @@ const data = {
     .map(({ _file, ...f }) => ({ ...f, value_text: rawValue(_file) ?? String(f.value), file: `data/factors/${_file}` }))
     .sort((a, b) => a.category.localeCompare(b.category) || a.id.localeCompare(b.id)),
   sources: sources.map((s) => ({ ...s, used: usedSources.has(s.id) })),
+  inventory,
 };
 
 rmSync(out, { recursive: true, force: true });
@@ -65,6 +68,8 @@ cpSync(join(root, 'site', 'assets'), join(out, 'assets'), { recursive: true });
 writeFileSync(join(out, 'assets', 'data.json'), JSON.stringify(data));
 // Public, stable API files (same content as the release bundle).
 writeFileSync(join(out, 'api', 'v1', 'factors.json'), JSON.stringify(data.factors.map(({ value_text, file, ...f }) => f), null, 2));
+writeFileSync(join(out, 'api', 'v1', 'inventory.json'), JSON.stringify(inventory, null, 2));
+for (const tb of inventory) cpSync(join(root, 'data', 'inventory', tb.file), join(out, 'api', 'v1', tb.file));
 writeFileSync(join(out, 'api', 'v1', 'sources.json'), JSON.stringify(sources, null, 2));
 
 const stats = {
@@ -80,7 +85,7 @@ writeFileSync(join(out, '.nojekyll'), '');
 console.log(`Built site-dist/ with ${stats.factors} factors (${stats.reviewed} reviewed) and ${pages.length} pages.`);
 
 if (process.argv.includes('--serve')) {
-  const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml' };
+  const types = { '.csv': 'text/csv; charset=utf-8', '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml' };
   createServer((req, res) => {
     let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
     if (p.endsWith('/')) p += 'index.html';

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Usage: npm run build
 // Validates the data, then writes the release bundle to dist/:
-//   factors.json  factors.csv  sources.json  meta.json
+//   factors.json  factors.csv  sources.json  inventory.json  meta.json
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -9,10 +9,11 @@ import { validateRepo } from './lib/validate.mjs';
 import { csvField as esc } from './lib/csv.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const { errors, factors, sources } = validateRepo({
+const { errors, factors, sources, inventory } = validateRepo({
   schemaDir: join(root, 'schema'),
   factorsDir: join(root, 'data', 'factors'),
   registryPath: join(root, 'sources', 'registry.csv'),
+  inventoryDir: join(root, 'data', 'inventory'),
 });
 if (errors.length) {
   for (const e of errors) console.error(`error    ${e}`);
@@ -47,5 +48,6 @@ const meta = {
 writeFileSync(join(out, 'factors.json'), JSON.stringify(records, null, 2) + '\n');
 writeFileSync(join(out, 'factors.csv'), '﻿' + csv); // BOM so Excel opens Chinese text correctly
 writeFileSync(join(out, 'sources.json'), JSON.stringify(sources, null, 2) + '\n');
+writeFileSync(join(out, 'inventory.json'), JSON.stringify(inventory, null, 2) + '\n');
 writeFileSync(join(out, 'meta.json'), JSON.stringify(meta, null, 2) + '\n');
 console.log(`Built dist/ with ${records.length} factors and ${sources.length} sources.`);

@@ -184,12 +184,73 @@ const methodology = () => `
 </section>
 `;
 
+const inventory = () => `
+<section class="hero inv-hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <p class="eyebrow">${t('全港溫室氣體排放清單', 'Hong Kong greenhouse gas inventory')}</p>
+      <h1>${t('全港排放，<span class="nb">由 1990 年到今天。</span>', 'Hong Kong’s emissions, <span class="nb">1990 to today.</span>')}</h1>
+    </div>
+    <div class="inv-kpis" id="inv-kpis"></div>
+    <div class="inv-panel">
+      <div class="dash-head">
+        <div><p class="dash-title" id="inv-title"></p><p class="dash-sub" id="inv-sub"></p></div>
+        <div class="inv-actions">
+          <div class="seg seg-band" id="inv-metric" role="radiogroup" aria-label="Measure">
+            <button type="button" data-metric="total" aria-pressed="true">${t('總排放', 'Total')}</button>
+            <button type="button" data-metric="per_capita" aria-pressed="false">${t('人均', 'Per capita')}</button>
+            <button type="button" data-metric="intensity" aria-pressed="false">${t('碳強度', 'Intensity')}</button>
+          </div>
+          <div class="seg seg-band" id="inv-range" role="radiogroup" aria-label="Years">
+            <button type="button" data-from="2005" aria-pressed="true">${t('2005 起', 'From 2005')}</button>
+            <button type="button" data-from="1990" aria-pressed="false">${t('1990 起', 'From 1990')}</button>
+          </div>
+        </div>
+      </div>
+      <div class="dash-chart inv-chart" id="inv-chart"></div>
+      <div class="dash-foot inv-foot" id="inv-foot"></div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap inv-body">
+  <div class="group-head">
+    <h2>${t('按排放源', 'By sector')}</h2>
+    <span class="sub" id="sec-year"></span>
+    <div class="inv-tools">
+      <div class="seg" id="sec-view" role="radiogroup" aria-label="View">
+        <button type="button" data-view="bars" aria-pressed="true">${t('圖表', 'Chart')}</button>
+        <button type="button" data-view="table" aria-pressed="false">${t('表格', 'Table')}</button>
+      </div>
+    </div>
+  </div>
+  <p class="inv-hint muted">${t('在上方圖表點選年份，可查看該年的分項。', 'Pick a year in the chart above to see its breakdown.')}</p>
+  <div id="inv-sectors"></div>
+  <div class="two-col inv-notes">
+    <div>
+      <h2>${t('關於這份清單', 'About this inventory')}</h2>
+      <div id="inv-about"></div>
+    </div>
+    <div>
+      <h2>${t('出處', 'Sources')}</h2>
+      <div id="inv-sources"></div>
+    </div>
+  </div>
+</section>
+`;
+
 export const pages = [
   {
     file: 'index.html',
     title: { zh: '系數庫', en: 'Factors' },
     description: 'Open, sourced emission factors for Hong Kong: electricity, town gas, fuels, water and more.',
     body: index,
+  },
+  {
+    file: 'inventory.html',
+    title: { zh: '排放清單', en: 'Inventory' },
+    description: 'Hong Kong greenhouse gas emissions by sector, 1990 to the latest year, from the government inventory.',
+    body: inventory,
   },
   {
     file: 'sources.html',

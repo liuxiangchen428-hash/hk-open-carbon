@@ -8,6 +8,7 @@ const REPO = 'https://github.com/liuxiangchen428-hash/hk-open-carbon';
 
 const nav = [
   { file: 'index.html', zh: '系數庫', en: 'Factors' },
+  { file: 'inventory.html', zh: '排放清單', en: 'Inventory' },
   { file: 'sources.html', zh: '來源', en: 'Sources' },
   { file: 'methodology.html', zh: '方法', en: 'Methodology' },
 ];

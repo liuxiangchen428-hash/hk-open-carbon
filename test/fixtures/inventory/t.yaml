@@ -1,0 +1,16 @@
+id: t
+file: t.csv
+name: {zh-Hant: 測試, en: Test}
+gwp: AR5
+status: reviewed
+columns:
+  electricity: {zh-Hant: a, en: a, unit: ktCO2e, source: src-ok}
+  transport: {zh-Hant: a, en: a, unit: ktCO2e, source: src-ok}
+  other_fuel: {zh-Hant: a, en: a, unit: ktCO2e, source: src-ok}
+  waste: {zh-Hant: a, en: a, unit: ktCO2e, source: src-ok}
+  ippu: {zh-Hant: a, en: a, unit: ktCO2e, source: src-ok}
+  afolu: {zh-Hant: a, en: a, unit: ktCO2e, source: src-ok}
+  total: {zh-Hant: a, en: a, unit: ktCO2e, source: src-missing}
+pages: {src-ok: "1", src-missing: "1"}
+verification:
+  - {by: claude, method: text-extract, date: 2026-11-22}

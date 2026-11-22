@@ -1,0 +1,78 @@
+# Hong Kong greenhouse gas inventory: metadata for hk-ghg.csv.
+# Values in the CSV are copied as published (three significant figures);
+# nothing is computed. Checked by scripts/lib/inventory.mjs.
+id: hk-ghg
+file: hk-ghg.csv
+name:
+  zh-Hant: 香港溫室氣體排放清單
+  en: Hong Kong greenhouse gas inventory
+edition: 2024 inventory (tables updated January 2026)
+gwp: AR5
+status: draft
+columns:
+  electricity:
+    zh-Hant: 發電及其他能源工業
+    en: Electricity generation and other energy industries
+    unit: ktCO2e
+    source: src-eeb-ghg-data-tables-2024
+  transport:
+    zh-Hant: 運輸
+    en: Transport
+    unit: ktCO2e
+    source: src-eeb-ghg-data-tables-2024
+  other_fuel:
+    zh-Hant: 其它燃料耗用（商業、工業及住宅）
+    en: Other end use of fuel (commercial, industrial and domestic)
+    unit: ktCO2e
+    source: src-eeb-ghg-data-tables-2024
+  waste:
+    zh-Hant: 廢棄物
+    en: Waste
+    unit: ktCO2e
+    source: src-eeb-ghg-data-tables-2024
+  ippu:
+    zh-Hant: 工業過程及產品使用
+    en: Industrial processes and product use
+    unit: ktCO2e
+    source: src-eeb-ghg-data-tables-2024
+  afolu:
+    zh-Hant: 農業、林業及其他土地利用
+    en: Agriculture, forestry and other land use
+    unit: ktCO2e
+    source: src-eeb-ghg-data-tables-2024
+  total:
+    zh-Hant: 總數
+    en: Total
+    unit: ktCO2e
+    source: src-eeb-ghg-data-tables-2024
+  per_capita:
+    zh-Hant: 人均排放
+    en: Per capita emissions
+    unit: tCO2e
+    source: src-eeb-ghg-data-tables-2024-percapita
+  intensity:
+    zh-Hant: 碳強度（每港元本地生產總值，2023 年環比物量）
+    en: Carbon intensity (per HK dollar of GDP, chained 2023 dollars)
+    unit: kgCO2e/HKD
+    source: src-eeb-ghg-data-tables-2024-percapita
+pages:
+  src-eeb-ghg-data-tables-2024: "1-2"
+  src-eeb-ghg-data-tables-2024-percapita: "1"
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-22
+    note: All 35 rows (1990-2024) parsed from pdftotext output of both PDFs; the total column matches in both tables for every year.
+notes:
+  zh-Hant: 表內全部年份均以 IPCC 第五次評估報告（AR5）的 GWP 計算（見表註）；2023 年以前發布的舊版清單用 AR4，不要混用。數值以三個有效數字公佈，分項相加可能與總數略有出入。
+  en: Every year in the table uses IPCC AR5 GWPs (see the table notes); releases before 2023 used AR4, so do not mix them. Values are published to three significant figures, so sectors may not add up exactly to the total.
+targets:
+  - id: cap2050-2035
+    year: 2035
+    base_year: 2005
+    reduction: 0.5
+    source: src-eeb-cap2050
+    page: "3 (report p.2)"
+    quote: reduce total carbon emissions of Hong Kong by half against the 2005 level before 2035
+    zh-Hant: 《香港氣候行動藍圖2050》：2035 年前把總碳排放量從 2005 年的水平減半
+    en: "Climate Action Plan 2050: halve total carbon emissions from the 2005 level before 2035"

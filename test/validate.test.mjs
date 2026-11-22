@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { validateRepo, parseCsv } from '../scripts/lib/validate.mjs';
+import { validateInventory } from '../scripts/lib/inventory.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const schemaDir = join(root, 'schema');
@@ -13,9 +14,11 @@ test('repository data passes validation', () => {
     schemaDir,
     factorsDir: join(root, 'data', 'factors'),
     registryPath: join(root, 'sources', 'registry.csv'),
+    inventoryDir: join(root, 'data', 'inventory'),
   });
   assert.deepEqual(r.errors, []);
   assert.ok(r.factors.length > 0);
+  assert.ok(r.inventory.length > 0 && r.inventory[0].rows.length > 0);
 });
 
 test('bad fixtures produce the expected errors', () => {
@@ -93,4 +96,15 @@ test('double-entry verification is enforced', () => {
   assert.ok(has(errors, 'one-check.yaml', 'two verification entries'));
   assert.ok(has(errors, 'no-maintainer.yaml', 'by the maintainer'));
   assert.ok(!errors.some((e) => e.includes('good.yaml')), 'a correctly verified factor passes');
+});
+
+test('inventory tables catch typos, gaps and missing sources', () => {
+  const dir = join(root, 'test', 'fixtures', 'inventory');
+  const { errors } = validateInventory({ dir, sources: [{ id: 'src-ok', url_status: 'found' }] });
+  assert.ok(has(errors, 'line 3', 'sectors add up to'), 'sector typo');
+  assert.ok(has(errors, 'line 4', 'should follow'), 'year gap');
+  assert.ok(has(errors, 'line 5', 'must be a non-negative number'), 'thousands separator');
+  assert.ok(has(errors, 'src-missing', 'not in sources/registry.csv'));
+  assert.ok(has(errors, 'reviewed table needs a verification entry by the maintainer'));
+  assert.ok(!errors.some((e) => e.includes('line 2:')), 'a row that adds up within rounding passes');
 });
