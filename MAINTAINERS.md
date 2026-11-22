@@ -4,7 +4,7 @@
 
 | 角色 | 誰 | 聯絡 |
 | --- | --- | --- |
-| 維護者（項目負責人）Maintainer | GitHub: liuxiangchen428-hash | （待填：項目公開聯絡郵箱 / TODO: public project email） |
+| 維護者（項目負責人）Maintainer | GitHub: liuxiangchen428-hash | <xiangchenliu@ln.hk> |
 | AI 助手 AI assistant | Claude（Anthropic） | 經維護者的工作階段運作，沒有獨立帳號 |
 
 ## 數據審核員 / Data reviewers
