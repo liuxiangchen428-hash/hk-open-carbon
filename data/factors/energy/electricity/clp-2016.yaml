@@ -16,7 +16,7 @@ source:
   page: "147 (report p.147)"
   table: "Climate-related information > CLP Power Hong Kong - carbon emissions intensity of electricity sold > CO2e emissions intensity of electricity sold by CLP Power Hong Kong (kg CO2e/kWh)"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -24,6 +24,11 @@ verification:
     value: 0.54
     page: "147 (report p.147)"
     note: Read from extracted text of the 2020 Sustainability Report, CO2e row, column 2016 (printed as 0.54).
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-22
+    value: 0.54
+    note: Confirmed by the maintainer in the working session ("其他都對").
 tags: [grid-factor]
 notes:
   zh-Hant: 售予中華電力本地客戶的全部電量，未扣除可再生能源證書（REC）。適用於九龍、新界及大部分離島（中電供電區）的範圍 2 核算。

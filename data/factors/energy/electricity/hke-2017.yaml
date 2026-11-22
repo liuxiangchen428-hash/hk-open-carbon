@@ -16,7 +16,7 @@ source:
   page: "2 (report p.71)"
   table: "Key Statistics > Environment > CO2e per electricity unit sold (kg/kWh)"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -24,6 +24,11 @@ verification:
     value: 0.79
     page: "2 (report p.71)"
     note: Read from extracted text of the 2019 Sustainability Report statistics, column 2017 (printed as 0.79).
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-22
+    value: 0.79
+    note: Confirmed by the maintainer in the working session ("其他都對").
 tags: [grid-factor]
 notes:
   zh-Hant: 港燈範圍 1 加範圍 2 排放除以售電量。適用於港島、鴨脷洲及南丫島（港燈供電區）的範圍 2 核算。

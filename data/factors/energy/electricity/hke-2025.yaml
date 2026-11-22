@@ -28,7 +28,7 @@ verification:
     method: pdf-visual
     date: 2026-11-14
     value: 0.59
-    note: Value given by the maintainer from the 2025 report.
+    note: Value given by the maintainer from the 2025 report. The AR5 GWP statement (PDF p.127, report p.125) was confirmed by the maintainer on 2026-11-22.
 tags: [grid-factor]
 notes:
   zh-Hant: 港燈範圍 1 加範圍 2 排放除以售電量。適用於港島、鴨脷洲及南丫島（港燈供電區）的範圍 2 核算。港燈 2025 年報告的溫室氣體核算方法（PDF 第 127 頁，報告第 125 頁）註明由 2025 年起採用 IPCC 第五次評估報告（AR5）的 GWP；之前年份的報告未註明。

@@ -16,7 +16,7 @@ source:
   page: "3 (report p.10)"
   table: "CO2 Emissions Intensity - CLP Power HK as of 31 December 2009"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -24,6 +24,11 @@ verification:
     value: 0.56
     page: "3 (report p.10)"
     note: 'Read from extracted text: "0.56kg CO2e/kWh* ... * per kWh electricity sold including nuclear power". The CO2-only figure is also 0.56.'
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-22
+    value: 0.56
+    note: Confirmed by the maintainer in the working session ("其他都對").
 tags: [grid-factor]
 notes:
   zh-Hant: 中電香港的二氧化碳當量排放強度。報告的口徑是「每售出一度電（包括核電）」。報告未註明是否扣除可再生能源證書（當年中電未有出售證書）。適用於中電供電區的範圍 2 核算。

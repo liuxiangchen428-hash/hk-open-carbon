@@ -1,0 +1,30 @@
+id: hk.energy.electricity.hke.2005
+name:
+  zh-Hant: 港燈售電排放強度（2005 年）
+  en: HK Electric CO2e per unit of electricity sold (2005)
+category: energy/electricity
+gas: CO2e
+gwp: not-stated
+value: 0.93
+unit: kgCO2e/kWh
+year: 2005
+region: HK-HKE
+scope: 2
+boundary: location-based
+source:
+  id: src-hke-sr-2020-statistics
+  page: "1 (report p.74)"
+  table: "Status of Targets > Reduce CO2e per unit of electricity sold to not higher than 0.6 kg/kWh in 2023 from 0.93 kg/kWh in 2005"
+quality: B
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-22
+    value: 0.93
+    page: "1 (report p.74)"
+    note: 'Read from extracted text: "Reduce CO2e per unit of electricity sold to not higher than 0.6 kg/kWh in 2023 from 0.93 kg/kWh in 2005 (just before natural gas was introduced to LPS)". The same baseline appears in the 2016-2019 reports.'
+tags: [grid-factor]
+notes:
+  zh-Hant: 港燈減排目標的基準年數值（2005 年，南丫發電廠引入天然氣之前）。港燈範圍 1 加範圍 2 排放除以售電量。2010 年指引的港燈 2005 年數值是 0.92，維護者決定（2026-11-22）採用港燈報告較新的 0.93，指引數值改為已取代。
+  en: Baseline of HK Electric's reduction target (2005, before natural gas came to Lamma Power Station). Scope 1 plus scope 2 emissions per unit of electricity sold. The 2010 guidelines give 0.92 for HK Electric in 2005; the maintainer decided (2026-11-22) to use the company's more recent 0.93 and mark the guideline value superseded.
