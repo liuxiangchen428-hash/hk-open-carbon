@@ -207,6 +207,7 @@ const inventory = () => `
       <div class="dash-chart inv-chart" id="inv-chart"></div>
       <div class="dash-foot inv-foot" id="inv-foot"></div>
     </div>
+    <p class="inv-goal-note" id="inv-goal-note"></p>
   </div>
 </section>
 

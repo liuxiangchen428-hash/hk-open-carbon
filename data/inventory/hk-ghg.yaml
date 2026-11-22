@@ -80,3 +80,11 @@ targets:
     quote: reduce total carbon emissions of Hong Kong by half against the 2005 level before 2035
     zh-Hant: 《香港氣候行動藍圖2050》：2035 年前把總碳排放量從 2005 年的水平減半
     en: "Climate Action Plan 2050: halve total carbon emissions from the 2005 level before 2035"
+  - id: cap2050-neutrality
+    kind: neutrality
+    year: 2050
+    source: src-eeb-cap2050
+    page: "3 (report p.2)"
+    quote: the new pledge made last November to achieve carbon neutrality before 2050
+    zh-Hant: 《香港氣候行動藍圖2050》：2050 年前實現碳中和
+    en: "Climate Action Plan 2050: carbon neutrality before 2050"

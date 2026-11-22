@@ -654,7 +654,7 @@
         svg += `<text class="ib-ref-t ${cls}" x="${anchorLeft ? pad.l + 6 : width - pad.r - 4}" y="${y - 6}" text-anchor="${anchorLeft ? 'start' : 'end'}">${esc(text)}</text>`;
       };
       if (base) ref(base.total, 'b', L(`${base.year} 年水平 ${kt(base.total)}`, `${base.year} level ${kt(base.total)}`), true);
-      if (target) ref(target.value, 'g', L(`${target.year} 年目標 ${kt(target.value)}`, `${target.year} target ${kt(target.value)}`), false);
+      if (target) ref(target.value, 'g', L(`香港 ${target.year} 年目標 ${kt(target.value)}`, `HK ${target.year} target ${kt(target.value)}`), false);
       cols.forEach((c, i) => {
         if (c.gap) return;
         svg += `<rect class="lc-hit ib-hit" data-i="${i}" x="${X(i) - slot / 2}" y="${pad.t}" width="${slot}" height="${height - pad.t - pad.b}"${c.r ? ` data-year="${c.r.year}" tabindex="-1"` : ''}/>`;
@@ -716,16 +716,26 @@
     const src = sourceById();
 
     function renderKpis() {
-      const remain = target ? latest.total - target.value : 0;
-      const done = target ? (base.total - latest.total) / (base.total - target.value) : 0;
+      const r = all.find((x) => x.year === st.year) ?? latest;
+      const remain = target ? r.total - target.value : 0;
+      const done = target ? (base.total - r.total) / (base.total - target.value) : 0;
+      const yearsLeft = target ? target.year - r.year : 0;
+      // Average yearly cut needed from the selected year to reach the target (computed here, not published).
+      const perYear = target && yearsLeft > 0 && remain > 0 ? (1 - Math.pow(target.value / r.total, 1 / yearsLeft)) * 100 : 0;
+      const sel = r.year !== latest.year ? `<em class="ik-sel">${esc(L('所選年份', 'Selected year'))}</em>` : '';
       $('#inv-kpis').innerHTML = `
-        <div class="ik"><span>${esc(L(`${latest.year} 年總排放`, `Total, ${latest.year}`))}</span><b>${esc(kt(latest.total))}</b><i>${esc(L(...METRIC.total.unit))}</i></div>
-        <div class="ik"><span>${esc(L(`對比 ${base.year} 年`, `vs ${base.year}`))}</span><b class="delta-ink ${dcls(pct(latest.total, base.total))}">${esc(pctTxt(pct(latest.total, base.total)))}</b><i>${esc(L(`${base.year} 年為 ${kt(base.total)}`, `${base.year}: ${kt(base.total)}`))}</i></div>
-        <div class="ik"><span>${esc(L('人均排放', 'Per capita'))}</span><b>${esc(latest.per_capita.toFixed(2))}</b><i>${esc(L(...METRIC.per_capita.unit))}</i></div>
-        ${target ? `<div class="ik ik-goal"><span>${esc(L(`距 ${target.year} 年目標`, `To the ${target.year} target`))}</span><b>${esc(kt(remain))}</b>
-          <i>${esc(L('千公噸，尚待減少', 'kt still to cut'))}</i>
+        <div class="ik"><span>${esc(L(`${r.year} 年總排放`, `Total, ${r.year}`))}${sel}</span><b>${esc(kt(r.total))}</b><i>${esc(L(...METRIC.total.unit))}</i></div>
+        <div class="ik"><span>${esc(L(`對比 ${base.year} 年`, `vs ${base.year}`))}</span><b class="delta-ink ${dcls(pct(r.total, base.total))}">${esc(r.year === base.year ? '—' : pctTxt(pct(r.total, base.total)))}</b><i>${esc(L(`${base.year} 年為 ${kt(base.total)}`, `${base.year}: ${kt(base.total)}`))}</i></div>
+        <div class="ik"><span>${esc(L(`${r.year} 年人均排放`, `Per capita, ${r.year}`))}</span><b>${esc(r.per_capita.toFixed(2))}</b><i>${esc(L(...METRIC.per_capita.unit))}</i></div>
+        ${target ? `<div class="ik ik-goal"><span>${esc(L(`距香港 ${target.year} 年目標`, `To HK's ${target.year} target`))}</span>
+          <b>${esc(remain > 0 ? kt(remain) : L('已達標', 'Met'))}</b>
+          <i>${esc(remain > 0 ? L(`千公噸尚待減少（目標 ${kt(target.value)}，即 ${base.year} 年的一半）`, `kt still to cut (target ${kt(target.value)}, half of ${base.year})`) : L(`低於目標 ${kt(-remain)} 千公噸`, `${kt(-remain)} kt below target`))}</i>
           <span class="goal-bar" role="img" aria-label="${esc(L(`已完成 ${Math.round(done * 100)}%`, `${Math.round(done * 100)}% of the way`))}"><span style="width:${Math.max(0, Math.min(100, done * 100)).toFixed(1)}%"></span></span>
-          <i>${esc(L(`已走 ${Math.round(done * 100)}% 的路`, `${Math.round(done * 100)}% of the way there`))}</i></div>` : ''}`;
+          <i>${esc(L(`由 ${base.year} 年起計已完成 ${Math.max(0, Math.round(done * 100))}%`, `${Math.max(0, Math.round(done * 100))}% of the way since ${base.year}`))}${perYear ? esc(L(`；${r.year}–${target.year} 年平均每年要減 ${perYear.toFixed(1)}%`, `; needs about ${perYear.toFixed(1)}% a year, ${r.year}–${target.year}`)) : ''}</i></div>` : ''}`;
+      const ng = table.targets?.find((x) => x.kind === 'neutrality');
+      $('#inv-goal-note').innerHTML = target ? esc(L(
+        `香港政府《香港氣候行動藍圖2050》的目標：${target.year} 年前把總碳排放從 ${base.year} 年水平減半${ng ? `，${ng.year} 年前實現碳中和` : ''}。`,
+        `Hong Kong Government targets (Climate Action Plan 2050): halve total emissions from the ${base.year} level before ${target.year}${ng ? ` and reach carbon neutrality before ${ng.year}` : ''}.`)) : '';
     }
 
     function renderChart() {
@@ -738,22 +748,24 @@
       const el = $('#inv-chart');
       el._redraw = null;
       if (st.metric === 'total') {
-        totalChart(el, rows, { base, target, selected: st.year, onSelect: (y) => { st.year = y; renderChart(); renderSectors(); } });
+        totalChart(el, rows, { base, target, selected: st.year, onSelect: (y) => { st.year = y; renderKpis(); renderChart(); renderSectors(); } });
       } else {
         const dec = st.metric === 'intensity' ? 3 : 2;
         lineChart(el, [{ label: L(...m.label), cls: 's1', points: rows.map((r) => ({ x: String(r.year), value: r[st.metric], text: r[st.metric].toFixed(dec) })) }]);
       }
       const first = rows[0];
+      const cur = all.find((x) => x.year === st.year) ?? latest;
+      const prev = all.find((x) => x.year === cur.year - 1);
       const v = (r) => r[st.metric];
       const fmtv = (n) => (st.metric === 'total' ? kt(n) : n.toFixed(st.metric === 'intensity' ? 3 : 2));
       $('#inv-foot').innerHTML = `
         <div class="kpis">
-          <div><span>${esc(L(`${latest.year} 年`, String(latest.year)))}</span><b>${esc(fmtv(v(latest)))}</b></div>
-          <div><span>${esc(L(`對比 ${latest.year - 1}`, `vs ${latest.year - 1}`))}</span><b class="delta-ink ${dcls(pct(v(latest), v(all.at(-2))))}">${esc(pctTxt(pct(v(latest), v(all.at(-2)))))}</b></div>
-          <div><span>${esc(L(`${first.year} 至今`, `Since ${first.year}`))}</span><b class="delta-ink ${dcls(pct(v(latest), v(first)))}">${esc(pctTxt(pct(v(latest), v(first))))}</b></div>
+          <div><span>${esc(L(`${cur.year} 年`, String(cur.year)))}</span><b>${esc(fmtv(v(cur)))}</b></div>
+          ${prev ? `<div><span>${esc(L(`對比 ${prev.year}`, `vs ${prev.year}`))}</span><b class="delta-ink ${dcls(pct(v(cur), v(prev)))}">${esc(pctTxt(pct(v(cur), v(prev))))}</b></div>` : ''}
+          ${cur.year !== first.year ? `<div><span>${esc(L(`${first.year} 至 ${cur.year}`, `${first.year} to ${cur.year}`))}</span><b class="delta-ink ${dcls(pct(v(cur), v(first)))}">${esc(pctTxt(pct(v(cur), v(first))))}</b></div>` : ''}
           ${st.metric === 'total' ? '' : `<div><span>${esc(L('峰值', 'Peak'))}</span><b>${esc(fmtv(Math.max(...rows.map(v))))} · ${esc(String(rows.reduce((a, r) => (v(r) > v(a) ? r : a)).year))}</b></div>`}
         </div>
-        ${st.metric === 'total' && target ? `<p class="inv-legend"><span class="sw b"></span>${esc(L(`${base.year} 年水平`, `${base.year} level`))}<span class="sw g"></span>${esc(L(`${target.year} 年目標（${base.year} 年的一半）`, `${target.year} target (half of ${base.year})`))}<span class="muted-b">${esc(L('點選柱可查看該年分項', 'Click a bar for its breakdown'))}</span></p>` : ''}`;
+        ${st.metric === 'total' && target ? `<p class="inv-legend"><span class="sw b"></span>${esc(L(`${base.year} 年水平`, `${base.year} level`))}<span class="sw g"></span>${esc(L(`香港 ${target.year} 年目標（${base.year} 年的一半）`, `HK ${target.year} target (half of ${base.year})`))}<span class="muted-b">${esc(L('點選柱可查看該年分項', 'Click a bar for its breakdown'))}</span></p>` : ''}`;
     }
 
     function renderSectors() {
@@ -792,7 +804,7 @@
       $('#inv-about').innerHTML = `
         <p>${esc(nm(table.notes))}</p>
         <p>${esc(L('「其它燃料耗用」指商業、工業及住宅處所的燃料燃燒。', '“Other end use of fuel” is fuel burned in commercial, industrial and domestic premises.'))}</p>
-        ${target ? `<p>${esc(L(`目標線 = ${base.year} 年總排放 × ${1 - target.reduction}，由本平台按公佈數字計算。`, `Target line = ${base.year} total × ${1 - target.reduction}, computed by the platform from the published figures.`))}</p>` : ''}
+        ${target ? `<p>${esc(L(`目標線 = ${base.year} 年總排放 × ${1 - target.reduction}，由本平台按公佈數字計算。「每年要減」是按所選年份至 ${target.year} 年平均計算，同樣由本平台計算，不是政府公佈的數字。`, `Target line = ${base.year} total × ${1 - target.reduction}, computed by the platform from the published figures. The yearly cut needed is an average from the selected year to ${target.year}, also computed by the platform, not a government figure.`))}</p>` : ''}
         <p>${statusTag(table.status)} ${esc(statusLine)}</p>`;
       const pages = { ...table.pages };
       const items = Object.keys(pages).map((id) => ({ id, page: pages[id] }));
@@ -813,7 +825,7 @@
 
     const all4 = () => { renderKpis(); renderChart(); renderSectors(); renderNotes(); };
     $('#inv-metric').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.metric = b.dataset.metric; renderChart(); } });
-    $('#inv-range').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.from = +b.dataset.from; if (st.year < st.from) st.year = latest.year; renderChart(); renderSectors(); } });
+    $('#inv-range').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.from = +b.dataset.from; if (st.year < st.from) st.year = latest.year; renderKpis(); renderChart(); renderSectors(); } });
     $('#sec-view').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.view = b.dataset.view; renderSectors(); } });
     all4();
     rerender.push(all4);
