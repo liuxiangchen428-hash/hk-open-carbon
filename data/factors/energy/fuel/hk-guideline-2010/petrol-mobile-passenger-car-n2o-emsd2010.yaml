@@ -16,7 +16,7 @@ source:
   page: 30
   table: "Table 2-3 N2O Emission factor (For mobile combustion sources)"
 quality: A
-status: draft
+status: reviewed
 update_frequency: irregular
 verification:
   - by: claude
@@ -25,6 +25,12 @@ verification:
     value: 1.105
     page: 30
     note: Read from extracted text of the 2010 building GHG guidelines, Table 2-3 (passenger car, ULP, printed as 1.105).
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-23
+    value: 1.105
+    page: 30
+    note: Checked by the maintainer against Tables 2-2 and 2-3 in the guidelines PDF.
 tags: [hk-guideline-2010, mobile-by-vehicle]
 notes:
   zh-Hant: 香港機電署及環保署 2010 年建築物溫室氣體指引的本地系數，流動燃燒源，按車輛類別。單位為每公升燃料的克數。二氧化碳另見同指引表 2-1。指引換算 CO2e 時採用 CH4 GWP 21、N2O GWP 310（IPCC 第二次評估報告）。

@@ -965,9 +965,9 @@
           <li>${esc(L('用電：電力公司公佈的售電排放強度（按供電區）。', 'Electricity: the supplier’s published emission intensity of electricity sold, by supply area.'))}</li>
           <li>${esc(L('煤氣：家中燃燒加上煤氣生產，兩者都由煤氣公司公佈。', 'Town gas: burning at home plus production, both published by the gas company.'))}</li>
           <li>${esc(L('食水及污水：水務署、渠務署處理和輸送用的電力；住宅污水按用水量 100% 計，是政府碳審計範本的預設做法。', 'Water and sewage: electricity used by the Water Supplies and Drainage Services Departments; household sewage is counted as 100% of water used, the default in the government carbon audit template.'))}</li>
-          <li>${esc(L('交通：港鐵按乘客公里（只計二氧化碳）；巴士按每程（九巴及龍運的推算平均值）；私家車按入油量（二氧化碳，加上私家車類別的甲烷和氧化亞氮，2010 年指引，按 GWP 21 及 310 換算）。每週車程 × 52 換算全年。', 'Transport: MTR per passenger-km (CO₂ only); bus per trip (a derived KMB and Long Win average); car by fuel bought (CO₂ plus passenger-car CH₄ and N₂O, 2010 guidelines, converted with GWP 21 and 310). Weekly trips × 52 for a year.'))}</li>
+          <li>${esc(L('交通：港鐵按乘客公里（只計二氧化碳）；巴士按每程（九巴及龍運的推算平均值；城巴沒有公佈排放數據，乘城巴時只能作近似）；私家車按入油量（二氧化碳，加上私家車類別的甲烷和氧化亞氮，2010 年指引，按 GWP 21 及 310 換算）。每週車程 × 52 換算全年。', 'Transport: MTR per passenger-km (CO₂ only); bus per trip (a derived KMB and Long Win average; Citybus publishes no emissions data, so for Citybus it is only an approximation); car by fuel bought (CO₂ plus passenger-car CH₄ and N₂O, 2010 guidelines, converted with GWP 21 and 310). Weekly trips × 52 for a year.'))}</li>
         </ul>
-        <p>${esc(L('不包括飛行、的士、小巴、渡輪、飲食、購物和廢物，所以結果會比一個人的完整碳足跡低。只使用已經過維護者核對的系數。', 'Flights, taxis, minibuses, ferries, food, shopping and waste are not included, so the result is lower than a full personal footprint. Only factors checked by the maintainer are used.'))}</p>`;
+        <p>${esc(L('不包括飛行、的士、小巴、電車、渡輪、飲食、購物和廢物（這些交通工具的營運商沒有公佈可用的排放數據），所以結果會比一個人的完整碳足跡低。只使用已經過維護者核對的系數。', 'Flights, taxis, minibuses, trams, ferries, food, shopping and waste are not included (their operators publish no usable emissions data), so the result is lower than a full personal footprint. Only factors checked by the maintainer are used.'))}</p>`;
       const ls = lines();
       const seen = new Set();
       $('#hh-factors').innerHTML = ls.filter((l) => !seen.has(l.f.id) && seen.add(l.f.id)).map((l) => {
