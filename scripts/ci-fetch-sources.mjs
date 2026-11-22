@@ -12,6 +12,7 @@
 import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { gunzipSync, brotliDecompressSync } from 'node:zlib';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { parseCsv } from './lib/validate.mjs';
@@ -80,7 +81,15 @@ for (const id of ids) {
     meta.http_status = res.status;
     meta.final_url = res.url;
     meta.content_type = res.headers.get('content-type') ?? '';
-    const buf = Buffer.from(await res.arrayBuffer());
+    let buf = Buffer.from(await res.arrayBuffer());
+    // Wayback "id_" copies can be the stored compressed body with no
+    // Content-Encoding header. Decompress gzip by magic bytes; for anything that
+    // is not PDF/ZIP and is not valid UTF-8, try brotli.
+    if (buf[0] === 0x1f && buf[1] === 0x8b) { buf = gunzipSync(buf); meta.decoded = 'gzip'; }
+    else if (!/^(%PDF-|PK)/.test(buf.subarray(0, 5).toString('latin1'))) {
+      try { new TextDecoder('utf-8', { fatal: true }).decode(buf); }
+      catch { try { buf = brotliDecompressSync(buf); meta.decoded = 'br'; } catch {} }
+    }
     if (buf.length > MAX_BYTES) throw new Error(`file too large (${buf.length} bytes)`);
     meta.bytes = buf.length;
     meta.sha256 = createHash('sha256').update(buf).digest('hex');
