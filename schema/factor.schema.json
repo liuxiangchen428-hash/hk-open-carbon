@@ -275,6 +275,11 @@
           "type": "string"
         }
       }
+    },
+    "order": {
+      "description": "Display order within a group of sibling factors from the same table (e.g. refrigerants in Table 3-1).",
+      "type": "integer",
+      "minimum": 1
     }
   },
   "allOf": [

@@ -1,0 +1,31 @@
+id: hk.buildings.refrigerant.hfc-125.emsd2010
+name:
+  zh-Hant: HFC-125 製冷劑全球暖化潛勢（2010 年指引）
+  en: HFC-125 refrigerant global warming potential (2010 HK guidelines)
+category: buildings/refrigerant
+gas: CO2e
+gwp: AR2
+value: 2800
+unit: kgCO2e/kg
+year: 2010
+region: HK
+scope: 1
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 33
+  table: "Table 3-1 Global Warming Potentials (GWP) of Common Refrigeration / Air-Conditioning Refrigerants (information source A)"
+quality: A
+status: draft
+update_frequency: irregular
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-22
+    value: 2800
+    page: 33
+    note: Read from extracted text of the 2010 building GHG guidelines, Table 3-1 (printed as 2,800).
+tags: [hk-guideline-2010, refrigerant-gwp]
+order: 3
+notes:
+  zh-Hant: 冷氣及製冷設備洩漏每公斤冷媒相當的二氧化碳排放（即 GWP）。用法：洩漏量 =（期初存量 + 購入 − 妥善處置 − 期末存量），排放 = 洩漏量 × GWP。數值來源：IPCC 第二次評估報告（1995）。
+  en: CO2-equivalent emissions per kg of refrigerant leaked (the GWP). Leakage = stock at start + purchased - disposed responsibly - stock at end; emissions = leakage x GWP. Value source - IPCC Second Assessment Report (1995).

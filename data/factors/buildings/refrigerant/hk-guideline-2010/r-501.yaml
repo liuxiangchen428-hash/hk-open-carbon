@@ -1,0 +1,31 @@
+id: hk.buildings.refrigerant.r-501.emsd2010
+name:
+  zh-Hant: R-501 製冷劑全球暖化潛勢（2010 年指引）
+  en: R-501 refrigerant global warming potential (2010 HK guidelines)
+category: buildings/refrigerant
+gas: CO2e
+gwp: not-stated
+value: 0
+unit: kgCO2e/kg
+year: 2010
+region: HK
+scope: 1
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 34
+  table: "Table 3-1 Global Warming Potentials (GWP) of Common Refrigeration / Air-Conditioning Refrigerants (information source B)"
+quality: A
+status: draft
+update_frequency: irregular
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-22
+    value: 0
+    page: 34
+    note: Read from extracted text of the 2010 building GHG guidelines, Table 3-1 (printed as 0).
+tags: [hk-guideline-2010, refrigerant-gwp]
+order: 41
+notes:
+  zh-Hant: 冷氣及製冷設備洩漏每公斤冷媒相當的二氧化碳排放（即 GWP）。用法：洩漏量 =（期初存量 + 購入 − 妥善處置 − 期末存量），排放 = 洩漏量 × GWP。數值來源：世界資源研究所（2005）HFC 及 PFC 排放計算指南，引用 ASHRAE 34 標準。 指引只計京都議定書氣體（HFC 及 PFC），此冷媒不含這些成分，所以按 0 計算。
+  en: CO2-equivalent emissions per kg of refrigerant leaked (the GWP). Leakage = stock at start + purchased - disposed responsibly - stock at end; emissions = leakage x GWP. Value source - World Resources Institute (2005) HFC/PFC calculation guide, citing ASHRAE Standard 34. The guidelines count only Kyoto gases (HFCs and PFCs); this refrigerant has none, so it counts as 0.

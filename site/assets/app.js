@@ -50,7 +50,7 @@
   const yearFmt = (f) => (f.tags?.includes('fiscal-year') ? `${f.year}/${String((f.year + 1) % 100).padStart(2, '0')}` : String(f.year));
   const groupDigits = (s) => {
     const [i, d] = String(s).split('.');
-    return (i.length > 4 ? i.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : i) + (d !== undefined ? `.${d}` : '');
+    return (i.length > 3 ? i.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : i) + (d !== undefined ? `.${d}` : '');
   };
   const numFmt = (n, max = 3) => n.toLocaleString(lang() === 'en' ? 'en' : 'zh-HK', { maximumFractionDigits: max });
   const statusTag = (s) => `<span class="status ${esc(s)}">${esc(pick(STATUS, s))}</span>`;
@@ -251,6 +251,7 @@
     if (isYearly(f)) return { key: seriesOf(f), kind: 'yearly' };
     if (GAS_SEG.test(f.id)) return { key: f.id.replace(GAS_SEG, '').replace(/\.mobile-(litre|kg)/, '.mobile'), kind: 'gas' };
     if (f.tags?.includes('ipcc-default')) return { key: `ipcc:${f.category}`, kind: 'names' };
+    if (f.tags?.includes('refrigerant-gwp')) return { key: `refgwp:${f.source.id}`, kind: 'names' };
     return { key: f.id, kind: 'single' };
   }
   const stripYear = (s, y) => s.replace(new RegExp(`\\s*[（(][^（）()]*${y}[^（）()]*[）)]\\s*$`), '').trim();
@@ -328,6 +329,7 @@
           const gasOrder = { CO2: 0, CO2e: 0, CH4: 1, N2O: 2 };
           if (kind === 'yearly') items.sort((a, b) => b.year - a.year);
           else if (kind === 'gas') items.sort((a, b) => (gasOrder[a.gas] ?? 9) - (gasOrder[b.gas] ?? 9) || a.unit.localeCompare(b.unit));
+          else if (kind === 'names') items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || nm(a.name).localeCompare(nm(b.name)));
           const f0 = items[0];
           const suffix = kind === 'names' && items.length > 1 ? commonSuffix(items.map((x) => nm(x.name))) : '';
           const title =
