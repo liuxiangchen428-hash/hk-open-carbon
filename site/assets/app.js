@@ -1076,9 +1076,9 @@
         <span class="l-zh">AI 助手</span><span class="l-en">Ask AI</span>
       </button>
       <section class="ai-panel" id="ai-panel" role="dialog" aria-label="AI" hidden>
+        <span class="ai-grip" aria-hidden="true" title=""></span>
         <header class="ai-head">
-          <div><p class="ai-title"><span class="l-zh">AI 助手</span><span class="l-en">AI assistant</span></p>
-          <p class="ai-sub"><span class="l-zh">只按本平台已審核的系數回答</span><span class="l-en">Answers from this platform's reviewed factors only</span></p></div>
+          <p class="ai-title"><span class="l-zh">AI 助手</span><span class="l-en">AI assistant</span></p>
           <button type="button" class="ai-x" data-ai-close aria-label="Close">×</button>
         </header>
         <div class="ai-log" id="ai-log" aria-live="polite"></div>
@@ -1086,7 +1086,7 @@
           <textarea id="ai-in" rows="2" maxlength="600" required></textarea>
           <button type="submit" class="ai-send"><span class="l-zh">發送</span><span class="l-en">Send</span></button>
         </form>
-        <p class="ai-note"><span class="l-zh">由開源模型（經 Cloudflare Workers AI）回答，可能出錯，請核對所引系數。問題會送到 Cloudflare 處理，本平台不會記錄；請勿輸入個人資料。</span><span class="l-en">Answered by an open model on Cloudflare Workers AI. It can be wrong, so check the cited factors. Your question is processed by Cloudflare and not kept by this platform; do not enter personal data.</span></p>
+        <p class="ai-note"><span class="l-zh">AI 回答可能出錯，請核對所引系數；請勿輸入個人資料。</span><span class="l-en">AI answers can be wrong; check the cited factors. Do not enter personal data.</span></p>
       </section>`;
     document.body.append(box);
     const fab = $('.ai-fab', box), panel = $('#ai-panel', box), log = $('#ai-log', box), form = $('#ai-form', box), input = $('#ai-in', box);
@@ -1133,6 +1133,33 @@
       form.classList.remove('busy');
       render(false);
     }
+    // Drag the top-left corner to resize; double-click it to reset. Size is remembered in this browser only.
+    const grip = $('.ai-grip', panel);
+    const KEY = 'hkoc-ai-size';
+    const applySize = (w, h) => {
+      const W = Math.max(300, Math.min(w, innerWidth - 32)), H = Math.max(360, Math.min(h, innerHeight - 40));
+      panel.style.width = `${W}px`; panel.style.height = `${H}px`;
+      return [W, H];
+    };
+    try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && innerWidth > 720) applySize(saved[0], saved[1]); } catch {}
+    grip.title = L('拖動調整大小，雙擊還原', 'Drag to resize, double-click to reset');
+    grip.addEventListener('pointerdown', (e) => {
+      if (innerWidth <= 720) return;
+      e.preventDefault();
+      grip.setPointerCapture(e.pointerId);
+      const r = panel.getBoundingClientRect(), x0 = e.clientX, y0 = e.clientY;
+      let size = [r.width, r.height];
+      const move = (ev) => { size = applySize(r.width + (x0 - ev.clientX), r.height + (y0 - ev.clientY)); };
+      const up = () => {
+        grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up);
+        panel.classList.remove('resizing');
+        try { localStorage.setItem(KEY, JSON.stringify(size.map(Math.round))); } catch {}
+      };
+      panel.classList.add('resizing');
+      grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up);
+    });
+    grip.addEventListener('dblclick', () => { panel.style.width = ''; panel.style.height = ''; try { localStorage.removeItem(KEY); } catch {} });
+
     const open = (v) => { panel.hidden = !v; fab.setAttribute('aria-expanded', String(v)); box.classList.toggle('open', v); if (v) { render(false); input.focus(); } };
     fab.addEventListener('click', () => open(panel.hidden));
     box.addEventListener('click', (e) => {
