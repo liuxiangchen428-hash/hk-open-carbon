@@ -92,5 +92,5 @@ node scripts/archive-sources.mjs --save     # 沒有存檔的就請求存檔
   - 溫室氣體議定書 GWP 表：網站條款禁止公開或商業用途 → `noncommercial-or-permission`（未使用）
   - 建造業議會碳評估工具：只限個人或非商業內部用途 → `noncommercial-or-permission`（未使用）
   - Poore & Nemecek：沒有開放授權，版權屬作者並獨家授權 AAAS → `reference-only`（只作參考，不抄數值）
-- [ ] 4 個 IPCC 預設燃料系數：保留、去信 IPCC 請求許可，或刪除（需要維護者決定）
-- [ ] （建議）公開前去信相關部門請求確認（需要維護者）
+- [ ] 4 個 IPCC 預設燃料系數：維護者決定保留（2026-11-22），公開前與去信政府部門一併去信 IPCC 秘書處請求許可（需要維護者）
+- [ ] （建議）公開前去信相關部門請求確認（需要維護者）；同時去信 IPCC
