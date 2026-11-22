@@ -486,7 +486,7 @@
       scrim.hidden = false;
       document.body.style.overflow = 'hidden';
       drawer.scrollTop = 0;
-      $('.d-close', body).focus({ preventScroll: true });
+      drawer.focus({ preventScroll: true });
     }
 
     function calc(f) {
@@ -565,7 +565,7 @@
     return `
       <div class="d-top">
         <span class="d-crumb">${esc(nm(cat?.groupName))} / ${esc(nm(cat?.name))}</span>
-        <button class="d-close" type="button" data-close aria-label="${esc(L('關閉', 'Close'))}">×</button>
+        <button class="d-close" type="button" data-close aria-label="${esc(L('關閉', 'Close'))}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
       </div>
       <h2 id="d-title">${esc(nm(f.name))}</h2>
       <div class="d-value">
@@ -1116,7 +1116,7 @@
         <span class="ai-grip" aria-hidden="true" title=""></span>
         <header class="ai-head">
           <p class="ai-title"><span class="l-zh">AI 助手</span><span class="l-en">AI assistant</span></p>
-          <button type="button" class="ai-x" data-ai-close aria-label="Close">×</button>
+          <button type="button" class="ai-x" data-ai-close aria-label="Close"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
         </header>
         <div class="ai-log" id="ai-log" aria-live="polite"></div>
         <form class="ai-form" id="ai-form">

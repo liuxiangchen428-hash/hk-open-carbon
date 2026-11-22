@@ -76,7 +76,7 @@ const index = (s) => `
 </section>
 
 <div class="drawer-scrim" data-close hidden></div>
-<aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="d-title" role="dialog">
+<aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="d-title" role="dialog" tabindex="-1">
   <div class="drawer-inner" id="drawer-body"></div>
 </aside>
 `;
