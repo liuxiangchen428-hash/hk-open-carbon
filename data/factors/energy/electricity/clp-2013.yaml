@@ -13,6 +13,7 @@ scope: 2
 boundary: location-based
 source:
   id: src-clp-sr-2015
+  page: "137 (report p.135)"
   table: "Chart: CO2e Emissions Intensity of Electricity Sold by CLP Power Hong Kong, CO2e (Scope 1 & 2), data label 2013"
 quality: B
 status: draft
@@ -21,8 +22,9 @@ verification:
     method: pdf-visual
     date: 2026-11-22
     value: 0.63
+    page: "137 (report p.135)"
     note: Read from the data label in a screenshot of the chart supplied by the maintainer.
 tags: [grid-factor]
 notes:
-  zh-Hant: 中電香港每售出一度電的二氧化碳當量排放（範圍 1 及 2），數值取自 2015 年報告圖表上標示的數字。適用於九龍、新界及大部分離島（中電供電區）的範圍 2 核算。
+  zh-Hant: 中電香港每售出一度電的二氧化碳當量排放（範圍 1 及 2），數值取自 2015 年報告「香港碳強度」一節圖表上標示的數字（PDF 第 137 頁，報告第 135 頁）。適用於九龍、新界及大部分離島（中電供電區）的範圍 2 核算。
   en: CLP Power Hong Kong CO2e (scope 1 and 2) per kWh of electricity sold, taken from the data labels printed on the chart in the 2015 report. Use for scope 2 in the CLP supply area (Kowloon, New Territories, most outlying islands).
