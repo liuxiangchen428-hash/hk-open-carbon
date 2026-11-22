@@ -82,6 +82,10 @@ for (const page of pages) {
   writeFileSync(join(out, page.file), layout({ ...page, body: page.body(stats), stats }));
 }
 writeFileSync(join(out, '.nojekyll'), '');
+// The method page was merged into sources.html; keep the old link working.
+writeFileSync(join(out, 'methodology.html'), '<!doctype html><meta charset="utf-8"><title>Sources &amp; method</title>'
+  + '<meta http-equiv="refresh" content="0; url=sources.html#method"><link rel="canonical" href="sources.html#method">'
+  + '<p><a href="sources.html#method">sources.html#method</a></p>');
 console.log(`Built site-dist/ with ${stats.factors} factors (${stats.reviewed} reviewed) and ${pages.length} pages.`);
 
 if (process.argv.includes('--serve')) {

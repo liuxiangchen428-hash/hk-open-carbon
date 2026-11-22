@@ -61,7 +61,7 @@ const index = (s) => `
         '整理自政府指引及公用事業、營運商公開報告。每個數值附原文頁碼與存檔，並經兩次獨立核對。',
         'Compiled from HK government guidelines and published utility and operator reports. Each value cites its page and archive copy and is read twice.',
       )}</p>
-      <a href="methodology.html">${t('了解核對方法 →', 'How values are checked →')}</a>
+      <a href="sources.html#method">${t('了解核對方法 →', 'How values are checked →')}</a>
     </div>
   </aside>
 
@@ -83,46 +83,16 @@ const index = (s) => `
 
 const sources = () => `
 <section class="page-head"><div class="wrap">
-  <p class="eyebrow">${t('來源登記', 'Source registry')}</p>
-  <h1>${t('來源', 'Sources')}</h1>
-  <p class="lede">${t(
-    '本平台使用或計劃使用的全部文件。每份文件都記錄出版機構、原始連結、Internet Archive 存檔及再使用條款。',
-    'Every document the platform uses or plans to use, with publisher, original link, Internet Archive copy and reuse terms.',
-  )}</p>
-</div></section>
-<section class="wrap">
-  <div class="source-tools">
-    <label class="search">
-      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
-      <input id="sq" type="search" autocomplete="off" spellcheck="false">
-    </label>
-    <label class="check"><input type="checkbox" id="used-only" checked> ${t('只顯示已引用', 'Cited only')}</label>
-  </div>
-  <div class="table-wrap">
-    <table class="sources-table">
-      <thead><tr>
-        <th>${t('文件', 'Document')}</th>
-        <th>${t('出版機構', 'Publisher')}</th>
-        <th>${t('版本', 'Edition')}</th>
-        <th>${t('連結', 'Links')}</th>
-      </tr></thead>
-      <tbody id="sources-body"></tbody>
-    </table>
-  </div>
-</section>
-`;
-
-const methodology = () => `
-<section class="page-head"><div class="wrap">
-  <p class="eyebrow">${t('方法', 'Methodology')}</p>
+  <p class="eyebrow">${t('來源與方法', 'Sources and method')}</p>
   <h1>${t('數據怎樣來、怎樣核對', 'Where the data comes from, and how it is checked')}</h1>
   <p class="lede">${t(
-    '本平台由一名維護者在 AI 助手協助下維護。為了在人手有限的情況下保證準確，我們用公開、可重複的規則處理每一個數值。',
-    'The platform is maintained by one person with help from an AI assistant. To stay accurate with a small team, every value goes through the same open, repeatable rules.',
+    '本平台由一名維護者在 AI 助手協助下維護。每個數值都來自公開原文，經兩次獨立讀取，並保留存檔。下面先說明方法，再列出全部來源。',
+    'The platform is maintained by one person with help from an AI assistant. Every value comes from a published source, is read twice and keeps an archive copy. The method comes first, then the full source list.',
   )}</p>
+  <p class="page-jump"><a href="#method">${t('方法', 'Method')}</a> · <a href="#registry">${t('來源登記', 'Source registry')}</a></p>
 </div></section>
 
-<section class="wrap prose">
+<section class="wrap prose" id="method">
   <div class="steps">
     <article>
       <span class="step-n">01</span>
@@ -182,7 +152,34 @@ const methodology = () => `
     </ul>
   </div>
 </section>
+
+<section class="wrap registry" id="registry">
+  <h2 class="section-title">${t('來源登記', 'Source registry')}</h2>
+  <p class="muted section-lede">${t(
+    '本平台使用或計劃使用的全部文件，附出版機構、原始連結、Internet Archive 存檔及再使用條款。',
+    'Every document the platform uses or plans to use, with publisher, original link, Internet Archive copy and reuse terms.',
+  )}</p>
+  <div class="source-tools">
+    <label class="search">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
+      <input id="sq" type="search" autocomplete="off" spellcheck="false">
+    </label>
+    <label class="check"><input type="checkbox" id="used-only" checked> ${t('只顯示已引用', 'Cited only')}</label>
+  </div>
+  <div class="table-wrap">
+    <table class="sources-table">
+      <thead><tr>
+        <th>${t('文件', 'Document')}</th>
+        <th>${t('出版機構', 'Publisher')}</th>
+        <th>${t('版本', 'Edition')}</th>
+        <th>${t('連結', 'Links')}</th>
+      </tr></thead>
+      <tbody id="sources-body"></tbody>
+    </table>
+  </div>
+</section>
 `;
+
 
 const inventory = () => `
 <section class="hero inv-hero">
@@ -364,14 +361,8 @@ export const pages = [
   },
   {
     file: 'sources.html',
-    title: { zh: '來源', en: 'Sources' },
-    description: 'Source registry of the HK Open Carbon Platform.',
+    title: { zh: '來源與方法', en: 'Sources & method' },
+    description: 'How the HK Open Carbon Platform sources and checks its emission factors, and the full source registry.',
     body: sources,
-  },
-  {
-    file: 'methodology.html',
-    title: { zh: '方法', en: 'Methodology' },
-    description: 'How emission factors are sourced and checked.',
-    body: methodology,
   },
 ];

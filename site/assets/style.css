@@ -668,3 +668,11 @@ html[data-lang="zh"] .l-en, html[data-lang="en"] .l-zh { display: none !importan
   .lc-line { animation: none; }
   .drawer-scrim { animation: none; }
 }
+
+/* Sources & method page */
+.page-jump { margin: 20px 0 0; font-size: 14px; color: var(--band-muted); }
+.page-jump a { color: var(--band-ink); }
+.registry { padding-bottom: 88px; scroll-margin-top: 80px; }
+#method { scroll-margin-top: 80px; padding-bottom: 40px; }
+.section-title { font-size: 24px; margin: 0 0 8px; padding-top: 40px; border-top: 1px solid var(--line); }
+.section-lede { margin: 0 0 20px; max-width: 64ch; }

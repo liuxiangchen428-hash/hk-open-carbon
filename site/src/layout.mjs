@@ -10,8 +10,7 @@ const nav = [
   { file: 'index.html', zh: '系數庫', en: 'Factors' },
   { file: 'calculator.html', zh: '計算器', en: 'Calculator' },
   { file: 'inventory.html', zh: '排放清單', en: 'Inventory' },
-  { file: 'sources.html', zh: '來源', en: 'Sources' },
-  { file: 'methodology.html', zh: '方法', en: 'Methodology' },
+  { file: 'sources.html', zh: '來源與方法', en: 'Sources & method' },
 ];
 
 const mark = `<svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
