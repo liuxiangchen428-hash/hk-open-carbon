@@ -5,7 +5,7 @@ Claude 每次開始工作前先讀這份文件。它記錄項目背景、已作�
 ## 項目 / Project
 
 - **名稱**：香港開源碳核算平台 · HK Open Carbon Platform
-- **倉庫**：github.com/liuxiangchen428-hash/hk-open-carbon（目前私有）
+- **倉庫**：github.com/liuxiangchen428-hash/hk-open-carbon（公開）；網站 https://liuxiangchen428-hash.github.io/hk-open-carbon/
 - **定位**：開源、免費、可溯源的香港本地碳排放系數庫及核算工具，服務市民、企業及政府。只做香港。
 - **團隊**：一名維護者（項目負責人，GitHub: liuxiangchen428-hash）+ Claude。預計長期如此。
 - **搭建計劃表**：claude.ai 上的文件「香港开源碳核算平台：搭建计划表」https://claude.ai/artifact/5xNnWvk1dAkQ1TBMwYMEeG （第 1 週由 2026-11-16 起算）。改動計劃時同步更新該文件的變更記錄。
@@ -47,7 +47,7 @@ Claude 每次開始工作前先讀這份文件。它記錄項目背景、已作�
 - **讀取原文的經驗**：Wayback `id_` 版本有時是未解壓的原始內容，fetch 腳本會自動改用一般存檔頁。港燈官網擋 GitHub，會自動改用存檔；Internet Archive 回應頭很大，工作流程已設 `--max-http-header-size`。維護者也可以直接發 PDF 截圖，Claude 看圖算一次讀數（`method: pdf-visual`）。港交所 PDF 文件名只是編號，先用 `--pages 1-3` 確認公司和年份再錄入；公司自己的報告列表頁（例如 `src-towngas-esg-reports-page`）通常有直接連結。
 - **2010 年指引附件**：表 4 樹木吸收 23 kg/棵/年（新類別 land/trees）、表 5 全港電力預設值 0.7 及中電／港燈 2002–2008、表 8、9 食水及污水 2003–2008，共 28 個（reviewed，舊年份標 historical）。
 - **排放清單**：`data/inventory/hk-ghg.csv`，1990–2024 年分項、總數、人均、碳強度（reviewed）；來源為 cnsd.gov.hk 2024 年數據表（政府網站擋 GitHub，經存檔讀取）。製冷劑 GWP 52 個（reviewed）。
-- **網站**：已完成（系數庫、計算器、排放清單、來源、方法五頁；繁中/英文；深淺色；手機版）。首頁為互動走勢面板（4 個關鍵系數分頁、懸停讀數、對比按鈕）；系數卡片可切換列表／柱狀圖；詳情有試算及歷年圖。維護者要求：高級但不花哨，首頁不放統計數字（已移到側欄）。原始碼在 `site/`，建置腳本 `scripts/build-site.mjs`，無外部依賴。尚未部署：倉庫私有，GitHub Pages 需公開倉庫或付費方案。截圖檢查用 Playwright；此環境只有無襯線中文字型，標題在截圖中不會顯示襯線體。
+- **網站**：已完成（系數庫、計算器、排放清單、來源、方法五頁；繁中/英文；深淺色；手機版）。首頁為互動走勢面板（4 個關鍵系數分頁、懸停讀數、對比按鈕）；系數卡片可切換列表／柱狀圖；詳情有試算及歷年圖。維護者要求：高級但不花哨，首頁不放統計數字（已移到側欄）。原始碼在 `site/`，建置腳本 `scripts/build-site.mjs`，無外部依賴。已部署到 GitHub Pages（見下）。截圖檢查用 Playwright；此環境只有無襯線中文字型，標題在截圖中不會顯示襯線體。
 - **公開**：2026-11-22 倉庫公開，網站以 GitHub Pages 部署（`.github/workflows/pages.yml`，推送到 main 自動更新）。聯絡郵箱 xiangchenliu@ln.hk。
 - **待維護者決定**：是否邀請顧問；去信政府部門及 IPCC（見 `sources/README.md`），維護者說之後再說。
 - **已知待辦**：見 `sources/README.md` 的待辦清單。
