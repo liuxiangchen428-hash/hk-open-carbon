@@ -828,6 +828,8 @@
   };
   const HH_FUEL = { petrol: 'hk.energy.fuel.petrol.mobile.co2.emsd2010', diesel: 'hk.energy.fuel.diesel.mobile.co2.emsd2010' };
   const MASS_KG = { g: 0.001, kg: 1, t: 1000 };
+  // GWPs the 2010 guidelines use to convert CH4 and N2O (IPCC AR2; guidelines p.27 and p.29, Note 4).
+  const AR2_GWP = { CH4: 21, N2O: 310 };
   const HH_KEY = 'hkoc-calc';
   const HH_PERIOD = { 1: ['每月', 'per month'], 2: ['每兩個月', 'every 2 months'], 4: ['每四個月', 'every 4 months'], 12: ['全年', 'whole year'] };
 
@@ -892,7 +894,13 @@
       add('mtr', ['港鐵', 'MTR'], num(st.mtrTrips) * num(st.mtrKm) * 52, 'pkm', HH_SERIES.mtr, { group: 't' });
       add('bus', ['巴士', 'Bus'], num(st.bus) * 52, 'trip', HH_SERIES.bus, { group: 't' });
       const fuelF = DATA.factors.find((f) => f.id === HH_FUEL[st.fuelType] && f.status === 'reviewed');
-      if (fuelF) out.push({ key: 'car', name: st.fuelType === 'petrol' ? ['私家車（汽油）', 'Car (petrol)'] : ['私家車（柴油）', 'Car (diesel)'], qty: num(st.fuel) * 12, unit: 'L', f: fuelF, kg: num(st.fuel) * 12 * fuelF.value, group: 't', fixed: true });
+      const carL = num(st.fuel) * 12;
+      const carName = st.fuelType === 'petrol' ? ['私家車（汽油）', 'Car (petrol)'] : ['私家車（柴油）', 'Car (diesel)'];
+      if (fuelF) out.push({ key: 'car', name: [`${carName[0]} 二氧化碳`, `${carName[1]} CO₂`], qty: carL, unit: 'L', f: fuelF, kg: carL * fuelF.value, group: 't', fixed: true });
+      for (const g of ['CH4', 'N2O']) {
+        const f = DATA.factors.find((x) => x.id === `hk.energy.fuel.${st.fuelType}.mobile-passenger-car.${g.toLowerCase()}.emsd2010` && x.status === 'reviewed');
+        if (f) out.push({ key: `car-${g}`, name: [`${carName[0]} ${g === 'CH4' ? '甲烷' : '氧化亞氮'}`, `${carName[1]} ${gasFmt(g)}`], qty: carL, unit: 'L', f, gwp: AR2_GWP[g], kg: carL * f.value * MASS_KG.g * AR2_GWP[g], group: 't', fixed: true });
+      }
       return out;
     }
 
@@ -930,7 +938,9 @@
     }
 
     function renderLines() {
-      const ls = lines();
+      const all = lines();
+      const filled = all.filter((l) => l.qty > 0);
+      const ls = filled.length ? filled : all;
       const actName = { kWh: ['度', 'kWh'], unit: ['單位', 'units'], m3: ['立方米', 'm³'], pkm: ['乘客公里', 'passenger-km'], trip: ['程', 'trips'], L: ['公升', 'litres'] };
       $('#hh-lines').innerHTML = `<div class="hh-lines">${ls.map((l) => {
         const fy = yearFmt(l.f);
@@ -939,10 +949,10 @@
           <div class="hl-name"><i class="hh-ico ${l.group}"></i>${esc(L(...l.name))}</div>
           <div class="hl-calc">
             <span>${esc(numFmt(l.qty, 1))} ${esc(L(...actName[l.unit]))}</span><span class="op">×</span>
-            <a href="index.html#f=${encodeURIComponent(l.f.id)}" title="${esc(nm(l.f.name))}">${esc(l.f.value_text)} <small>${esc(emissionFmt(l.f.unit))}/${esc(L(...actName[l.unit]))}</small></a><span class="op">=</span>
+            <a href="index.html#f=${encodeURIComponent(l.f.id)}" title="${esc(nm(l.f.name))}">${esc(l.f.value_text)} <small>${esc(emissionFmt(l.f.unit))}/${esc(L(...actName[l.unit]))}</small></a>${l.gwp ? `<span class="op">×</span><span title="${esc(L('全球暖化潛勢（2010 年指引採用 IPCC 第二次評估報告數值）', 'Global warming potential (IPCC AR2 values used by the 2010 guidelines)'))}">${l.gwp} <small>GWP</small></span>` : ''}<span class="op">=</span>
             <b>${esc(kgFmt(l.kg))} kg</b>
           </div>
-          <div class="hl-meta">${esc(L(`系數年份 ${fy}`, `Factor year ${fy}`))}${l.f.quality === 'D' ? ` · ${esc(L('推算值（D 級）', 'Derived value (quality D)'))}` : ''}${l.f.gas === 'CO2' ? ` · ${esc(L('只計二氧化碳', 'CO₂ only'))}` : ''}${other ? ` · <span class="warn">${esc(L(`沒有 ${st.year} 年的系數，用最接近的 ${fy}`, `No ${st.year} factor; using ${fy}`))}</span>` : ''}</div>
+          <div class="hl-meta">${esc(L(`系數年份 ${fy}`, `Factor year ${fy}`))}${l.f.quality === 'D' ? ` · ${esc(L('推算值（D 級）', 'Derived value (quality D)'))}` : ''}${l.f.gas === 'CO2' && l.key !== 'car' ? ` · ${esc(L('只計二氧化碳', 'CO₂ only'))}` : ''}${other ? ` · <span class="warn">${esc(L(`沒有 ${st.year} 年的系數，用最接近的 ${fy}`, `No ${st.year} factor; using ${fy}`))}</span>` : ''}</div>
         </div>`;
       }).join('')}</div>
       <p class="muted inv-small">${esc(L('用量按帳單涵蓋的月數換算成全年：例如兩個月的帳單 × 6。點系數可查看出處和核對紀錄。', 'Usage is scaled to a year from the billing period, e.g. a two-month bill × 6. Click a factor to see its source and checks.'))}</p>`;
@@ -955,7 +965,7 @@
           <li>${esc(L('用電：電力公司公佈的售電排放強度（按供電區）。', 'Electricity: the supplier’s published emission intensity of electricity sold, by supply area.'))}</li>
           <li>${esc(L('煤氣：家中燃燒加上煤氣生產，兩者都由煤氣公司公佈。', 'Town gas: burning at home plus production, both published by the gas company.'))}</li>
           <li>${esc(L('食水及污水：水務署、渠務署處理和輸送用的電力；住宅污水按用水量 100% 計，是政府碳審計範本的預設做法。', 'Water and sewage: electricity used by the Water Supplies and Drainage Services Departments; household sewage is counted as 100% of water used, the default in the government carbon audit template.'))}</li>
-          <li>${esc(L('交通：港鐵按乘客公里（只計二氧化碳）；巴士按每程（九巴及龍運的推算平均值）；私家車按入油量（只計二氧化碳，2010 年指引）。每週車程 × 52 換算全年。', 'Transport: MTR per passenger-km (CO₂ only); bus per trip (a derived KMB and Long Win average); car by fuel bought (CO₂ only, 2010 guidelines). Weekly trips × 52 for a year.'))}</li>
+          <li>${esc(L('交通：港鐵按乘客公里（只計二氧化碳）；巴士按每程（九巴及龍運的推算平均值）；私家車按入油量（二氧化碳，加上私家車類別的甲烷和氧化亞氮，2010 年指引，按 GWP 21 及 310 換算）。每週車程 × 52 換算全年。', 'Transport: MTR per passenger-km (CO₂ only); bus per trip (a derived KMB and Long Win average); car by fuel bought (CO₂ plus passenger-car CH₄ and N₂O, 2010 guidelines, converted with GWP 21 and 310). Weekly trips × 52 for a year.'))}</li>
         </ul>
         <p>${esc(L('不包括飛行、的士、小巴、渡輪、飲食、購物和廢物，所以結果會比一個人的完整碳足跡低。只使用已經過維護者核對的系數。', 'Flights, taxis, minibuses, ferries, food, shopping and waste are not included, so the result is lower than a full personal footprint. Only factors checked by the maintainer are used.'))}</p>`;
       const ls = lines();

@@ -1,0 +1,31 @@
+id: hk.energy.fuel.diesel.mobile-private-van.ch4.emsd2010
+name:
+  zh-Hant: 私家貨車柴油甲烷排放系數（2010 年指引）
+  en: Private van diesel oil CH4 emission factor (2010 HK guidelines)
+category: energy/fuel
+gas: CH4
+gwp_used: AR2
+value: 0.072
+unit: gCH4/L
+year: 2010
+region: HK
+scope: 1
+boundary: combustion
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 30
+  table: "Table 2-2 CH4 Emission factor (For mobile combustion sources)"
+quality: A
+status: draft
+update_frequency: irregular
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-23
+    value: 0.072
+    page: 30
+    note: Read from extracted text of the 2010 building GHG guidelines, Table 2-2 (private van, DO, printed as 0.072).
+tags: [hk-guideline-2010, mobile-by-vehicle]
+notes:
+  zh-Hant: 香港機電署及環保署 2010 年建築物溫室氣體指引的本地系數，流動燃燒源，按車輛類別。單位為每公升燃料的克數。二氧化碳另見同指引表 2-1。指引換算 CO2e 時採用 CH4 GWP 21、N2O GWP 310（IPCC 第二次評估報告）。
+  en: Local factor from the 2010 EMSD/EPD building GHG guidelines, mobile combustion by vehicle type, in grams per litre of fuel. CO2 is in Table 2-1 of the same guidelines. The guidelines convert to CO2e with GWP 21 for CH4 and 310 for N2O (IPCC Second Assessment).
