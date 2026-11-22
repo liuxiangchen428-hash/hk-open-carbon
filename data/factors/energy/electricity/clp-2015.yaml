@@ -16,7 +16,7 @@ source:
   page: "137 (report p.135)"
   table: "Chart: CO2e Emissions Intensity of Electricity Sold by CLP Power Hong Kong, CO2e (Scope 1 & 2), data label 2015"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: pdf-visual
@@ -30,6 +30,11 @@ verification:
     value: 0.54
     page: "137 (report p.135)"
     note: Also stated in the text beside the chart ("kg CO2e/kWh also decreased from 0.64 in 2014 to 0.54kg CO2e/kWh in 2015"), read from a screenshot of the full page.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-22
+    value: 0.54
+    note: Confirmed by the maintainer in the working session ("都對").
 tags: [grid-factor]
 notes:
   zh-Hant: 中電香港每售出一度電的二氧化碳當量排放（範圍 1 及 2），數值取自 2015 年報告「香港碳強度」一節圖表上標示的數字（PDF 第 137 頁，報告第 135 頁）。適用於九龍、新界及大部分離島（中電供電區）的範圍 2 核算。

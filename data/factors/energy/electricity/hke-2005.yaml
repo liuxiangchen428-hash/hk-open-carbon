@@ -16,7 +16,7 @@ source:
   page: "1 (report p.74)"
   table: "Status of Targets > Reduce CO2e per unit of electricity sold to not higher than 0.6 kg/kWh in 2023 from 0.93 kg/kWh in 2005"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -24,6 +24,11 @@ verification:
     value: 0.93
     page: "1 (report p.74)"
     note: 'Read from extracted text: "Reduce CO2e per unit of electricity sold to not higher than 0.6 kg/kWh in 2023 from 0.93 kg/kWh in 2005 (just before natural gas was introduced to LPS)". The same baseline appears in the 2016-2019 reports.'
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-22
+    value: 0.93
+    note: Confirmed by the maintainer in the working session ("都對").
 tags: [grid-factor]
 notes:
   zh-Hant: 港燈減排目標的基準年數值（2005 年，南丫發電廠引入天然氣之前）。港燈範圍 1 加範圍 2 排放除以售電量。2010 年指引的港燈 2005 年數值是 0.92，維護者決定（2026-11-22）採用港燈報告較新的 0.93，指引數值改為已取代。
