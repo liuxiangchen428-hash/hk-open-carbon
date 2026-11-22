@@ -8,7 +8,7 @@ name:
   en: Hong Kong greenhouse gas inventory
 edition: 2024 inventory (tables updated January 2026)
 gwp: AR5
-status: draft
+status: reviewed
 columns:
   electricity:
     zh-Hant: 發電及其他能源工業
@@ -63,6 +63,10 @@ verification:
     method: text-extract
     date: 2026-11-22
     note: All 35 rows (1990-2024) parsed from pdftotext output of both PDFs; the total column matches in both tables for every year.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-22
+    note: Maintainer checked the values against both PDFs and confirmed them.
 notes:
   zh-Hant: 表內全部年份均以 IPCC 第五次評估報告（AR5）的 GWP 計算（見表註）；2023 年以前發布的舊版清單用 AR4，不要混用。數值以三個有效數字公佈，分項相加可能與總數略有出入。
   en: Every year in the table uses IPCC AR5 GWPs (see the table notes); releases before 2023 used AR4, so do not mix them. Values are published to three significant figures, so sectors may not add up exactly to the total.

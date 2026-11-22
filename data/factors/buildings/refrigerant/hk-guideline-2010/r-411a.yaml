@@ -15,7 +15,7 @@ source:
   page: 33
   table: "Table 3-1 Global Warming Potentials (GWP) of Common Refrigeration / Air-Conditioning Refrigerants (information source B)"
 quality: A
-status: draft
+status: reviewed
 update_frequency: irregular
 verification:
   - by: claude
@@ -24,6 +24,12 @@ verification:
     value: 15
     page: 33
     note: Read from extracted text of the 2010 building GHG guidelines, Table 3-1 (printed as 15).
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-22
+    value: 15
+    page: 33
+    note: Checked by the maintainer against Table 3-1 in the guidelines PDF.
 tags: [hk-guideline-2010, refrigerant-gwp]
 order: 27
 notes:

@@ -13,9 +13,9 @@ One row per year from 1990. Column meanings, units, source pages and checks are 
 
 - GWP：AR5。2023 年以前發布的舊版清單用 AR4，不要混用。
 - 校驗（`scripts/lib/inventory.mjs`）：年份連續；數字不帶千位分隔號；六個分項相加與總數的差距不超過四捨五入的容許範圍（可抓錄入錯字）。
-- 狀態：`draft`。維護者核對後，在 `hk-ghg.yaml` 的 `verification` 加一條 `by: maintainer`，並把 `status` 改為 `reviewed`。
+- 狀態：`reviewed`（2026-11-22 維護者核對）。
 
 ## 待辦 / To do
 
-- [ ] 維護者核對 2024 年數據表（尤其最近五年，2020–2024）。
+- [x] 維護者核對 2024 年數據表（2026-11-22）。
 - [ ] 政府每年約 1 月公佈新一年數字；新表通常會回溯修訂往年，更新時整個 CSV 一起替換。
