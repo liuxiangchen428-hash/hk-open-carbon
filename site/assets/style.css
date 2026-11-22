@@ -314,6 +314,12 @@ html[data-lang="zh"] .l-en, html[data-lang="en"] .l-zh { display: none !importan
 .bc-col:hover .bc-val { color: var(--ink); }
 .bc-col.cur .bc-bar > span { background: var(--accent); }
 .bc-col.cur .bc-val, .bc-col.cur .bc-x { color: var(--ink); font-weight: 600; }
+.bc.dense .bc-col:not(.lab) .bc-val, .bc.dense .bc-col:not(.lab) .bc-x { visibility: hidden; }
+.bc.dense .bc-col:hover .bc-val, .bc.dense .bc-col:focus-visible .bc-val { visibility: visible; position: relative; z-index: 1; background: var(--surface); }
+.bc.dense .bc-col { overflow: visible; }
+.bc.dense .bc-col:first-child .bc-val, .bc.dense .bc-col:first-child .bc-x { text-align: left; }
+.bc.dense .bc-col:last-child .bc-val, .bc.dense .bc-col:last-child .bc-x { direction: rtl; text-align: right; }
+.bc.dense .bc-val, .bc.dense .bc-x { overflow: visible; }
 .bc-col.hist .bc-bar > span { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, var(--surface)) 0 4px, transparent 4px 7px); }
 
 /* sidebar mini stats */

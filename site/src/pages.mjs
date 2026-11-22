@@ -149,6 +149,7 @@ const sources = () => `
       <li>${t('AI 助手可能讀錯表格或單位；維護者的目視核對是最後把關。發現錯誤請在 GitHub 開 Issue。', 'The AI assistant can misread tables or units; the maintainer’s visual check is the final safeguard. Please report errors as a GitHub issue.')}</li>
       <li>${t('部分來源沒有註明所用的全球暖化潛勢（GWP）版本，資料中會標示「原文未註明」。', 'Some sources do not state which GWP set they use; these are marked “not stated”.')}</li>
       <li>${t('數據僅供參考。正式披露（例如港交所 ESG 報告）請以官方公佈及核查機構意見為準。', 'For reference only. For formal disclosure (e.g. HKEX ESG reports) rely on official publications and your verifier.')}</li>
+      <li>${t('計算器的輸入只留在你的瀏覽器。AI 助手是例外：你的問題會送到 Cloudflare Workers AI 由開源模型處理，本平台不保存問題內容；請勿輸入個人資料。', 'Calculator inputs stay in your browser. The AI assistant is the exception: your question is sent to Cloudflare Workers AI and answered by an open model; this platform does not keep it. Do not enter personal data.')}</li>
     </ul>
   </div>
 </section>

@@ -25,8 +25,6 @@
   const REGION = { HK: ['全港', 'Hong Kong'], 'HK-CLP': ['中電供電區', 'CLP supply area'], 'HK-HKE': ['港燈供電區', 'HK Electric area'], GLOBAL: ['國際', 'International'] };
   const STATUS = { reviewed: ['已審核', 'Reviewed'], draft: ['草稿', 'Draft'], deprecated: ['已取代', 'Superseded'] };
   const QUALITY = { A: ['香港政府', 'HK government'], B: ['本地企業或機構', 'Local company or body'], C: ['國際預設值', 'International default'], D: ['推算值', 'Derived'] };
-  const BY = { maintainer: ['維護者', 'Maintainer'], claude: ['AI 助手', 'AI assistant'] };
-  const METHOD = { 'pdf-visual': ['看原文頁面', 'Read on the page'], 'text-extract': ['從原文文字讀取', 'Read from source text'], recalculation: ['重新計算', 'Recalculated'] };
   const BOUNDARY = {
     combustion: ['燃燒', 'Combustion'], 'location-based': ['按地點', 'Location-based'], 'market-based': ['按市場', 'Market-based'],
     'cradle-to-gate': ['搖籃到大門', 'Cradle to gate'], 'cradle-to-grave': ['搖籃到墳墓', 'Cradle to grave'],
@@ -161,9 +159,14 @@
   /** Zero-based vertical bar chart; bars are buttons that open the factor. */
   function barChart(items, { current, height = 132 } = {}) {
     const max = Math.max(...items.map((f) => Math.abs(f.value))) || 1;
-    return `<div class="bc" style="--h:${height}px">${items.map((f) => {
+    // With many bars, print labels on the first, last, current and every n-th bar only (hover shows the rest).
+    const n = items.length;
+    const every = n > 24 ? 5 : n > 12 ? 3 : 1;
+    const ci = items.findIndex((f) => f.id === current);
+    const labelled = (i) => every === 1 || i === 0 || i === n - 1 || i === ci || (i % every === 0 && n - 1 - i >= every && (ci < 0 || Math.abs(i - ci) > 1));
+    return `<div class="bc${every > 1 ? ' dense' : ''}" style="--h:${height}px">${items.map((f, i) => {
       const h = Math.max(2, (Math.abs(f.value) / max) * 100);
-      return `<button type="button" class="bc-col${f.id === current ? ' cur' : ''}${f.tags?.includes('historical') ? ' hist' : ''}" data-open="${esc(f.id)}"
+      return `<button type="button" class="bc-col${f.id === current ? ' cur' : ''}${f.tags?.includes('historical') ? ' hist' : ''}${labelled(i) ? ' lab' : ''}" data-open="${esc(f.id)}"
         aria-label="${esc(`${yearFmt(f)}: ${f.value_text} ${unitFmt(f.unit)}`)}">
         <span class="bc-val">${esc(groupDigits(f.value_text))}</span>
         <span class="bc-bar"><span style="height:${h.toFixed(1)}%"></span></span>
@@ -517,11 +520,6 @@
       [L('品質等級', 'Quality'), `${f.quality} · ${pick(QUALITY, f.quality)}`],
       [L('識別碼', 'ID'), f.id],
     ].filter(Boolean);
-    const checks = (f.verification || []).map((v) => {
-      const who = v.by.startsWith('contributor:') ? v.by.slice(12) : pick(BY, v.by);
-      return `<li><span class="who">${esc(who)}</span> · ${esc(pick(METHOD, v.method))} · <span class="when">${esc(v.date)}</span>
-        <div class="note">${esc(L('讀數', 'Reading'))} ${esc(v.value)}${v.page ? ` · ${esc(L('頁碼', 'Page'))} ${esc(v.page)}` : ''}</div></li>`;
-    }).join('');
     const citation = `HK Open Carbon Platform (${DATA.built}). ${f.name.en}: ${f.value_text} ${f.unit}. Source: ${src.title || f.source.id}${f.source.page ? `, p. ${f.source.page}` : ''}. CC BY 4.0.`;
     const fileUrl = `https://github.com/liuxiangchen428-hash/hk-open-carbon/blob/main/${f.file}`;
     const history = isYearly(f) ? seriesItems(seriesOf(f)) : [];
@@ -584,7 +582,6 @@
       <div class="d-section"><h3>${esc(L('資料', 'Details'))}</h3>
         <dl class="kv">${kv.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
       </div>
-      ${checks ? `<div class="d-section"><h3>${esc(L('核對記錄', 'Verification'))}</h3><ul class="timeline">${checks}</ul></div>` : ''}
       <div class="d-section"><h3>${esc(L('引用', 'Cite'))}</h3>
         <div class="cite">${esc(citation)}</div>
         <div class="links">
@@ -968,7 +965,7 @@
           <div class="hl-meta">${esc(L(`系數年份 ${fy}`, `Factor year ${fy}`))}${l.f.quality === 'D' ? ` · ${esc(L('推算值（D 級）', 'Derived value (quality D)'))}` : ''}${l.f.gas === 'CO2' && l.key !== 'car' ? ` · ${esc(L('只計二氧化碳', 'CO₂ only'))}` : ''}${other ? ` · <span class="warn">${esc(L(`沒有 ${st.year} 年的系數，用最接近的 ${fy}`, `No ${st.year} factor; using ${fy}`))}</span>` : ''}</div>
         </div>`;
       }).join('')}</div>
-      <p class="muted inv-small">${esc(L('用量按帳單涵蓋的月數換算成全年：例如兩個月的帳單 × 6。點系數可查看出處和核對紀錄。', 'Usage is scaled to a year from the billing period, e.g. a two-month bill × 6. Click a factor to see its source and checks.'))}</p>`;
+      <p class="muted inv-small">${esc(L('用量按帳單涵蓋的月數換算成全年：例如兩個月的帳單 × 6。點系數可查看出處。', 'Usage is scaled to a year from the billing period, e.g. a two-month bill × 6. Click a factor to see its source.'))}</p>`;
     }
 
     function renderNotes() {
