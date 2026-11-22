@@ -86,5 +86,11 @@ node scripts/archive-sources.mjs --save     # 沒有存檔的就請求存檔
 - [x] 九巴：改用載通國際在港交所的年報（`src-tih-ar-2025`、`src-tih-ar-2025-full`）
 - [x] 運輸署《運輸資料年報》：2022–2024 年版仍有出版（2026-11-22 查）
 - [ ] 未有存檔、需人手處理的來源：Poore & Nemecek 論文；2026-11-22 再次請求存檔的有 `src-datagovhk-ghg-by-sector`、`src-tih-ar-2025-full`、`src-ipcc-2006-v2-ch1`、`src-hke-sr-2016-statistics`、`src-clp-sr-2015`（中電網站擋 GitHub，可能存不到）
-- [ ] 確認再使用條款（`reuse: check`）：IPCC 指南、溫室氣體議定書 GWP 表、英國政府系數、Poore & Nemecek、建造業議會碳評估工具
+- [x] 確認再使用條款（2026-11-22 讀原文，條款頁登記為 `src-terms-*`）：
+  - 英國政府系數：開放政府授權 v3.0，可商業使用，須註明出處 → `open-attribution`
+  - IPCC 指南（4 個來源）：只限個人非商業用途，其他用途須 IPCC 秘書處書面許可 → `noncommercial-or-permission`（4 個 IPCC 預設燃料系數在用）
+  - 溫室氣體議定書 GWP 表：網站條款禁止公開或商業用途 → `noncommercial-or-permission`（未使用）
+  - 建造業議會碳評估工具：只限個人或非商業內部用途 → `noncommercial-or-permission`（未使用）
+  - Poore & Nemecek：沒有開放授權，版權屬作者並獨家授權 AAAS → `reference-only`（只作參考，不抄數值）
+- [ ] 4 個 IPCC 預設燃料系數：保留、去信 IPCC 請求許可，或刪除（需要維護者決定）
 - [ ] （建議）公開前去信相關部門請求確認（需要維護者）
