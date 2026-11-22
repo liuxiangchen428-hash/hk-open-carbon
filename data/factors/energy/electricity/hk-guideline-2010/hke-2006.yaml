@@ -1,0 +1,30 @@
+id: hk.energy.electricity.hke.2006
+name:
+  zh-Hant: 港燈電力排放系數（2006 年，2010 年指引）
+  en: HK Electric electricity emission factor (2006, 2010 HK guidelines)
+category: energy/electricity
+gas: CO2e
+gwp: not-stated
+value: 0.91
+unit: kgCO2e/kWh
+year: 2006
+region: HK-HKE
+scope: 2
+boundary: location-based
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 36
+  table: "Table 5 note: GHG Emission Factor for Different Power Companies in Hong Kong (in kg CO2-e / kWh)"
+quality: A
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-23
+    value: 0.91
+    page: 36
+    note: Read from extracted text of the 2010 building GHG guidelines, Table 5 note, HK Electric column 2006.
+tags: [grid-factor, hk-guideline-2010, historical]
+notes:
+  zh-Hant: 歷史數據：只用於核算當年的排放。2010 年指引列出供參考，註明數值由指引根據港燈的環境、品質、健康及安全報告及港燈網站得出；與近年電力公司直接公佈的售電排放強度口徑未必相同。
+  en: Historical data — use only for emissions in that year. Listed for reference in the 2010 guidelines, which say the values were derived from HEC's Environment, Quality, Health and Safety Report and HEC's website; the basis may differ from the emission intensity of electricity sold that the company publishes today.

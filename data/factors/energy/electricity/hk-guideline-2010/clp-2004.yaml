@@ -1,0 +1,30 @@
+id: hk.energy.electricity.clp.2004
+name:
+  zh-Hant: 中電電力排放系數（2004 年，2010 年指引）
+  en: CLP electricity emission factor (2004, 2010 HK guidelines)
+category: energy/electricity
+gas: CO2e
+gwp: not-stated
+value: 0.53
+unit: kgCO2e/kWh
+year: 2004
+region: HK-CLP
+scope: 2
+boundary: location-based
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 36
+  table: "Table 5 note: GHG Emission Factor for Different Power Companies in Hong Kong (in kg CO2-e / kWh)"
+quality: A
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-23
+    value: 0.53
+    page: 36
+    note: Read from extracted text of the 2010 building GHG guidelines, Table 5 note, CLP column 2004.
+tags: [grid-factor, hk-guideline-2010, historical]
+notes:
+  zh-Hant: 歷史數據：只用於核算當年的排放。2010 年指引列出供參考，註明數值由指引根據中電集團年報及中電主要表現統計得出；與近年電力公司直接公佈的售電排放強度口徑未必相同。
+  en: Historical data — use only for emissions in that year. Listed for reference in the 2010 guidelines, which say the values were derived from CLP Holdings Annual Report and CLP's Key Performance Statistics; the basis may differ from the emission intensity of electricity sold that the company publishes today.

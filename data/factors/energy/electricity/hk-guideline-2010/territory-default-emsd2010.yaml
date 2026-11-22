@@ -1,0 +1,31 @@
+id: hk.energy.electricity.territory-default.emsd2010
+name:
+  zh-Hant: 全港電力預設排放系數（2010 年指引）
+  en: Territory-wide default electricity emission factor (2010 HK guidelines)
+category: energy/electricity
+gas: CO2e
+gwp: not-stated
+value: 0.7
+unit: kgCO2e/kWh
+year: 2010
+region: HK
+scope: 2
+boundary: location-based
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 36
+  table: "Table 5 note: territory-wide default value of 0.7kg / kWh"
+quality: A
+status: draft
+update_frequency: irregular
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-23
+    value: 0.7
+    page: 36
+    note: Read from extracted text of the 2010 building GHG guidelines, Table 5 note ("territory-wide default value of 0.7kg / kWh"; same value on p.22).
+tags: [hk-guideline-2010]
+notes:
+  zh-Hant: 指引建議兩種做法：用全港預設值 0.7 kg/kWh，或用電力公司公佈的當年系數。指引也用此值推算食水及污水處理的系數（表 8、表 9）。有電力公司當年系數時應優先使用。
+  en: The guidelines allow either this territory-wide default or the power company's own factor for the year. They also use it to derive the fresh water and sewage factors (Tables 8 and 9). Prefer the company's factor for the year when available.

@@ -1,0 +1,31 @@
+id: hk.water.sewage.emsd2010.2005
+name:
+  zh-Hant: 污水處理用電排放系數（2005 年，2010 年指引）
+  en: Electricity for sewage processing, emission factor (2005, 2010 HK guidelines)
+category: water/sewage
+gas: CO2e
+gwp: not-stated
+value: 0.160
+unit: kgCO2e/m3
+year: 2005
+region: HK
+scope: 3
+boundary: location-based
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 39
+  table: "Table 9 note: GHG Emission Factor (in kg CO2-e / m3)"
+quality: A
+status: draft
+update_frequency: irregular
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-23
+    value: 0.160
+    page: 39
+    note: Read from extracted text of the 2010 building GHG guidelines, Table 9 note, column 2005 (printed as 0.160).
+tags: [water, hk-guideline-2010, historical]
+notes:
+  zh-Hant: 歷史數據：只用於核算當年的排放。按食水用量（立方米）計算；指引的預設用法：食肆及飲食服務 × 0.7，其他商業、住宅及機構用途 × 1.0。指引的算法是單位用電量 × 全港預設值 0.7 kg/kWh。年份按指引表頭照錄（指引未註明是否財政年度）。
+  en: Historical data — use only for emissions in that year. Per cubic metre of fresh water used; the guidelines apply x0.7 for restaurants and catering and x1.0 for other commercial, residential and institutional uses. The guidelines compute it as unit electricity use x the territory-wide default of 0.7 kg/kWh. Years as printed in the table header (the guidelines do not say whether they are financial years).

@@ -1,0 +1,31 @@
+id: hk.water.fresh-water.emsd2010.2004
+name:
+  zh-Hant: 食水處理及供應用電排放系數（2004 年，2010 年指引）
+  en: Electricity for fresh water processing, emission factor (2004, 2010 HK guidelines)
+category: water/fresh-water
+gas: CO2e
+gwp: not-stated
+value: 0.463
+unit: kgCO2e/m3
+year: 2004
+region: HK
+scope: 3
+boundary: location-based
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 38
+  table: "Table 8 note: GHG Emission Factor (in kg CO2-e / m3)"
+quality: A
+status: draft
+update_frequency: irregular
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-23
+    value: 0.463
+    page: 38
+    note: Read from extracted text of the 2010 building GHG guidelines, Table 8 note, column 2004 (printed as 0.463).
+tags: [water, hk-guideline-2010, historical]
+notes:
+  zh-Hant: 歷史數據：只用於核算當年的排放。按用水量（立方米，以水費單計）計算。指引的算法是單位用電量 × 全港預設值 0.7 kg/kWh。年份按指引表頭照錄（指引未註明是否財政年度）。
+  en: Historical data — use only for emissions in that year. Per cubic metre of water on the water bill. The guidelines compute it as unit electricity use x the territory-wide default of 0.7 kg/kWh. Years as printed in the table header (the guidelines do not say whether they are financial years).

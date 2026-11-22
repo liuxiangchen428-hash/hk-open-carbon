@@ -1,0 +1,32 @@
+id: hk.land.trees.removal.emsd2010
+name:
+  zh-Hant: 新種樹木每年二氧化碳吸收量（2010 年指引）
+  en: CO2 removal by a newly planted tree per year (2010 HK guidelines)
+category: land/trees
+gas: CO2
+value: 23
+unit: kgCO2/unit
+unit_definition:
+  zh-Hant: 每棵樹每年（吸收量，不是排放）；適用於香港常見、可長到最少 5 米高的樹木
+  en: Per tree per year (a removal, not an emission); for trees common in Hong Kong that can reach at least 5 metres
+year: 2010
+region: HK
+scope: 1
+source:
+  id: src-emsd-epd-building-ghg-2010
+  page: 35
+  table: "Table 4: Direct GHG Removals from Newly Planted Trees, CO2 removal factor (kg / unit / year)"
+quality: A
+status: draft
+update_frequency: irregular
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-23
+    value: 23
+    page: 35
+    note: Read from extracted text of the 2010 building GHG guidelines, Table 4, removal factor column.
+tags: [hk-guideline-2010, removal]
+notes:
+  zh-Hant: 這是吸收量：每棵新種樹木每年從大氣移除約 23 公斤二氧化碳。指引算法：（種植數 − 移除數）× 23 ÷ 1000 × 報告期年數 = 公噸。指引註明此預設值按香港位置、林地類型及估計樹木密度建議，適用於香港常見、可長到最少 5 米高的樹木。
+  en: This is a removal. Each newly planted tree removes about 23 kg of CO2 a year. Guidelines method — (trees planted - trees removed) x 23 / 1000 x years in the reporting period = tonnes. The guidelines say the default reflects Hong Kong's location, woodland types and estimated tree density, and applies to trees common in Hong Kong that can reach at least 5 metres.

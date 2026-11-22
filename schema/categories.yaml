@@ -38,6 +38,11 @@ water:
     fresh-water: { name: { zh-Hant: 食水, en: Fresh water } }
     sewage: { name: { zh-Hant: 污水處理, en: Sewage treatment } }
 
+land:
+  name: { zh-Hant: 土地及植物, en: Land and vegetation }
+  children:
+    trees: { name: { zh-Hant: 樹木, en: Trees } }
+
 food:
   name: { zh-Hant: 食物, en: Food }
   children:
