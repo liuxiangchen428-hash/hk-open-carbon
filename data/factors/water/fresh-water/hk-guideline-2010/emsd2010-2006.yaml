@@ -16,7 +16,7 @@ source:
   page: 38
   table: "Table 8 note: GHG Emission Factor (in kg CO2-e / m3)"
 quality: A
-status: draft
+status: reviewed
 update_frequency: irregular
 verification:
   - by: claude
@@ -25,6 +25,12 @@ verification:
     value: 0.438
     page: 38
     note: Read from extracted text of the 2010 building GHG guidelines, Table 8 note, column 2006 (printed as 0.438).
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-23
+    value: 0.438
+    page: 38
+    note: Checked by the maintainer against the guidelines PDF.
 tags: [water, hk-guideline-2010, historical]
 notes:
   zh-Hant: 歷史數據：只用於核算當年的排放。按用水量（立方米，以水費單計）計算。指引的算法是單位用電量 × 全港預設值 0.7 kg/kWh。年份按指引表頭照錄（指引未註明是否財政年度）。

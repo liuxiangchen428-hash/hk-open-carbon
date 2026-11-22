@@ -17,7 +17,7 @@ source:
   page: 35
   table: "Table 4: Direct GHG Removals from Newly Planted Trees, CO2 removal factor (kg / unit / year)"
 quality: A
-status: draft
+status: reviewed
 update_frequency: irregular
 verification:
   - by: claude
@@ -26,6 +26,12 @@ verification:
     value: 23
     page: 35
     note: Read from extracted text of the 2010 building GHG guidelines, Table 4, removal factor column.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-23
+    value: 23
+    page: 35
+    note: Checked by the maintainer against the guidelines PDF.
 tags: [hk-guideline-2010, removal]
 notes:
   zh-Hant: 這是吸收量：每棵新種樹木每年從大氣移除約 23 公斤二氧化碳。指引算法：（種植數 − 移除數）× 23 ÷ 1000 × 報告期年數 = 公噸。指引註明此預設值按香港位置、林地類型及估計樹木密度建議，適用於香港常見、可長到最少 5 米高的樹木。

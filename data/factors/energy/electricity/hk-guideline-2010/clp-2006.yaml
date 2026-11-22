@@ -16,7 +16,7 @@ source:
   page: 36
   table: "Table 5 note: GHG Emission Factor for Different Power Companies in Hong Kong (in kg CO2-e / kWh)"
 quality: A
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -24,6 +24,12 @@ verification:
     value: 0.53
     page: 36
     note: Read from extracted text of the 2010 building GHG guidelines, Table 5 note, CLP column 2006.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-23
+    value: 0.53
+    page: 36
+    note: Checked by the maintainer against the guidelines PDF.
 tags: [grid-factor, hk-guideline-2010, historical]
 notes:
   zh-Hant: 歷史數據：只用於核算當年的排放。2010 年指引列出供參考，註明數值由指引根據中電集團年報及中電主要表現統計得出；與近年電力公司直接公佈的售電排放強度口徑未必相同。
