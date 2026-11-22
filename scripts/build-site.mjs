@@ -81,7 +81,7 @@ const stats = {
 };
 // Version tag for asset URLs, so browsers fetch new CSS/JS/data after each change instead of a cached copy.
 const hash = createHash('sha256');
-for (const f of ['style.css', 'app.js', 'data.json']) hash.update(readFileSync(join(out, 'assets', f)));
+for (const f of ['style.css', 'app.js', 'data.json', 'favicon.svg', 'icon-180.png']) hash.update(readFileSync(join(out, 'assets', f)));
 stats.v = hash.digest('hex').slice(0, 10);
 for (const page of pages) {
   writeFileSync(join(out, page.file), layout({ ...page, body: page.body(stats), stats }));

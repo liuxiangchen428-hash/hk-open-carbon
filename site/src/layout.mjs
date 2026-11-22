@@ -38,8 +38,8 @@ export function layout({ file, title, description, body, stats }) {
 <title>${title.zh} · 香港開源碳核算平台</title>
 <meta name="description" content="${description}">
 <meta name="color-scheme" content="light dark">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" href="assets/favicon.svg?v=${stats.v}" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png?v=${stats.v}">
 <meta name="theme-color" content="#0b1d18">
 <link rel="stylesheet" href="assets/style.css?v=${stats.v}">
 <script>try{var l=localStorage.getItem('hkoc-lang');if(l)document.documentElement.dataset.lang=l;}catch(e){}</script>
