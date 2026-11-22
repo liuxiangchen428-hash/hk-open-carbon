@@ -274,10 +274,12 @@
   }
 
   /* ---------- factor browser ---------- */
+  $('.site-nav [aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'center' });
   const page = document.body.dataset.page;
   if (page === 'index') dataReady.then(() => { initDash(); initBrowser(); });
   if (page === 'sources') dataReady.then(initSources);
   if (page === 'inventory') dataReady.then(initInventory);
+  if (page === 'calculator') dataReady.then(initCalculator);
 
   function initBrowser() {
     const state = { cat: 'all', status: 'all', q: '', charts: new Set() };
@@ -815,6 +817,171 @@
     $('#sec-view').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.view = b.dataset.view; renderSectors(); } });
     all4();
     rerender.push(all4);
+  }
+
+  /* ---------- household calculator ---------- */
+  const HH_SERIES = {
+    clp: 'hk.energy.electricity.clp', hke: 'hk.energy.electricity.hke',
+    gasProd: 'hk.energy.town-gas.purchased', gasComb: 'hk.energy.town-gas.combustion-co2e',
+    water: 'hk.water.fresh-water.wsd', sewage: 'hk.water.sewage.dsd',
+  };
+  const HH_KEY = 'hkoc-calc';
+  const HH_PERIOD = { 1: ['每月', 'per month'], 2: ['每兩個月', 'every 2 months'], 4: ['每四個月', 'every 4 months'], 12: ['全年', 'whole year'] };
+
+  /** Reviewed factor of a series for the bill year: same year, else the latest earlier one, else the earliest. */
+  function factorFor(series, year) {
+    const items = seriesItems(series, { recent: true }).filter((f) => f.status === 'reviewed');
+    if (!items.length) return null;
+    return items.find((f) => f.year === year) ?? [...items].reverse().find((f) => f.year < year) ?? items[0];
+  }
+
+  function initCalculator() {
+    const form = $('#hh-form');
+    if (!form) return;
+    const st = { people: 1, year: null, supplier: 'clp', kwh: '', gas: '', water: '', p_kwh: 1, p_gas: 1, p_water: 1, sewage: true };
+    try { Object.assign(st, JSON.parse(localStorage.getItem(HH_KEY) || '{}')); } catch {}
+    const save = () => { try { localStorage.setItem(HH_KEY, JSON.stringify(st)); } catch {} };
+    const inv = DATA.inventory?.[0];
+    const hkLatest = inv?.rows.at(-1);
+    const srcs = sourceById();
+
+    const years = () => seriesItems(HH_SERIES[st.supplier], { recent: true }).filter((f) => f.status === 'reviewed').map((f) => f.year).reverse();
+    const num = (v) => { const n = parseFloat(v); return Number.isFinite(n) && n > 0 ? n : 0; };
+    const kgFmt = (n) => numFmt(Math.round(n), 0);
+    const tFmt = (n) => numFmt(n / 1000, 2);
+
+    function fillControls() {
+      const ys = years();
+      if (!ys.includes(st.year)) st.year = ys[0];
+      $('#hh-year').innerHTML = ys.map((y) => `<option value="${y}"${y === st.year ? ' selected' : ''}>${y}</option>`).join('');
+      $('#hh-people').value = st.people;
+      $('#hh-kwh').value = st.kwh; $('#hh-gas').value = st.gas; $('#hh-water').value = st.water;
+      $('#hh-sewage').checked = st.sewage;
+      $$('.calc-period', form).forEach((s) => {
+        s.innerHTML = Object.entries(HH_PERIOD).map(([v, l]) => `<option value="${v}">${esc(L(...l))}</option>`).join('');
+        s.value = String(st[`p_${s.dataset.period}`]);
+      });
+      $$('#hh-supplier button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.supplier === st.supplier)));
+    }
+
+    function lines() {
+      const y = st.year;
+      const annual = (q, p) => num(q) * (12 / p);
+      const out = [];
+      const add = (key, name, qty, unit, series, extra) => {
+        const f = factorFor(series, y);
+        if (!f) return;
+        out.push({ key, name, qty, unit, f, kg: qty * f.value, ...extra });
+      };
+      const kwh = annual(st.kwh, st.p_kwh), gas = annual(st.gas, st.p_gas), water = annual(st.water, st.p_water);
+      add('elec', st.supplier === 'clp' ? ['用電（中電）', 'Electricity (CLP)'] : ['用電（港燈）', 'Electricity (HK Electric)'], kwh, 'kWh', HH_SERIES[st.supplier], { group: 'e' });
+      add('gasComb', ['煤氣燃燒（家中爐具）', 'Town gas burned at home'], gas, 'unit', HH_SERIES.gasComb, { group: 'g' });
+      add('gasProd', ['煤氣生產', 'Town gas production'], gas, 'unit', HH_SERIES.gasProd, { group: 'g' });
+      add('water', ['食水處理及供應', 'Fresh water supply'], water, 'm3', HH_SERIES.water, { group: 'w' });
+      if (st.sewage) add('sewage', ['污水處理', 'Sewage treatment'], water, 'm3', HH_SERIES.sewage, { group: 'w' });
+      return out;
+    }
+
+    function renderResult() {
+      const ls = lines();
+      const total = ls.reduce((a, l) => a + l.kg, 0);
+      const people = Math.max(1, Math.round(num(st.people)) || 1);
+      const per = total / people;
+      const max = Math.max(...ls.map((l) => l.kg), 1);
+      const hkPer = hkLatest ? hkLatest.per_capita * 1000 : 0;
+      const cmpMax = Math.max(per, hkPer, 1);
+      const empty = total === 0;
+      $('#hh-result').innerHTML = `
+        <div class="hr-head">
+          <span class="hr-label">${esc(L('全家每年', 'Household per year'))}</span>
+          <div class="hr-total"><b>${esc(tFmt(total))}</b><span>${esc(L('公噸二氧化碳當量', 't CO₂e'))}</span></div>
+          <p class="hr-sub">${esc(L(`即 ${kgFmt(total)} 千克 · 每人 ${tFmt(per)} 公噸（${people} 人）`, `${kgFmt(total)} kg · ${tFmt(per)} t per person (${people} ${people === 1 ? 'person' : 'people'})`))}</p>
+        </div>
+        ${empty ? `<p class="hr-empty">${esc(L('在左邊填上帳單用量，結果會即時顯示。', 'Enter the usage from your bills; the result updates as you type.'))}</p>` : `
+        <div class="hr-bars">${ls.filter((l) => l.kg > 0).map((l) => `
+          <div class="hr-bar"><span class="n"><i class="hh-ico ${l.group}"></i>${esc(L(...l.name))}</span>
+            <span class="v">${esc(kgFmt(l.kg))} <small>kg</small></span>
+            <span class="p">${total ? ((l.kg / total) * 100).toFixed(0) : 0}%</span>
+            <span class="t"><span style="width:${((l.kg / max) * 100).toFixed(1)}%"></span></span></div>`).join('')}
+        </div>`}
+        ${hkLatest ? `
+        <div class="hr-cmp">
+          <p class="hr-cmp-t">${esc(L('每人每年，公噸', 'Per person per year, tonnes'))}</p>
+          <div class="cmp-row you"><span>${esc(L('你家（家居用電、煤氣、水）', 'Your home (electricity, gas, water)'))}</span><b>${esc(tFmt(per))}</b>
+            <span class="t"><span style="width:${((per / cmpMax) * 100).toFixed(1)}%"></span></span></div>
+          <div class="cmp-row hk"><span>${esc(L(`全港人均（${hkLatest.year} 年，所有排放）`, `Hong Kong average (${hkLatest.year}, all emissions)`))}</span><b>${esc(hkLatest.per_capita.toFixed(2))}</b>
+            <span class="t"><span style="width:${((hkPer / cmpMax) * 100).toFixed(1)}%"></span></span></div>
+          <p class="hr-note">${esc(L('全港人均包括交通、工商業、廢物等所有本地排放，不只家居；兩者不是同一範圍，只作參考。', 'The Hong Kong figure covers all local emissions — transport, business, waste and more — not just homes, so this is a rough reference, not a like-for-like comparison.'))}</p>
+        </div>` : ''}`;
+    }
+
+    function renderLines() {
+      const ls = lines();
+      const actName = { kWh: ['度', 'kWh'], unit: ['單位', 'units'], m3: ['立方米', 'm³'] };
+      $('#hh-lines').innerHTML = `<div class="hh-lines">${ls.map((l) => {
+        const fy = yearFmt(l.f);
+        const other = l.f.year !== st.year;
+        return `<div class="hl">
+          <div class="hl-name"><i class="hh-ico ${l.group}"></i>${esc(L(...l.name))}</div>
+          <div class="hl-calc">
+            <span>${esc(numFmt(l.qty, 1))} ${esc(L(...actName[l.unit]))}</span><span class="op">×</span>
+            <a href="index.html#f=${encodeURIComponent(l.f.id)}" title="${esc(nm(l.f.name))}">${esc(l.f.value_text)} <small>${esc(emissionFmt(l.f.unit))}/${esc(L(...actName[l.unit]))}</small></a><span class="op">=</span>
+            <b>${esc(kgFmt(l.kg))} kg</b>
+          </div>
+          <div class="hl-meta">${esc(L(`系數年份 ${fy}`, `Factor year ${fy}`))}${other ? ` · <span class="warn">${esc(L(`沒有 ${st.year} 年的系數，用最接近的 ${fy}`, `No ${st.year} factor; using ${fy}`))}</span>` : ''}</div>
+        </div>`;
+      }).join('')}</div>
+      <p class="muted inv-small">${esc(L('用量按帳單涵蓋的月數換算成全年：例如兩個月的帳單 × 6。點系數可查看出處和核對紀錄。', 'Usage is scaled to a year from the billing period, e.g. a two-month bill × 6. Click a factor to see its source and checks.'))}</p>`;
+    }
+
+    function renderNotes() {
+      $('#hh-scope').innerHTML = `
+        <p>${esc(L('計算家中用電、煤氣和食水帶來的排放：', 'Counts the emissions from the electricity, town gas and water your home uses:'))}</p>
+        <ul>
+          <li>${esc(L('用電：電力公司公佈的售電排放強度（按供電區）。', 'Electricity: the supplier’s published emission intensity of electricity sold, by supply area.'))}</li>
+          <li>${esc(L('煤氣：家中燃燒加上煤氣生產，兩者都由煤氣公司公佈。', 'Town gas: burning at home plus production, both published by the gas company.'))}</li>
+          <li>${esc(L('食水及污水：水務署、渠務署處理和輸送用的電力；住宅污水按用水量 100% 計，是政府碳審計範本的預設做法。', 'Water and sewage: electricity used by the Water Supplies and Drainage Services Departments; household sewage is counted as 100% of water used, the default in the government carbon audit template.'))}</li>
+        </ul>
+        <p>${esc(L('不包括交通、飲食、購物和廢物，所以結果會比一個人的完整碳足跡低。只使用已經過維護者核對的系數。', 'Transport, food, shopping and waste are not included, so the result is lower than a full personal footprint. Only factors checked by the maintainer are used.'))}</p>`;
+      const ls = lines();
+      const seen = new Set();
+      $('#hh-factors').innerHTML = ls.filter((l) => !seen.has(l.f.id) && seen.add(l.f.id)).map((l) => {
+        const s = srcs.get(l.f.source.id);
+        return `<div class="inv-src">
+          <p class="doc-title"><a href="index.html#f=${encodeURIComponent(l.f.id)}">${esc(nm(l.f.name))}</a></p>
+          <p class="muted">${esc(l.f.value_text)} ${esc(unitFmt(l.f.unit))} · ${s ? esc(lang() === 'en' ? s.title : s.title_zh || s.title) : ''}${l.f.source.page ? ` · ${esc(L('頁', 'p.'))} ${esc(String(l.f.source.page))}` : ''}</p>
+        </div>`;
+      }).join('');
+    }
+
+    const renderAll = () => { renderResult(); renderLines(); renderNotes(); };
+    form.addEventListener('input', (e) => {
+      const el = e.target;
+      if (el.id === 'hh-people') st.people = el.value;
+      else if (el.id === 'hh-kwh') st.kwh = el.value;
+      else if (el.id === 'hh-gas') st.gas = el.value;
+      else if (el.id === 'hh-water') st.water = el.value;
+      else if (el.id === 'hh-year') st.year = +el.value;
+      else if (el.id === 'hh-sewage') st.sewage = el.checked;
+      else if (el.dataset.period) st[`p_${el.dataset.period}`] = +el.value;
+      save(); renderAll();
+    });
+    form.addEventListener('click', (e) => {
+      const sup = e.target.closest('[data-supplier]');
+      if (sup) { st.supplier = sup.dataset.supplier; fillControls(); save(); renderAll(); return; }
+      if (e.target.closest('[data-example]')) {
+        // Illustrative numbers only; not a typical or average household.
+        Object.assign(st, { people: 3, kwh: '550', p_kwh: 2, gas: '60', p_gas: 2, water: '40', p_water: 4, sewage: true });
+        fillControls(); save(); renderAll(); return;
+      }
+      if (e.target.closest('[data-clear]')) {
+        Object.assign(st, { people: 1, kwh: '', gas: '', water: '', p_kwh: 1, p_gas: 1, p_water: 1, sewage: true });
+        fillControls(); save(); renderAll();
+      }
+    });
+    fillControls();
+    renderAll();
+    rerender.push(() => { fillControls(); renderAll(); });
   }
 
   /* ---------- sources page ---------- */

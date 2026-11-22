@@ -239,12 +239,101 @@ const inventory = () => `
 </section>
 `;
 
+const period = (name) => `<select class="calc-period" data-period="${name}" aria-label="Billing period">
+  <option value="1">${'每月 / month'}</option>
+  <option value="2">${'每兩個月 / 2 months'}</option>
+  <option value="4">${'每四個月 / 4 months'}</option>
+  <option value="12">${'全年 / year'}</option>
+</select>`;
+
+const calculator = () => `
+<section class="hero calc-hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <p class="eyebrow">${t('家庭碳足跡計算器', 'Household carbon calculator')}</p>
+      <h1>${t('你家一年，<span class="nb">排放多少？</span>', 'How much does your home <span class="nb">emit in a year?</span>')}</h1>
+      <p class="hero-lede">${t('拿出電費、煤氣費和水費單，填上用量和帳單涵蓋的時間。計算只在你的瀏覽器進行，不會上傳。', 'Take your electricity, gas and water bills and enter the usage and billing period. Everything is calculated in your browser; nothing is uploaded.')}</p>
+    </div>
+    <div class="hh">
+      <form class="hh-form" id="hh-form" autocomplete="off">
+        <div class="hh-row hh-top">
+          <label class="hh-field"><span>${t('住戶人數', 'People in the home')}</span>
+            <input type="number" id="hh-people" min="1" max="20" step="1" value="1" inputmode="numeric"></label>
+          <label class="hh-field"><span>${t('帳單年份', 'Bill year')}</span>
+            <select id="hh-year"></select></label>
+        </div>
+
+        <fieldset class="hh-sec">
+          <legend><span class="hh-ico e" aria-hidden="true"></span>${t('電力', 'Electricity')}</legend>
+          <div class="seg seg-band" id="hh-supplier" role="radiogroup" aria-label="Supplier">
+            <button type="button" data-supplier="clp" aria-pressed="true">${t('中電', 'CLP')}</button>
+            <button type="button" data-supplier="hke" aria-pressed="false">${t('港燈', 'HK Electric')}</button>
+          </div>
+          <div class="hh-row">
+            <label class="hh-field grow"><span>${t('用電量（度 / kWh）', 'Usage (kWh)')}</span>
+              <input type="number" id="hh-kwh" min="0" step="any" inputmode="decimal" placeholder="0"></label>
+            <label class="hh-field"><span>${t('帳單涵蓋', 'Bill covers')}</span>${period('kwh')}</label>
+          </div>
+        </fieldset>
+
+        <fieldset class="hh-sec">
+          <legend><span class="hh-ico g" aria-hidden="true"></span>${t('煤氣', 'Town gas')}</legend>
+          <div class="hh-row">
+            <label class="hh-field grow"><span>${t('用量（單位，1 單位 = 48 兆焦耳）', 'Usage (units; 1 unit = 48 MJ)')}</span>
+              <input type="number" id="hh-gas" min="0" step="any" inputmode="decimal" placeholder="0"></label>
+            <label class="hh-field"><span>${t('帳單涵蓋', 'Bill covers')}</span>${period('gas')}</label>
+          </div>
+        </fieldset>
+
+        <fieldset class="hh-sec">
+          <legend><span class="hh-ico w" aria-hidden="true"></span>${t('食水', 'Water')}</legend>
+          <div class="hh-row">
+            <label class="hh-field grow"><span>${t('用水量（立方米 / m³）', 'Usage (m³)')}</span>
+              <input type="number" id="hh-water" min="0" step="any" inputmode="decimal" placeholder="0"></label>
+            <label class="hh-field"><span>${t('帳單涵蓋', 'Bill covers')}</span>${period('water')}</label>
+          </div>
+          <label class="check check-band"><input type="checkbox" id="hh-sewage" checked> ${t('包括污水處理（住宅按用水量 100% 計）', 'Include sewage treatment (homes: 100% of water used)')}</label>
+        </fieldset>
+
+        <div class="hh-actions">
+          <button type="button" class="pill" data-example>${t('填入示例', 'Fill an example')}</button>
+          <button type="button" class="pill" data-clear>${t('清除', 'Clear')}</button>
+        </div>
+      </form>
+
+      <div class="hh-result" id="hh-result" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap calc-body">
+  <div class="group-head"><h2>${t('怎樣計算', 'How it is calculated')}</h2></div>
+  <div id="hh-lines"></div>
+  <div class="two-col inv-notes">
+    <div>
+      <h2>${t('計算範圍', 'What is counted')}</h2>
+      <div id="hh-scope"></div>
+    </div>
+    <div>
+      <h2>${t('使用的系數', 'Factors used')}</h2>
+      <div id="hh-factors"></div>
+    </div>
+  </div>
+</section>
+`;
+
 export const pages = [
   {
     file: 'index.html',
     title: { zh: '系數庫', en: 'Factors' },
     description: 'Open, sourced emission factors for Hong Kong: electricity, town gas, fuels, water and more.',
     body: index,
+  },
+  {
+    file: 'calculator.html',
+    title: { zh: '計算器', en: 'Calculator' },
+    description: 'Estimate your household carbon footprint from electricity, town gas and water bills, using Hong Kong factors.',
+    body: calculator,
   },
   {
     file: 'inventory.html',
