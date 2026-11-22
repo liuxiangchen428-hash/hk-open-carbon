@@ -1197,7 +1197,15 @@
     });
     grip.addEventListener('dblclick', () => { panel.style.width = ''; panel.style.height = ''; try { localStorage.removeItem(KEY); } catch {} });
 
-    const open = (v) => { panel.hidden = !v; fab.setAttribute('aria-expanded', String(v)); box.classList.toggle('open', v); if (v) { render(false); input.focus(); } };
+    const phone = () => matchMedia('(max-width: 720px)').matches;
+    // Phones: lock the page behind the panel and size the panel to the visible area (shrinks when the keyboard opens).
+    const fit = () => { if (window.visualViewport) panel.style.setProperty('--ai-vh', `${Math.round(visualViewport.height)}px`); if (phone() && !panel.hidden) scrollTo(0, scrollY); };
+    window.visualViewport?.addEventListener('resize', fit);
+    const open = (v) => {
+      panel.hidden = !v; fab.setAttribute('aria-expanded', String(v)); box.classList.toggle('open', v);
+      html.classList.toggle('ai-lock', v && phone());
+      if (v) { fit(); render(false); if (!phone()) input.focus(); }
+    };
     fab.addEventListener('click', () => open(panel.hidden));
     box.addEventListener('click', (e) => {
       if (e.target.closest('[data-ai-close]')) open(false);

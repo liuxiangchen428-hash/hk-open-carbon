@@ -733,7 +733,12 @@ button.group-head { width: 100%; background: none; border-width: 0 0 1px; border
 @media (max-width: 720px) {
   .ai { right: 12px; bottom: 12px; }
   .ai-fab { padding: 11px 15px; }
-  .ai-panel { right: 0; bottom: 0; width: 100vw !important; height: min(88vh, 100dvh) !important; border-radius: 16px 16px 0 0; }
+  /* Full screen on phones; height follows the visible area so the keyboard never pushes it sideways. */
+  .ai-panel { inset: 0 0 auto 0; right: 0; bottom: auto; top: 0; width: 100% !important; max-width: 100%; height: var(--ai-vh, 100dvh) !important; border-radius: 0; border: 0; }
+  .ai-head { padding-top: calc(14px + env(safe-area-inset-top)) !important; }
+  .ai-form { padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .ai-log { overscroll-behavior: contain; }
+  .ai-msg { max-width: 92%; }
   .ai-grip { display: none; }
   .ai-head { padding-left: 16px !important; }
 }
@@ -791,4 +796,10 @@ button.group-head { width: 100%; background: none; border-width: 0 0 1px; border
   .group.folded .series { display: none; }
   .group.folded button.group-head { border-color: var(--line); }
   .group.folded { margin-bottom: 0; }
+}
+
+/* iOS zooms into fields with text smaller than 16px; keep phone fields at 16px so the page never needs panning. */
+@media (max-width: 720px) {
+  .ai-form textarea, .search input, .hh-field input, .hh-field select, .calc-field input, select, input, textarea { font-size: 16px; }
+  html.ai-lock, html.ai-lock body { overflow: hidden; overscroll-behavior: none; }
 }
