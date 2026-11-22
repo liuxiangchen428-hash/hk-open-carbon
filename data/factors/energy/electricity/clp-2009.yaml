@@ -1,0 +1,30 @@
+id: hk.energy.electricity.clp.2009
+name:
+  zh-Hant: 中電售電排放強度（2009 年）
+  en: CLP Power Hong Kong emission intensity of electricity sold (2009)
+category: energy/electricity
+gas: CO2e
+gwp: not-stated
+value: 0.56
+unit: kgCO2e/kWh
+year: 2009
+region: HK-CLP
+scope: 2
+boundary: location-based
+source:
+  id: src-clp-sr-2009-essence
+  page: "3 (report p.10)"
+  table: "CO2 Emissions Intensity - CLP Power HK as of 31 December 2009"
+quality: B
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-22
+    value: 0.56
+    page: "3 (report p.10)"
+    note: 'Read from extracted text: "0.56kg CO2e/kWh* ... * per kWh electricity sold including nuclear power". The CO2-only figure is also 0.56.'
+tags: [grid-factor]
+notes:
+  zh-Hant: 中電香港的二氧化碳當量排放強度。報告的口徑是「每售出一度電（包括核電）」。報告未註明是否扣除可再生能源證書（當年中電未有出售證書）。適用於中電供電區的範圍 2 核算。
+  en: CLP Power Hong Kong CO2-equivalent intensity. The report gives it per kWh of electricity sold including nuclear power. It does not mention Renewable Energy Certificates (CLP did not sell them at the time). Use for scope 2 in the CLP supply area.

@@ -4,7 +4,7 @@ name:
   en: HK Electric CO2e per unit of electricity sold (2025)
 category: energy/electricity
 gas: CO2e
-gwp: not-stated
+gwp: AR5
 value: 0.59
 unit: kgCO2e/kWh
 year: 2025
@@ -31,5 +31,5 @@ verification:
     note: Value given by the maintainer from the 2025 report.
 tags: [grid-factor]
 notes:
-  zh-Hant: 港燈範圍 1 加範圍 2 排放除以售電量。適用於港島、鴨脷洲及南丫島（港燈供電區）的範圍 2 核算。
-  en: HK Electric scope 1 plus scope 2 emissions per unit of electricity sold. Use for scope 2 in the HK Electric supply area (Hong Kong Island, Ap Lei Chau, Lamma).
+  zh-Hant: 港燈範圍 1 加範圍 2 排放除以售電量。適用於港島、鴨脷洲及南丫島（港燈供電區）的範圍 2 核算。港燈 2025 年報告的溫室氣體核算方法（PDF 第 127 頁，報告第 125 頁）註明由 2025 年起採用 IPCC 第五次評估報告（AR5）的 GWP；之前年份的報告未註明。
+  en: HK Electric scope 1 plus scope 2 emissions per unit of electricity sold. Use for scope 2 in the HK Electric supply area (Hong Kong Island, Ap Lei Chau, Lamma). The GHG accounting methodology in the 2025 report (PDF p.127, report p.125) says HK Electric adopted IPCC AR5 GWP values that year ("Changes from the prior year"); earlier reports do not say.

@@ -1,0 +1,30 @@
+id: hk.energy.electricity.hke.2014
+name:
+  zh-Hant: 港燈售電排放強度（2014 年）
+  en: HK Electric CO2e per unit of electricity sold (2014)
+category: energy/electricity
+gas: CO2e
+gwp: not-stated
+value: 0.79
+unit: kgCO2e/kWh
+year: 2014
+region: HK-HKE
+scope: 2
+boundary: location-based
+source:
+  id: src-hke-sr-2016-statistics
+  page: "3 (report p.46)"
+  table: "Key Statistics > Environment > CO2e per electricity unit sold (kg/kWh)"
+quality: B
+status: draft
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-22
+    value: 0.79
+    page: "3 (report p.46)"
+    note: Read from extracted text of the 2016 Sustainability Report statistics, column 2014 (printed as 0.79).
+tags: [grid-factor]
+notes:
+  zh-Hant: 港燈範圍 1 加範圍 2 排放除以售電量。適用於港島、鴨脷洲及南丫島（港燈供電區）的範圍 2 核算。
+  en: HK Electric scope 1 plus scope 2 emissions per unit of electricity sold. Use for scope 2 in the HK Electric supply area (Hong Kong Island, Ap Lei Chau, Lamma).
