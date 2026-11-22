@@ -322,6 +322,7 @@ const calculator = () => `
       </form>
 
       <div class="hh-result" id="hh-result" aria-live="polite"></div>
+      <a class="hh-sticky" id="hh-sticky" href="#hh-result" aria-live="off"></a>
     </div>
   </div>
 </section>

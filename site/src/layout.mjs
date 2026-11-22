@@ -9,10 +9,10 @@ export const t = (zh, en) => `<span class="l-zh">${zh}</span><span class="l-en">
 const REPO = 'https://github.com/liuxiangchen428-hash/hk-open-carbon';
 
 const nav = [
-  { file: 'index.html', zh: '系數庫', en: 'Factors' },
-  { file: 'calculator.html', zh: '計算器', en: 'Calculator' },
-  { file: 'inventory.html', zh: '排放清單', en: 'Inventory' },
-  { file: 'sources.html', zh: '來源與方法', en: 'Sources & method' },
+  { file: 'index.html', zh: '系數庫', en: 'Factors', short: ['系數', 'Factors'], icon: '<path d="M4 5h12M4 10h12M4 15h8"/>' },
+  { file: 'calculator.html', zh: '計算器', en: 'Calculator', short: ['計算', 'Calculate'], icon: '<rect x="4.5" y="3" width="11" height="14" rx="2"/><path d="M7.5 7h5M7.5 10.5h1M11.5 10.5h1M7.5 13.5h1M11.5 13.5h1"/>' },
+  { file: 'inventory.html', zh: '排放清單', en: 'Inventory', short: ['清單', 'Inventory'], icon: '<path d="M4 16V10M8 16V6M12 16V8M16 16V4"/>' },
+  { file: 'sources.html', zh: '來源與方法', en: 'Sources & method', short: ['來源', 'Sources'], icon: '<path d="M6 3h6l3 3v11H6z"/><path d="M12 3v3h3M8.5 10h4M8.5 13h4"/>' },
 ];
 
 const mark = `<svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
@@ -25,11 +25,14 @@ export function layout({ file, title, description, body, stats }) {
   const links = nav
     .map((n) => `<a href="${n.file}"${n.file === file ? ' aria-current="page"' : ''}>${t(n.zh, n.en)}</a>`)
     .join('');
+  const tabs = nav
+    .map((n) => `<a href="${n.file}"${n.file === file ? ' aria-current="page"' : ''}><svg viewBox="0 0 20 20" aria-hidden="true">${n.icon}</svg>${t(...n.short)}</a>`)
+    .join('');
   return `<!doctype html>
 <html lang="zh-Hant" data-lang="zh">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${title.zh} · 香港開源碳核算平台</title>
 <meta name="description" content="${description}">
 <meta name="color-scheme" content="light dark">
@@ -54,6 +57,7 @@ export function layout({ file, title, description, body, stats }) {
     </button>
   </div>
 </header>
+<nav class="tabbar" aria-label="Main (mobile)">${tabs}</nav>
 <main id="main">
 ${body}
 </main>

@@ -286,7 +286,7 @@
   if (document.body.dataset.ai) initAssistant(document.body.dataset.ai);
 
   function initBrowser() {
-    const state = { cat: 'all', status: 'all', q: '', charts: new Set() };
+    const state = { cat: 'all', status: 'all', q: '', charts: new Set(), expanded: new Set() };
     const q = $('#q');
     const catList = $('#cat-list');
     const groupsEl = $('#groups');
@@ -324,6 +324,7 @@
       emptyEl.hidden = list.length > 0;
 
       let out = '';
+      let gi = 0;
       for (const cat of DATA.categories) {
         const inCat = list.filter((f) => f.category === cat.id);
         if (!inCat.length) continue;
@@ -337,7 +338,10 @@
           Math.max(...b.items.map((x) => x.year)) - Math.max(...a.items.map((x) => x.year)) ||
           a.items[0].quality.localeCompare(b.items[0].quality) ||
           nm(a.items[0].name).localeCompare(nm(b.items[0].name)));
-        out += `<section class="group"><div class="group-head"><h2>${esc(nm(cat.name))}</h2><span class="sub">${esc(nm(cat.groupName))}</span></div>`;
+        // Phones: categories fold; the first one (or all, when searching or filtering) starts open.
+        gi += 1;
+        const isOpen = !!(state.q || state.cat !== 'all' || (state.openGroups ? state.openGroups.has(cat.id) : gi === 1));
+        out += `<section class="group${isOpen ? '' : ' folded'}"><button type="button" class="group-head" data-group="${esc(cat.id)}" aria-expanded="${isOpen}"><h2>${esc(nm(cat.name))}</h2><span class="sub">${esc(nm(cat.groupName))}</span><span class="g-count">${inCat.length}</span><svg class="g-chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>`;
         for (const { key, kind, items } of ordered) {
           const gasOrder = { CO2: 0, CO2e: 0, CH4: 1, N2O: 2 };
           if (kind === 'yearly') items.sort((a, b) => b.year - a.year);
@@ -366,7 +370,12 @@
           if (asChart) {
             out += `<div class="series-chart">${barChart([...items].reverse(), {})}<p class="chart-note">${esc(unitFmt(f0.unit))} · ${esc(L('點選柱狀查看詳情', 'Select a bar for details'))}</p></div>`;
           } else {
-            for (const f of items) {
+            const phone = matchMedia('(max-width: 720px)').matches;
+            const LIMIT = kind === 'yearly' ? (phone ? 3 : 5) : 8;
+            const long = (kind === 'yearly' || kind === 'names') && items.length > LIMIT + 1;
+            const many = long && !state.expanded.has(key) && !state.q;
+            const shown = many ? items.slice(0, LIMIT) : items;
+            for (const f of shown) {
               let label;
               if (kind === 'yearly' && items.length > 1) {
                 const w = max ? Math.max(2, (Math.abs(f.value) / max) * 100) : 0;
@@ -384,6 +393,12 @@
                 <span class="st">${statusTag(f.status)}</span>
               </button>`;
             }
+            if (many) out += `<button type="button" class="more-row" data-more="${esc(key)}">${esc(kind === 'yearly'
+              ? L(`顯示全部 ${items.length} 年（至 ${items.at(-1).year} 年）`, `Show all ${items.length} years (back to ${items.at(-1).year})`)
+              : L(`顯示全部 ${items.length} 項`, `Show all ${items.length}`))} ↓</button>`;
+            else if (long && state.expanded.has(key)) out += `<button type="button" class="more-row" data-less="${esc(key)}">${esc(kind === 'yearly'
+              ? L(`只看最近 ${LIMIT} 年`, `Show the latest ${LIMIT} years`)
+              : L(`收起`, `Show fewer`))} ↑</button>`;
           }
           out += '</div>';
         }
@@ -407,6 +422,23 @@
     q.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => { state.q = q.value.trim(); render(); }, 120); });
     $('[data-filters-toggle]').addEventListener('click', () => $('#filters').classList.toggle('open'));
     groupsEl.addEventListener('click', (e) => {
+      const g = e.target.closest('[data-group]');
+      if (g) {
+        if (!matchMedia('(max-width: 720px)').matches) return;
+        if (!state.openGroups) state.openGroups = new Set($$('#groups .group:not(.folded) [data-group]').map((x) => x.dataset.group));
+        const k = g.dataset.group;
+        const open = !state.openGroups.has(k);
+        if (open) state.openGroups.add(k); else state.openGroups.delete(k);
+        g.closest('.group').classList.toggle('folded', !open);
+        g.setAttribute('aria-expanded', String(open));
+        return;
+      }
+      const more = e.target.closest('[data-more],[data-less]');
+      if (more) {
+        if (more.dataset.more) state.expanded.add(more.dataset.more); else state.expanded.delete(more.dataset.less);
+        render();
+        return;
+      }
       const v = e.target.closest('[data-view]');
       if (v) {
         if (v.dataset.view === 'chart') state.charts.add(v.dataset.key); else state.charts.delete(v.dataset.key);
@@ -914,6 +946,11 @@
       return out;
     }
 
+    // Phones: hide the sticky total once the full result is on screen.
+    const stickyEl = $('#hh-sticky');
+    if (stickyEl && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([en]) => stickyEl.classList.toggle('away', en.isIntersecting), { threshold: 0.15 }).observe($('#hh-result'));
+    }
     function renderResult() {
       const ls = lines();
       const total = ls.reduce((a, l) => a + l.kg, 0);
@@ -923,13 +960,16 @@
       const hkPer = hkLatest ? hkLatest.per_capita * 1000 : 0;
       const cmpMax = Math.max(per, hkPer, 1);
       const empty = total === 0;
+      const bar = $('#hh-sticky');
+      if (bar) bar.classList.toggle('empty', total === 0);
+      if (bar) bar.innerHTML = `<span>${esc(L('全家每年', 'Household / year'))}</span><b>${esc(tFmt(total))}</b><span>${esc(L('公噸', 't CO₂e'))}</span><i>${esc(L('看明細', 'Details'))} ↓</i>`;
       $('#hh-result').innerHTML = `
         <div class="hr-head">
           <span class="hr-label">${esc(L('全家每年', 'Household per year'))}</span>
           <div class="hr-total"><b>${esc(tFmt(total))}</b><span>${esc(L('公噸二氧化碳當量', 't CO₂e'))}</span></div>
           <p class="hr-sub">${esc(L(`即 ${kgFmt(total)} 千克 · 每人 ${tFmt(per)} 公噸（${people} 人）`, `${kgFmt(total)} kg · ${tFmt(per)} t per person (${people} ${people === 1 ? 'person' : 'people'})`))}</p>
         </div>
-        ${empty ? `<p class="hr-empty">${esc(L('在左邊填上帳單用量，結果會即時顯示。', 'Enter the usage from your bills; the result updates as you type.'))}</p>` : `
+        ${empty ? `<p class="hr-empty">${esc(L('填上帳單用量，結果會即時顯示。', 'Enter the usage from your bills; the result updates as you type.'))}</p>` : `
         <div class="hr-bars">${ls.filter((l) => l.kg > 0).map((l) => `
           <div class="hr-bar"><span class="n"><i class="hh-ico ${l.group}"></i>${esc(L(...l.name))}</span>
             <span class="v">${esc(kgFmt(l.kg))} <small>kg</small></span>
