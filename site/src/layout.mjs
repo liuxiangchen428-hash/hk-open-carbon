@@ -15,10 +15,12 @@ const nav = [
   { file: 'sources.html', zh: '來源與方法', en: 'Sources & method', short: ['來源', 'Sources'], icon: '<path d="M6 3h6l3 3v11H6z"/><path d="M12 3v3h3M8.5 10h4M8.5 13h4"/>' },
 ];
 
+// Logo: an open "C" (carbon, open source) with a leaf in the opening.
 const mark = `<svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
-  <rect x="1" y="1" width="30" height="30" rx="7" fill="var(--accent)"/>
-  <path d="M9 21.5c0-6 4.2-10.5 10.5-11.5-1 3.2-1.2 6.4 0 9.5-3.4-.6-6.9.3-10.5 2Z" fill="var(--on-accent)"/>
-  <path d="M9 21.5c3.6-2.6 7.2-4.3 11-5" stroke="var(--accent)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <rect x="1" y="1" width="30" height="30" rx="8" fill="var(--mark-bg)" stroke="var(--mark-line)" stroke-width="1"/>
+  <path d="M22.4 9.6A9 9 0 1 0 22.4 22.4" fill="none" stroke="var(--mark-c)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M19.5 16C19.5 12.4 22.2 10 26 9.6 26 13.6 23.6 16 19.5 16Z" fill="var(--mark-leaf)"/>
+  <path d="M19.5 16C21.6 14.2 23.4 12.4 25 10.6" stroke="var(--mark-bg)" stroke-width=".9" fill="none" stroke-linecap="round"/>
 </svg>`;
 
 export function layout({ file, title, description, body, stats }) {
@@ -37,6 +39,8 @@ export function layout({ file, title, description, body, stats }) {
 <meta name="description" content="${description}">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta name="theme-color" content="#0b1d18">
 <link rel="stylesheet" href="assets/style.css?v=${stats.v}">
 <script>try{var l=localStorage.getItem('hkoc-lang');if(l)document.documentElement.dataset.lang=l;}catch(e){}</script>
 </head>

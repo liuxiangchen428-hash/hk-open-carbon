@@ -100,7 +100,7 @@ html[data-lang="zh"] .l-en, html[data-lang="en"] .l-zh { display: none !importan
 .header-inner { display: flex; align-items: center; gap: 28px; height: 64px; }
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--band-ink); margin-right: auto; min-width: 0; }
 .brand:hover { color: var(--band-ink); }
-.mark { width: 30px; height: 30px; flex: none; --accent: var(--band-accent); --on-accent: var(--band); }
+.mark { width: 30px; height: 30px; flex: none; --mark-bg: #0b1d18; --mark-line: rgb(238 243 239 / .16); --mark-c: #f4f3ee; --mark-leaf: #6fd3ae; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
 .brand-name { font-family: var(--serif); font-weight: 600; font-size: 16px; letter-spacing: .02em; white-space: nowrap; }
 .brand-sub { font-size: 10.5px; color: var(--band-muted); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }

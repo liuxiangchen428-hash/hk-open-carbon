@@ -17,6 +17,7 @@ Claude 每次開始工作前先讀這份文件。它記錄項目背景、已作�
 
 | 日期 | 決定 | 原因 |
 | --- | --- | --- |
+| 2026-11-22 | Logo 定為方案 B「開口的 C」：深色方塊、白色 C（碳 Carbon，開口代表開源）、開口處一片薄荷綠葉；`site/assets/favicon.svg`、`icon-180.png`、`icon-512.png` | 維護者選擇；小尺寸最清楚 |
 | 2026-11-22 | 網站加 AI 助手：Cloudflare Worker（`worker/`）+ Workers AI 開源模型（免費額度），只按已審核系數回答並引用系數編號；問題送 Cloudflare 處理、不記錄，網頁註明；`site/src/config.mjs` 的 `AI_ENDPOINT` 為空時不顯示按鈕 | 維護者選擇做法一（免費、可換模型） |
 | 2026-11-22 | 英文名定為 HK Open Carbon Platform；公開聯絡郵箱 liuxiangchen428@gmail.com；倉庫公開並以 GitHub Pages 部署網站；顧問及去信之後再定 | 維護者決定 |
 | 2026-11-22 | 4 個 IPCC 預設燃料系數保留；公開前與去信政府部門一併去信 IPCC 請求許可。再使用條款已讀原文：英國政府系數 OGL v3（可商用）；IPCC、溫室氣體議定書、建造業議會限制商業用途；Poore & Nemecek 只作參考 | 維護者選擇保留國際參考值 |
