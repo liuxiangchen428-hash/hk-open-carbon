@@ -295,6 +295,27 @@ const calculator = () => `
           <label class="check check-band"><input type="checkbox" id="hh-sewage" checked> ${t('包括污水處理（住宅按用水量 100% 計）', 'Include sewage treatment (homes: 100% of water used)')}</label>
         </fieldset>
 
+        <fieldset class="hh-sec">
+          <legend><span class="hh-ico t" aria-hidden="true"></span>${t('交通', 'Transport')}</legend>
+          <div class="hh-row">
+            <label class="hh-field grow"><span>${t('港鐵：每週車程（程）', 'MTR: trips per week')}</span>
+              <input type="number" id="hh-mtr-trips" min="0" step="any" inputmode="decimal" placeholder="0" data-needs="mtr"></label>
+            <label class="hh-field"><span>${t('平均每程（公里）', 'Average km per trip')}</span>
+              <input type="number" id="hh-mtr-km" min="0" step="any" inputmode="decimal" placeholder="0" data-needs="mtr"></label>
+          </div>
+          <div class="hh-row">
+            <label class="hh-field grow"><span>${t('巴士：每週車程（程）', 'Bus: trips per week')}</span>
+              <input type="number" id="hh-bus" min="0" step="any" inputmode="decimal" placeholder="0" data-needs="bus"></label>
+          </div>
+          <div class="hh-row">
+            <label class="hh-field grow"><span>${t('私家車：每月入油（公升）', 'Car: fuel per month (litres)')}</span>
+              <input type="number" id="hh-fuel" min="0" step="any" inputmode="decimal" placeholder="0"></label>
+            <label class="hh-field"><span>${t('燃料', 'Fuel')}</span>
+              <select id="hh-fuel-type"><option value="petrol">汽油 / Petrol</option><option value="diesel">柴油 / Diesel</option></select></label>
+          </div>
+          <p class="hh-pending" id="hh-pending" hidden></p>
+        </fieldset>
+
         <div class="hh-actions">
           <button type="button" class="pill" data-example>${t('填入示例', 'Fill an example')}</button>
           <button type="button" class="pill" data-clear>${t('清除', 'Clear')}</button>

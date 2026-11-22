@@ -824,7 +824,10 @@
     clp: 'hk.energy.electricity.clp', hke: 'hk.energy.electricity.hke',
     gasProd: 'hk.energy.town-gas.purchased', gasComb: 'hk.energy.town-gas.combustion-co2e',
     water: 'hk.water.fresh-water.wsd', sewage: 'hk.water.sewage.dsd',
+    mtr: 'hk.transport.rail.mtr-co2-per-pkm', bus: 'hk.transport.bus.tih-per-trip',
   };
+  const HH_FUEL = { petrol: 'hk.energy.fuel.petrol.mobile.co2.emsd2010', diesel: 'hk.energy.fuel.diesel.mobile.co2.emsd2010' };
+  const MASS_KG = { g: 0.001, kg: 1, t: 1000 };
   const HH_KEY = 'hkoc-calc';
   const HH_PERIOD = { 1: ['每月', 'per month'], 2: ['每兩個月', 'every 2 months'], 4: ['每四個月', 'every 4 months'], 12: ['全年', 'whole year'] };
 
@@ -838,7 +841,7 @@
   function initCalculator() {
     const form = $('#hh-form');
     if (!form) return;
-    const st = { people: 1, year: null, supplier: 'clp', kwh: '', gas: '', water: '', p_kwh: 1, p_gas: 1, p_water: 1, sewage: true };
+    const st = { people: 1, year: null, supplier: 'clp', kwh: '', gas: '', water: '', p_kwh: 1, p_gas: 1, p_water: 1, sewage: true, mtrTrips: '', mtrKm: '', bus: '', fuel: '', fuelType: 'petrol' };
     try { Object.assign(st, JSON.parse(localStorage.getItem(HH_KEY) || '{}')); } catch {}
     const save = () => { try { localStorage.setItem(HH_KEY, JSON.stringify(st)); } catch {} };
     const inv = DATA.inventory?.[0];
@@ -857,6 +860,13 @@
       $('#hh-people').value = st.people;
       $('#hh-kwh').value = st.kwh; $('#hh-gas').value = st.gas; $('#hh-water').value = st.water;
       $('#hh-sewage').checked = st.sewage;
+      $('#hh-mtr-trips').value = st.mtrTrips; $('#hh-mtr-km').value = st.mtrKm; $('#hh-bus').value = st.bus;
+      $('#hh-fuel').value = st.fuel; $('#hh-fuel-type').value = st.fuelType;
+      const missing = ['mtr', 'bus'].filter((k) => !factorFor(HH_SERIES[k], st.year));
+      $$('[data-needs]', form).forEach((i) => { i.disabled = missing.includes(i.dataset.needs); });
+      const pend = $('#hh-pending');
+      pend.hidden = !missing.length;
+      pend.textContent = L(`${missing.map((k) => (k === 'mtr' ? '港鐵' : '巴士')).join('、')}系數仍待維護者核對，暫不計算。`, `${missing.map((k) => (k === 'mtr' ? 'MTR' : 'Bus')).join(' and ')} factors are awaiting the maintainer’s check and are not counted yet.`);
       $$('.calc-period', form).forEach((s) => {
         s.innerHTML = Object.entries(HH_PERIOD).map(([v, l]) => `<option value="${v}">${esc(L(...l))}</option>`).join('');
         s.value = String(st[`p_${s.dataset.period}`]);
@@ -871,7 +881,7 @@
       const add = (key, name, qty, unit, series, extra) => {
         const f = factorFor(series, y);
         if (!f) return;
-        out.push({ key, name, qty, unit, f, kg: qty * f.value, ...extra });
+        out.push({ key, name, qty, unit, f, kg: qty * f.value * (MASS_KG[splitUnit(f.unit).mass] ?? 1), ...extra });
       };
       const kwh = annual(st.kwh, st.p_kwh), gas = annual(st.gas, st.p_gas), water = annual(st.water, st.p_water);
       add('elec', st.supplier === 'clp' ? ['用電（中電）', 'Electricity (CLP)'] : ['用電（港燈）', 'Electricity (HK Electric)'], kwh, 'kWh', HH_SERIES[st.supplier], { group: 'e' });
@@ -879,6 +889,10 @@
       add('gasProd', ['煤氣生產', 'Town gas production'], gas, 'unit', HH_SERIES.gasProd, { group: 'g' });
       add('water', ['食水處理及供應', 'Fresh water supply'], water, 'm3', HH_SERIES.water, { group: 'w' });
       if (st.sewage) add('sewage', ['污水處理', 'Sewage treatment'], water, 'm3', HH_SERIES.sewage, { group: 'w' });
+      add('mtr', ['港鐵', 'MTR'], num(st.mtrTrips) * num(st.mtrKm) * 52, 'pkm', HH_SERIES.mtr, { group: 't' });
+      add('bus', ['巴士', 'Bus'], num(st.bus) * 52, 'trip', HH_SERIES.bus, { group: 't' });
+      const fuelF = DATA.factors.find((f) => f.id === HH_FUEL[st.fuelType] && f.status === 'reviewed');
+      if (fuelF) out.push({ key: 'car', name: st.fuelType === 'petrol' ? ['私家車（汽油）', 'Car (petrol)'] : ['私家車（柴油）', 'Car (diesel)'], qty: num(st.fuel) * 12, unit: 'L', f: fuelF, kg: num(st.fuel) * 12 * fuelF.value, group: 't', fixed: true });
       return out;
     }
 
@@ -907,7 +921,7 @@
         ${hkLatest ? `
         <div class="hr-cmp">
           <p class="hr-cmp-t">${esc(L('每人每年，公噸', 'Per person per year, tonnes'))}</p>
-          <div class="cmp-row you"><span>${esc(L('你家（家居用電、煤氣、水）', 'Your home (electricity, gas, water)'))}</span><b>${esc(tFmt(per))}</b>
+          <div class="cmp-row you"><span>${esc(L('你家（以上已填項目）', 'Your household (items entered)'))}</span><b>${esc(tFmt(per))}</b>
             <span class="t"><span style="width:${((per / cmpMax) * 100).toFixed(1)}%"></span></span></div>
           <div class="cmp-row hk"><span>${esc(L(`全港人均（${hkLatest.year} 年，所有排放）`, `Hong Kong average (${hkLatest.year}, all emissions)`))}</span><b>${esc(hkLatest.per_capita.toFixed(2))}</b>
             <span class="t"><span style="width:${((hkPer / cmpMax) * 100).toFixed(1)}%"></span></span></div>
@@ -917,10 +931,10 @@
 
     function renderLines() {
       const ls = lines();
-      const actName = { kWh: ['度', 'kWh'], unit: ['單位', 'units'], m3: ['立方米', 'm³'] };
+      const actName = { kWh: ['度', 'kWh'], unit: ['單位', 'units'], m3: ['立方米', 'm³'], pkm: ['乘客公里', 'passenger-km'], trip: ['程', 'trips'], L: ['公升', 'litres'] };
       $('#hh-lines').innerHTML = `<div class="hh-lines">${ls.map((l) => {
         const fy = yearFmt(l.f);
-        const other = l.f.year !== st.year;
+        const other = !l.fixed && l.f.year !== st.year;
         return `<div class="hl">
           <div class="hl-name"><i class="hh-ico ${l.group}"></i>${esc(L(...l.name))}</div>
           <div class="hl-calc">
@@ -928,7 +942,7 @@
             <a href="index.html#f=${encodeURIComponent(l.f.id)}" title="${esc(nm(l.f.name))}">${esc(l.f.value_text)} <small>${esc(emissionFmt(l.f.unit))}/${esc(L(...actName[l.unit]))}</small></a><span class="op">=</span>
             <b>${esc(kgFmt(l.kg))} kg</b>
           </div>
-          <div class="hl-meta">${esc(L(`系數年份 ${fy}`, `Factor year ${fy}`))}${other ? ` · <span class="warn">${esc(L(`沒有 ${st.year} 年的系數，用最接近的 ${fy}`, `No ${st.year} factor; using ${fy}`))}</span>` : ''}</div>
+          <div class="hl-meta">${esc(L(`系數年份 ${fy}`, `Factor year ${fy}`))}${l.f.quality === 'D' ? ` · ${esc(L('推算值（D 級）', 'Derived value (quality D)'))}` : ''}${l.f.gas === 'CO2' ? ` · ${esc(L('只計二氧化碳', 'CO₂ only'))}` : ''}${other ? ` · <span class="warn">${esc(L(`沒有 ${st.year} 年的系數，用最接近的 ${fy}`, `No ${st.year} factor; using ${fy}`))}</span>` : ''}</div>
         </div>`;
       }).join('')}</div>
       <p class="muted inv-small">${esc(L('用量按帳單涵蓋的月數換算成全年：例如兩個月的帳單 × 6。點系數可查看出處和核對紀錄。', 'Usage is scaled to a year from the billing period, e.g. a two-month bill × 6. Click a factor to see its source and checks.'))}</p>`;
@@ -941,8 +955,9 @@
           <li>${esc(L('用電：電力公司公佈的售電排放強度（按供電區）。', 'Electricity: the supplier’s published emission intensity of electricity sold, by supply area.'))}</li>
           <li>${esc(L('煤氣：家中燃燒加上煤氣生產，兩者都由煤氣公司公佈。', 'Town gas: burning at home plus production, both published by the gas company.'))}</li>
           <li>${esc(L('食水及污水：水務署、渠務署處理和輸送用的電力；住宅污水按用水量 100% 計，是政府碳審計範本的預設做法。', 'Water and sewage: electricity used by the Water Supplies and Drainage Services Departments; household sewage is counted as 100% of water used, the default in the government carbon audit template.'))}</li>
+          <li>${esc(L('交通：港鐵按乘客公里（只計二氧化碳）；巴士按每程（九巴及龍運的推算平均值）；私家車按入油量（只計二氧化碳，2010 年指引）。每週車程 × 52 換算全年。', 'Transport: MTR per passenger-km (CO₂ only); bus per trip (a derived KMB and Long Win average); car by fuel bought (CO₂ only, 2010 guidelines). Weekly trips × 52 for a year.'))}</li>
         </ul>
-        <p>${esc(L('不包括交通、飲食、購物和廢物，所以結果會比一個人的完整碳足跡低。只使用已經過維護者核對的系數。', 'Transport, food, shopping and waste are not included, so the result is lower than a full personal footprint. Only factors checked by the maintainer are used.'))}</p>`;
+        <p>${esc(L('不包括飛行、的士、小巴、渡輪、飲食、購物和廢物，所以結果會比一個人的完整碳足跡低。只使用已經過維護者核對的系數。', 'Flights, taxis, minibuses, ferries, food, shopping and waste are not included, so the result is lower than a full personal footprint. Only factors checked by the maintainer are used.'))}</p>`;
       const ls = lines();
       const seen = new Set();
       $('#hh-factors').innerHTML = ls.filter((l) => !seen.has(l.f.id) && seen.add(l.f.id)).map((l) => {
@@ -961,8 +976,13 @@
       else if (el.id === 'hh-kwh') st.kwh = el.value;
       else if (el.id === 'hh-gas') st.gas = el.value;
       else if (el.id === 'hh-water') st.water = el.value;
-      else if (el.id === 'hh-year') st.year = +el.value;
+      else if (el.id === 'hh-year') { st.year = +el.value; fillControls(); }
       else if (el.id === 'hh-sewage') st.sewage = el.checked;
+      else if (el.id === 'hh-mtr-trips') st.mtrTrips = el.value;
+      else if (el.id === 'hh-mtr-km') st.mtrKm = el.value;
+      else if (el.id === 'hh-bus') st.bus = el.value;
+      else if (el.id === 'hh-fuel') st.fuel = el.value;
+      else if (el.id === 'hh-fuel-type') st.fuelType = el.value;
       else if (el.dataset.period) st[`p_${el.dataset.period}`] = +el.value;
       save(); renderAll();
     });
@@ -971,11 +991,11 @@
       if (sup) { st.supplier = sup.dataset.supplier; fillControls(); save(); renderAll(); return; }
       if (e.target.closest('[data-example]')) {
         // Illustrative numbers only; not a typical or average household.
-        Object.assign(st, { people: 3, kwh: '550', p_kwh: 2, gas: '60', p_gas: 2, water: '40', p_water: 4, sewage: true });
+        Object.assign(st, { people: 3, kwh: '550', p_kwh: 2, gas: '60', p_gas: 2, water: '40', p_water: 4, sewage: true, mtrTrips: '10', mtrKm: '12', bus: '4', fuel: '', fuelType: 'petrol' });
         fillControls(); save(); renderAll(); return;
       }
       if (e.target.closest('[data-clear]')) {
-        Object.assign(st, { people: 1, kwh: '', gas: '', water: '', p_kwh: 1, p_gas: 1, p_water: 1, sewage: true });
+        Object.assign(st, { people: 1, kwh: '', gas: '', water: '', p_kwh: 1, p_gas: 1, p_water: 1, sewage: true, mtrTrips: '', mtrKm: '', bus: '', fuel: '', fuelType: 'petrol' });
         fillControls(); save(); renderAll();
       }
     });

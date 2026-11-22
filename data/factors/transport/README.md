@@ -14,3 +14,4 @@ Most Hong Kong operators do not publish emissions per passenger-km. Only publish
 - 城巴、小巴、電車、渡輪：未找到營運商公佈的排放數據。
 - 的士、私家車：沒有營運商數據；如要做需用燃料系數加假設耗油量，須維護者決定。
 - 港鐵 2025 年：等 2026 年報告的 COMET 數據。
+- 計算器已接上港鐵（每乘客公里）及巴士（每程）系列；系數改為 reviewed 後才會計入。私家車用 2010 年指引的汽油／柴油流動源 CO2 系數（已審核），未計 CH4、N2O。
