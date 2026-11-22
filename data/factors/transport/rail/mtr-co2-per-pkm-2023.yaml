@@ -14,7 +14,7 @@ source:
   page: "42 (report p.42)"
   table: "COMET Benchmarking Results 2024 > Environment > CO2 per passenger km (MTR bar)"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: pdf-visual
@@ -22,6 +22,12 @@ verification:
     value: 35.05
     page: "42 (report p.42)"
     note: Read the MTR bar label from a screenshot of the chart supplied by the maintainer.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-22
+    value: 35.05
+    page: "42 (report p.42)"
+    note: Checked by the maintainer against the source.
 tags: [mtr, comet-benchmark]
 notes:
   zh-Hant: 港鐵在國際地鐵基準組織 COMET 的對比數據。原圖沒有標示單位；按數量級判斷為每乘客公里克數（與學術研究的 55–71 克/乘客公里同一量級），此判斷經維護者同意。只計 CO2。乘客乘搭港鐵屬範圍 3（商務差旅或員工通勤）。

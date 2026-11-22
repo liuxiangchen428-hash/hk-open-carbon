@@ -16,7 +16,7 @@ source:
   page: "90 (report p.88)"
   table: "Performance Statistics > Environmental > GHG Emissions of Bus (Scope 1) Intensity (tCO2e per million km)"
 quality: B
-status: draft
+status: reviewed
 verification:
   - by: claude
     method: text-extract
@@ -24,6 +24,12 @@ verification:
     value: 1364
     page: "90 (report p.88)"
     note: Read from extracted text of the TIH 2025 annual report (FY 2025 column).
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-22
+    value: 1364
+    page: "90 (report p.88)"
+    note: Checked by the maintainer against the source.
 tags: [bus]
 notes:
   zh-Hant: 巴士每行駛 1 公里的排放（約 1.364 kg CO2e），屬車輛排放，不是每位乘客的排放。涵蓋載通國際旗下巴士業務；報告未說明包括哪幾家公司（集團亦經營非專營巴士）。
