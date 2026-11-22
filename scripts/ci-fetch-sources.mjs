@@ -51,6 +51,18 @@ function htmlToText(html, base) {
     .replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n');
 }
 
+// Wayback "id_" copies can be the stored compressed body with no
+// Content-Encoding header. Decompress gzip/brotli; return null if the body is
+// still not PDF, ZIP or valid UTF-8 text.
+function decodeBody(buf, meta) {
+  const isText = (b) => { try { new TextDecoder('utf-8', { fatal: true }).decode(b); return true; } catch { return false; } };
+  if (/^(%PDF-|PK)/.test(buf.subarray(0, 5).toString('latin1'))) return buf;
+  if (buf[0] === 0x1f && buf[1] === 0x8b) { try { meta.decoded = 'gzip'; return gunzipSync(buf); } catch { return null; } }
+  if (isText(buf)) return buf;
+  try { const out = brotliDecompressSync(buf); if (isText(out)) { meta.decoded = 'br'; return out; } } catch {}
+  return null;
+}
+
 let failures = 0;
 for (const id of ids) {
   const src = registry.get(id);
@@ -65,13 +77,18 @@ for (const id of ids) {
     const candidates = useArchive ? [archiveRaw, archivePlain] : [src.url, archiveRaw, archivePlain];
     const tries = candidates.filter(Boolean);
     if (!tries.length) throw new Error(useArchive ? 'no archive_url recorded' : 'no url');
-    let res;
+    let res, body;
     meta.attempts = [];
     for (const u of tries) {
       try {
         res = await fetch(u, { headers: { 'User-Agent': UA }, redirect: 'follow' });
         meta.attempts.push(`${u} -> HTTP ${res.status}`);
-        if (res.ok) { meta.url = u; meta.from_archive = u !== src.url; break; }
+        if (res.ok) {
+          body = decodeBody(Buffer.from(await res.arrayBuffer()), meta);
+          if (body) { meta.url = u; meta.from_archive = u !== src.url; break; }
+          meta.attempts.push(`${u} -> body still compressed, trying next`);
+          res = null;
+        }
       } catch (e) {
         meta.attempts.push(`${u} -> ${e.message}${e.cause ? ` (${e.cause.code ?? ''} ${e.cause.message ?? ''})` : ''}`);
         res = null;
@@ -81,15 +98,7 @@ for (const id of ids) {
     meta.http_status = res.status;
     meta.final_url = res.url;
     meta.content_type = res.headers.get('content-type') ?? '';
-    let buf = Buffer.from(await res.arrayBuffer());
-    // Wayback "id_" copies can be the stored compressed body with no
-    // Content-Encoding header. Decompress gzip by magic bytes; for anything that
-    // is not PDF/ZIP and is not valid UTF-8, try brotli.
-    if (buf[0] === 0x1f && buf[1] === 0x8b) { buf = gunzipSync(buf); meta.decoded = 'gzip'; }
-    else if (!/^(%PDF-|PK)/.test(buf.subarray(0, 5).toString('latin1'))) {
-      try { new TextDecoder('utf-8', { fatal: true }).decode(buf); }
-      catch { try { buf = brotliDecompressSync(buf); meta.decoded = 'br'; } catch {} }
-    }
+    const buf = body;
     if (buf.length > MAX_BYTES) throw new Error(`file too large (${buf.length} bytes)`);
     meta.bytes = buf.length;
     meta.sha256 = createHash('sha256').update(buf).digest('hex');
