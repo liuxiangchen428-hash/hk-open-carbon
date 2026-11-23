@@ -1114,7 +1114,15 @@ a:hover { color: var(--accent-ink); }
 .t-label::before { content: none !important; display: none !important; }
 
 /* ---------- carbon map ---------- */
-:root { --map-clp: color-mix(in srgb, var(--c-elec) 38%, var(--bg)); --map-hke: var(--c-elec); --map-off: color-mix(in srgb, var(--ink) 9%, var(--bg)); }
+/* Map colours: warm paper land, quiet sea, one smooth ramp per layer. */
+:root {
+  --map-sea: #f3f5f6; --map-off: #e7e4dd; --map-line: #ffffff;
+  --ember-lo: #f7dcc0; --ember-hi: #a8321f;   /* electricity: peach to brick */
+  --sun-lo: #fbeec2; --sun-hi: #c77a00;       /* solar: pale butter to amber */
+}
+@media (prefers-color-scheme: dark) {
+  :root { --map-sea: #121416; --map-off: #2b2a27; --map-line: #121416; --ember-lo: #4a2a1f; --ember-hi: #ff7b5c; --sun-lo: #3d3214; --sun-hi: #ffc94d; }
+}
 .map-wrap { padding: 28px 0 88px; }
 .map-bar { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 16px; }
 .map-period { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; }
@@ -1201,3 +1209,19 @@ a:hover { color: var(--accent-ink); }
   .tabbar a { font-size: 10.5px; }
 }
 .map-period[hidden], .map-back[hidden], .map-tip[hidden] { display: none !important; }
+
+/* map: refined look */
+.map-stage { background: var(--map-sea); }
+.dist { stroke: var(--map-line); }
+.dist.hover { transform: translateY(-2px); filter: drop-shadow(0 5px 5px rgb(40 25 10 / .22)); stroke: var(--map-line); }
+.dist.sel { stroke: var(--rule); }
+.dist.dim { opacity: .4; }
+.dl { font-weight: 700; fill: color-mix(in srgb, var(--ink) 82%, transparent); stroke: color-mix(in srgb, var(--bg) 85%, transparent); }
+.map-legend { font-weight: 600; color: var(--ink-2); }
+.map-legend .muted { color: var(--muted); font-weight: 500; }
+.map-legend i { border-radius: 2px; }
+.map-legend i.ramp.ember { background: linear-gradient(90deg in oklab, var(--ember-lo), var(--ember-hi)); }
+.map-legend i.ramp.sun { background: linear-gradient(90deg in oklab, var(--sun-lo), var(--sun-hi)); }
+.mp-sec:nth-of-type(1), .mp-sec:has(.mp-split) { --c: var(--ember-hi); }
+.mp-sec:has(.mp-years) { --c: var(--sun-hi); }
+.mp-split i, .mp-rank i { background: var(--ember-hi); }

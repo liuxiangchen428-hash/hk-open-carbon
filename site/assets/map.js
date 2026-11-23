@@ -60,22 +60,29 @@
       <g id="map-labels" aria-hidden="true">${M.districts.map((d) => `<text class="dl" data-code="${d.code}" x="${d.label[0]}" y="${d.label[1]}"></text>`).join('')}</g>`;
   }
 
+  // t in 0..1 -> colour on the layer's ramp (two ends defined in CSS), mixed in OKLab.
+  const ramp = (name, t) => `color-mix(in oklab, var(--${name}-hi) ${Math.round(Math.max(0, Math.min(1, t)) * 100)}%, var(--${name}-lo))`;
   function fillFor(code) {
-    if (st.layer === 'supply') return supplierOf(code) === 'hke' ? 'var(--map-hke)' : 'var(--map-clp)';
+    if (st.layer === 'supply') {
+      // Colour by the latest emission factor per kWh: lighter = cleaner.
+      const c = latestFactor('clp').value, h = latestFactor('hke').value;
+      const v = supplierOf(code) === 'hke' ? h : c;
+      return ramp('ember', 0.12 + 0.88 * (v - 0.3) / (Math.max(c, h) - 0.3));
+    }
     if (st.layer === 'hke') {
       if (supplierOf(code) !== 'hke') return 'var(--map-off)';
       const rows = M.districts.filter((d) => supplierOf(d.code) === 'hke').map((d) => hkeRow(d.code, st.hkePeriod)?.consumption_gwh ?? 0);
       const r = hkeRow(code, st.hkePeriod);
       if (!r) return 'var(--map-off)';
       const t = (r.consumption_gwh - Math.min(...rows)) / ((Math.max(...rows) - Math.min(...rows)) || 1);
-      return `color-mix(in srgb, var(--c-elec) ${Math.round(30 + t * 70)}%, var(--bg))`;
+      return ramp('ember', 0.15 + t * 0.85);
     }
     const reg = regionOf(code);
     if (!reg) return 'var(--map-off)';
     const vals = ['kowloon', 'nt'].map((g) => solarRow(g, st.solarMonth)?.solar_wind_kwh ?? 0);
     const r = solarRow(reg, st.solarMonth);
     const t = r ? r.solar_wind_kwh / (Math.max(...vals) || 1) : 0;
-    return `color-mix(in srgb, var(--c-move) ${Math.round(25 + t * 75)}%, var(--bg))`;
+    return ramp('sun', 0.2 + t * 0.8);
   }
 
   function labelFor(d) {
@@ -114,7 +121,7 @@
       tx.style.strokeWidth = `${3 * scale}px`;
       tx.classList.toggle('hide', !!st.sel && tx.dataset.code !== st.sel);
     }
-    $$('.dist', svg).forEach((p) => p.style.setProperty('stroke-width', `${(p.classList.contains('sel') ? 2.4 : 0.9) * scale}px`));
+    $$('.dist', svg).forEach((p) => p.style.setProperty('stroke-width', `${(p.classList.contains('sel') ? 2 : 1.1) * scale}px`));
     renderLegend();
     renderPanel();
     renderNotes();
@@ -123,11 +130,11 @@
   function renderLegend() {
     const el = $('#map-legend');
     if (st.layer === 'supply') {
-      el.innerHTML = `<span><i style="background:var(--map-clp)"></i>${esc(L('中電供電', 'CLP area'))}</span><span><i style="background:var(--map-hke)"></i>${esc(L('港燈供電', 'HK Electric area'))}</span>`;
+      el.innerHTML = `<span><i style="background:${fillFor('E')}"></i>${esc(L(`中電 ${latestFactor('clp').text}`, `CLP ${latestFactor('clp').text}`))}</span><span><i style="background:${fillFor('A')}"></i>${esc(L(`港燈 ${latestFactor('hke').text}`, `HK Electric ${latestFactor('hke').text}`))}</span><span class="muted">${esc(L('kg CO₂e / 度，顏色越深排放越高', 'kg CO₂e per kWh; darker = higher'))}</span>`;
     } else if (st.layer === 'hke') {
-      el.innerHTML = `<span><i class="ramp red"></i>${esc(L('用電量（顏色越深越多）', 'Consumption (darker = more)'))}</span><span><i style="background:var(--map-off)"></i>${esc(L('沒有分區數據（中電區）', 'No district data (CLP area)'))}</span>`;
+      el.innerHTML = `<span><i class="ramp ember"></i>${esc(L('用電量，越深越多', 'Consumption, darker = more'))}</span><span><i style="background:var(--map-off)"></i>${esc(L('中電區沒有分區數據', 'No district data (CLP area)'))}</span>`;
     } else {
-      el.innerHTML = `<span><i class="ramp green"></i>${esc(L('太陽能及風能發電（只分九龍、新界）', 'Solar and wind (Kowloon / NT only)'))}</span><span><i style="background:var(--map-off)"></i>${esc(L('沒有數據', 'No data'))}</span>`;
+      el.innerHTML = `<span><i class="ramp sun"></i>${esc(L('太陽能及風能發電，越深越多（只分九龍、新界）', 'Solar and wind, darker = more (Kowloon / NT only)'))}</span><span><i style="background:var(--map-off)"></i>${esc(L('沒有數據', 'No data'))}</span>`;
     }
   }
 
@@ -240,8 +247,8 @@
     if (st.layer === 'supply') {
       const c = latestFactor('clp'), h = latestFactor('hke');
       return `<p class="mp-k">${esc(L('全港', 'All of Hong Kong'))}</p><h2>${esc(L('誰供電，每度電排放多少', 'Who supplies power, and its emissions per kWh'))}</h2>
-        <div class="mp-two"><div style="--c:var(--map-clp)"><span>${esc(L('中電', 'CLP'))}</span><b>${esc(c.text)}</b><small>kg CO₂e / ${esc(L('度', 'kWh'))} · ${c.year}</small><em>${esc(L('九龍、新界、大部分離島', 'Kowloon, NT, most islands'))}</em></div>
-        <div style="--c:var(--map-hke)"><span>${esc(L('港燈', 'HK Electric'))}</span><b>${esc(h.text)}</b><small>kg CO₂e / ${esc(L('度', 'kWh'))} · ${h.year}</small><em>${esc(L('港島、鴨脷洲、南丫島', 'HK Island, Ap Lei Chau, Lamma'))}</em></div></div>
+        <div class="mp-two"><div style="--c:${fillFor('E')}"><span>${esc(L('中電', 'CLP'))}</span><b>${esc(c.text)}</b><small>kg CO₂e / ${esc(L('度', 'kWh'))} · ${c.year}</small><em>${esc(L('九龍、新界、大部分離島', 'Kowloon, NT, most islands'))}</em></div>
+        <div style="--c:${fillFor('A')}"><span>${esc(L('港燈', 'HK Electric'))}</span><b>${esc(h.text)}</b><small>kg CO₂e / ${esc(L('度', 'kWh'))} · ${h.year}</small><em>${esc(L('港島、鴨脷洲、南丫島', 'HK Island, Ap Lei Chau, Lamma'))}</em></div></div>
         <p class="mp-hint">${esc(L('點地圖上任何一區，放大並查看歷年數字。', 'Click any district to zoom in and see the years.'))}</p>`;
     }
     if (st.layer === 'hke') {
@@ -253,8 +260,8 @@
     }
     const k = solarRow('kowloon', st.solarMonth), n = solarRow('nt', st.solarMonth);
     return `<p class="mp-k">${esc(monthName(st.solarMonth))}</p><h2>${esc(L('自家太陽能及風能發電', 'Customer solar and wind generation'))}</h2>
-      <div class="mp-two"><div style="--c:var(--c-move)"><span>${esc(L('新界', 'New Territories'))}</span><b>${esc(num(n.solar_wind_kwh / 1e6, 2))}</b><small>${esc(L('百萬度', 'GWh'))}</small><em>${esc(L(`${num(n.solar_wind_accounts)} 個客戶`, `${num(n.solar_wind_accounts)} accounts`))}</em></div>
-      <div style="--c:color-mix(in srgb, var(--c-move) 45%, var(--bg))"><span>${esc(L('九龍', 'Kowloon'))}</span><b>${esc(num(k.solar_wind_kwh / 1e6, 2))}</b><small>${esc(L('百萬度', 'GWh'))}</small><em>${esc(L(`${num(k.solar_wind_accounts)} 個客戶`, `${num(k.solar_wind_accounts)} accounts`))}</em></div></div>
+      <div class="mp-two"><div style="--c:${fillFor('R')}"><span>${esc(L('新界', 'New Territories'))}</span><b>${esc(num(n.solar_wind_kwh / 1e6, 2))}</b><small>${esc(L('百萬度', 'GWh'))}</small><em>${esc(L(`${num(n.solar_wind_accounts)} 個客戶`, `${num(n.solar_wind_accounts)} accounts`))}</em></div>
+      <div style="--c:${fillFor('E')}"><span>${esc(L('九龍', 'Kowloon'))}</span><b>${esc(num(k.solar_wind_kwh / 1e6, 2))}</b><small>${esc(L('百萬度', 'GWh'))}</small><em>${esc(L(`${num(k.solar_wind_accounts)} 個客戶`, `${num(k.solar_wind_accounts)} accounts`))}</em></div></div>
       <p class="mp-src">${esc(L('接上中電電錶的客戶太陽能及風能系統（上網電價計劃）。中電只分九龍、新界公佈。', 'Customer solar and wind systems on CLP meters (feed-in tariff). CLP publishes Kowloon and the New Territories only.'))}</p>`;
   }
 

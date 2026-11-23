@@ -1,6 +1,6 @@
 # Data behind the district carbon map (site page map.html).
 # Values are copied as published. Nothing here is derived except the simplified boundary shapes.
-status: draft
+status: reviewed
 updated: 2026-11-23
 
 boundaries:
@@ -53,3 +53,7 @@ verification:
     method: text-extract
     date: 2026-11-23
     note: Tables written by script from the source files (HK Electric CSVs fetched via Actions; CLP CSV supplied by the maintainer). Row sums checked; the two CLP inconsistencies above are in the source.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-23
+    note: 'Spot-checked five figures against the sources and confirmed them ("都對"): HK Electric 2025 H2 Wan Chai 1,332 GWh, 109 thousand customers, 12,265 kWh; Eastern residential 532, commercial 900, industrial 59 GWh; CLP Sep 2026 New Territories 37,550,728 kWh and 24,933 accounts, Kowloon 3,886,231 kWh and 1,130 accounts; 2021 Census Sha Tin population 692,806 and households 246,425.'
