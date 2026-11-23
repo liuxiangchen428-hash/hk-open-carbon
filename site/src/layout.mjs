@@ -12,6 +12,7 @@ const nav = [
   { file: 'index.html', zh: '系數庫', en: 'Factors', short: ['系數', 'Factors'], icon: '<path d="M4 5h12M4 10h12M4 15h8"/>' },
   { file: 'calculator.html', zh: '計算器', en: 'Calculator', short: ['計算', 'Calculate'], icon: '<rect x="4.5" y="3" width="11" height="14" rx="2"/><path d="M7.5 7h5M7.5 10.5h1M11.5 10.5h1M7.5 13.5h1M11.5 13.5h1"/>' },
   { file: 'inventory.html', zh: '排放清單', en: 'Inventory', short: ['清單', 'Inventory'], icon: '<path d="M4 16V10M8 16V6M12 16V8M16 16V4"/>' },
+  { file: 'map.html', zh: '碳地圖', en: 'Map', short: ['地圖', 'Map'], icon: '<path d="M3 5.5l4.5-2 5 2 4.5-2v11l-4.5 2-5-2-4.5 2z"/><path d="M7.5 3.5v11M12.5 5.5v11"/>' },
   { file: 'sources.html', zh: '來源與方法', en: 'Sources & method', short: ['來源', 'Sources'], icon: '<path d="M6 3h6l3 3v11H6z"/><path d="M12 3v3h3M8.5 10h4M8.5 13h4"/>' },
 ];
 
@@ -23,7 +24,7 @@ const mark = `<svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
   <path d="M19.5 16C21.6 14.2 23.4 12.4 25 10.6" stroke="var(--mark-bg)" stroke-width=".9" fill="none" stroke-linecap="round"/>
 </svg>`;
 
-export function layout({ file, title, description, body, stats }) {
+export function layout({ file, title, description, body, stats, script }) {
   const links = nav
     .map((n) => `<a href="${n.file}"${n.file === file ? ' aria-current="page"' : ''}>${t(n.zh, n.en)}</a>`)
     .join('');
@@ -81,7 +82,7 @@ ${body}
     </div>
   </div>
 </footer>
-<script src="assets/app.js?v=${stats.v}" defer></script>
+<script src="assets/app.js?v=${stats.v}" defer></script>${script ? `\n<script src="assets/${script}?v=${stats.v}" defer></script>` : ''}
 </body>
 </html>
 `;

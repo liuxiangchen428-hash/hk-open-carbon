@@ -356,6 +356,38 @@ const calculator = () => `
 </section>
 `;
 
+
+const map = () => `
+<section class="page-head map-head"><div class="wrap">
+  <p class="eyebrow">${t('香港碳地圖', 'Hong Kong carbon map')}</p>
+  <h1>${t('十八區，<span class="nb">用電與發電。</span>', '18 districts, <span class="nb">power used and made.</span>')}</h1>
+  <p class="lede">${t(
+    '把滑鼠移到地區上看數字，點一下放大並查看歷年數據。所有數字照錄自電力公司及政府公佈，不作推算。',
+    'Hover over a district to see its figures; click to zoom in and step through the years. Every number is copied from what the power companies and government publish; nothing is estimated.',
+  )}</p>
+</div></section>
+<section class="wrap map-wrap">
+  <div class="map-bar">
+    <div class="seg" id="map-layer" role="radiogroup" aria-label="Layer">
+      <button type="button" data-layer="supply" aria-pressed="true">${t('供電與排放系數', 'Supply & factor')}</button>
+      <button type="button" data-layer="hke" aria-pressed="false">${t('港島用電', 'HK Island use')}</button>
+      <button type="button" data-layer="solar" aria-pressed="false">${t('自家太陽能', 'Rooftop solar')}</button>
+    </div>
+    <label class="map-period" id="map-period-wrap" hidden><span id="map-period-label"></span><select id="map-period"></select></label>
+  </div>
+  <div class="map-grid">
+    <div class="map-stage" id="map-stage">
+      <svg id="map-svg" role="img" aria-label="Map of Hong Kong's 18 districts"></svg>
+      <button type="button" class="map-back pill" id="map-back" hidden>← ${t('返回全港', 'All of Hong Kong')}</button>
+      <div class="map-tip" id="map-tip" hidden></div>
+      <div class="map-legend" id="map-legend"></div>
+    </div>
+    <aside class="map-panel" id="map-panel" aria-live="polite"></aside>
+  </div>
+  <div class="map-notes" id="map-notes"></div>
+</section>
+`;
+
 export const pages = [
   {
     file: 'index.html',
@@ -374,6 +406,13 @@ export const pages = [
     title: { zh: '排放清單', en: 'Inventory' },
     description: 'Hong Kong greenhouse gas emissions by sector, 1990 to the latest year, from the government inventory.',
     body: inventory,
+  },
+  {
+    file: 'map.html',
+    title: { zh: '碳地圖', en: 'Carbon map' },
+    description: 'Hong Kong district map: power supplier and emission factor, HK Electric consumption by district, and CLP customer solar by region.',
+    body: map,
+    script: 'map.js',
   },
   {
     file: 'sources.html',

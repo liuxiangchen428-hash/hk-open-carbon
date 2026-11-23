@@ -48,7 +48,26 @@ for (const [key, node] of Object.entries(categoryTree)) {
   }
 }
 
+// District map: boundaries, supply areas and the two published tables (see data/map/map.yaml).
+const mapDir = join(root, 'data', 'map');
+const mapMeta = yaml.load(readFileSync(join(mapDir, 'map.yaml'), 'utf8'));
+const readCsv = (file) => {
+  const [head, ...rows] = readFileSync(join(mapDir, file), 'utf8').trim().split('\n');
+  const cols = head.split(',');
+  return rows.map((r) => Object.fromEntries(r.split(',').map((v, i) => [cols[i], /^-?\d+(\.\d+)?$/.test(v) ? Number(v) : v])));
+};
+const mapData = {
+  ...JSON.parse(readFileSync(join(mapDir, 'hk-districts.json'), 'utf8')),
+  status: mapMeta.status,
+  supply: mapMeta.supply_areas,
+  hke: readCsv('hke-district-consumption.csv'),
+  clpRe: readCsv('clp-renewables-by-region.csv'),
+  notes: { boundaries: mapMeta.boundaries.notes, supply: mapMeta.supply_areas.source_note, clpRe: mapMeta.tables.find((t) => t.file === 'clp-renewables-by-region.csv').notes },
+  sources: [mapMeta.boundaries.source, ...mapMeta.tables.flatMap((t) => t.sources)],
+};
+
 const usedSources = new Set(factors.map((f) => f.source.id));
+for (const s of mapData.sources) usedSources.add(s);
 for (const t of inventory) for (const c of [...Object.values(t.columns), ...(t.targets ?? [])]) usedSources.add(c.source);
 const data = {
   built: new Date().toISOString().slice(0, 10),
@@ -67,6 +86,7 @@ mkdirSync(join(out, 'api', 'v1'), { recursive: true });
 cpSync(join(root, 'site', 'assets'), join(out, 'assets'), { recursive: true });
 
 writeFileSync(join(out, 'assets', 'data.json'), JSON.stringify(data));
+writeFileSync(join(out, 'assets', 'map.json'), JSON.stringify(mapData));
 // Public, stable API files (same content as the release bundle).
 writeFileSync(join(out, 'api', 'v1', 'factors.json'), JSON.stringify(data.factors.map(({ value_text, file, ...f }) => f), null, 2));
 writeFileSync(join(out, 'api', 'v1', 'inventory.json'), JSON.stringify(inventory, null, 2));
@@ -81,7 +101,7 @@ const stats = {
 };
 // Version tag for asset URLs, so browsers fetch new CSS/JS/data after each change instead of a cached copy.
 const hash = createHash('sha256');
-for (const f of ['style.css', 'app.js', 'data.json', 'favicon.svg', 'icon-180.png']) hash.update(readFileSync(join(out, 'assets', f)));
+for (const f of ['style.css', 'app.js', 'map.js', 'data.json', 'map.json', 'favicon.svg', 'icon-180.png']) hash.update(readFileSync(join(out, 'assets', f)));
 stats.v = hash.digest('hex').slice(0, 10);
 for (const page of pages) {
   writeFileSync(join(out, page.file), layout({ ...page, body: page.body(stats), stats }));
