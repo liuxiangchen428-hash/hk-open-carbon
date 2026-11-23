@@ -10,6 +10,10 @@
   /* ---------- language ---------- */
   const lang = () => (html.dataset.lang === 'en' ? 'en' : 'zh');
   const L = (zh, en) => (lang() === 'en' ? en : zh);
+  /** Topic colour for a category id, as a CSS custom property value. */
+  const TOPIC = [['energy/electricity', 'elec'], ['energy/town-gas', 'gas'], ['energy/fuel', 'fuel'], ['transport', 'move'], ['water', 'water'], ['waste', 'waste'], ['buildings', 'bldg'], ['land', 'land']];
+  const topicOf = (cat) => (TOPIC.find(([p]) => String(cat || '').startsWith(p)) || [null, 'ink'])[1];
+  const cvar = (cat) => `--c:var(--c-${topicOf(cat)})`;
   const nm = (obj) => (obj ? (lang() === 'en' ? obj.en : obj['zh-Hant']) ?? obj.en ?? '' : '');
   const rerender = [];
   document.addEventListener('click', (e) => {
@@ -176,10 +180,10 @@
 
   /* ---------- home dashboard ---------- */
   const DASH = [
-    { key: 'hk.energy.electricity.clp', label: ['中電 · 每度電', 'CLP · per kWh'], short: ['中電', 'CLP'], compare: 'hk.energy.electricity.hke' },
-    { key: 'hk.energy.electricity.hke', label: ['港燈 · 每度電', 'HK Electric · per kWh'], short: ['港燈', 'HK Electric'], compare: 'hk.energy.electricity.clp' },
-    { key: 'hk.energy.town-gas.purchased', label: ['煤氣生產 · 每單位', 'Town gas production · per unit'], short: ['煤氣生產', 'Gas production'] },
-    { key: 'hk.water.fresh-water.wsd', label: ['食水供應 · 每立方米', 'Fresh water · per m³'], short: ['食水', 'Fresh water'], compare: 'hk.water.sewage.dsd' },
+    { key: 'hk.energy.electricity.clp', label: ['中電', 'CLP'], area: ['九龍・新界', 'Kowloon & NT'], g: ['電', 'E'], short: ['中電', 'CLP'], compare: 'hk.energy.electricity.hke' },
+    { key: 'hk.energy.electricity.hke', label: ['港燈', 'HK Electric'], area: ['港島・南丫島', 'HK Island & Lamma'], g: ['電', 'E'], short: ['港燈', 'HK Electric'], compare: 'hk.energy.electricity.clp' },
+    { key: 'hk.energy.town-gas.purchased', label: ['煤氣生產', 'Town gas'], area: ['全港', 'Territory-wide'], g: ['氣', 'G'], short: ['煤氣生產', 'Gas production'] },
+    { key: 'hk.water.fresh-water.wsd', label: ['食水', 'Fresh water'], area: ['全港', 'Territory-wide'], g: ['水', 'W'], short: ['食水', 'Fresh water'], compare: 'hk.water.sewage.dsd' },
   ];
   const SHORT = { 'hk.water.sewage.dsd': ['污水處理', 'Sewage'] };
   const dash = { i: 0, compare: false };
@@ -199,8 +203,8 @@
       const last = items.at(-1);
       if (!last) return '';
       const dl = deltaOf(items);
-      return `<button type="button" class="dash-tab" role="tab" aria-selected="${i === dash.i}" data-i="${i}">
-        <span class="t-label">${esc(L(...c.label))}</span>
+      return `<button type="button" class="dash-tab" role="tab" aria-selected="${i === dash.i}" data-i="${i}" style="${cvar(last.category)}">
+        <span class="t-label" data-g="${esc(L(...c.g))}">${esc(L(...c.label))}<small class="t-area">${esc(L(...c.area))}</small></span>
         <span class="t-value"><span class="num">${esc(last.value_text)}</span><span class="u">${esc(emissionFmt(last.unit))}</span></span>
         <span class="t-foot"><span class="t-year">${esc(yearFmt(last))}</span>${dl ? `<span class="delta ${dl.cls}">${dl.sign} ${Math.abs(dl.d).toFixed(1)}%</span>` : ''}</span>
       </button>`;
@@ -231,6 +235,7 @@
         ${items.length > 2 ? `<div><span>${esc(L(`${yearFmt(first)} 至今`, `Since ${yearFmt(first)}`))}</span><b class="delta-ink ${change < 0 ? 'down' : change > 0 ? 'up' : 'flat'}">${change < 0 ? '↓' : change > 0 ? '↑' : '→'} ${Math.abs(change).toFixed(1)}%</b></div>` : ''}
       </div>
       <a class="pill pill-solid" href="#f=${encodeURIComponent(last.id)}">${esc(L('查看最新系數', 'Open latest factor'))} →</a>`;
+    $('#dash').style.cssText = cvar(last.category);
     lineChart($('#dash-chart'), series);
   }
 
@@ -252,6 +257,23 @@
     });
     renderDash();
     rerender.push(renderDash);
+  }
+
+  /** The big search box on the home page feeds the library search below it. */
+  function initHomeSearch() {
+    const form = $('#hsearch');
+    if (!form) return;
+    const input = $('#hq');
+    const go = (text) => {
+      const q = $('#q');
+      q.value = text;
+      q.dispatchEvent(new Event('input'));
+      $('.browser').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    };
+    const ph = () => { input.placeholder = L('搜一個系數，例如：港燈 2024', 'Search a factor, e.g. HK Electric 2024'); };
+    ph(); rerender.push(ph);
+    form.addEventListener('submit', (e) => { e.preventDefault(); go(input.value.trim()); });
+    $('#hchips').addEventListener('click', (e) => { const b = e.target.closest('[data-hq]'); if (b) { input.value = b.dataset.hq; go(b.dataset.hq); } });
   }
 
   /* ---------- grouping of factor cards ---------- */
@@ -279,7 +301,7 @@
   /* ---------- factor browser ---------- */
   $('.site-nav [aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'center' });
   const page = document.body.dataset.page;
-  if (page === 'index') dataReady.then(() => { initDash(); initBrowser(); });
+  if (page === 'index') dataReady.then(() => { initDash(); initBrowser(); initHomeSearch(); });
   if (page === 'sources') dataReady.then(initSources);
   if (page === 'inventory') dataReady.then(initInventory);
   if (page === 'calculator') dataReady.then(initCalculator);
@@ -311,7 +333,7 @@
       let lastGroup = '';
       for (const c of used) {
         if (c.group !== lastGroup) { out += `<li><p class="group-label">${esc(nm(c.groupName))}</p></li>`; lastGroup = c.group; }
-        out += `<li><button type="button" data-cat="${esc(c.id)}" aria-pressed="${state.cat === c.id}"><span>${esc(nm(c.name))}</span><span class="n">${counts.get(c.id)}</span></button></li>`;
+        out += `<li><button type="button" data-cat="${esc(c.id)}" aria-pressed="${state.cat === c.id}" style="${cvar(c.id)}"><span>${esc(nm(c.name))}</span><span class="n">${counts.get(c.id)}</span></button></li>`;
       }
       catList.innerHTML = out;
     }
@@ -341,7 +363,7 @@
         // Phones: categories fold; the first one (or all, when searching or filtering) starts open.
         gi += 1;
         const isOpen = !!(state.q || state.cat !== 'all' || (state.openGroups ? state.openGroups.has(cat.id) : gi === 1));
-        out += `<section class="group${isOpen ? '' : ' folded'}"><button type="button" class="group-head" data-group="${esc(cat.id)}" aria-expanded="${isOpen}"><h2>${esc(nm(cat.name))}</h2><span class="sub">${esc(nm(cat.groupName))}</span><span class="g-count">${inCat.length}</span><svg class="g-chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>`;
+        out += `<section class="group${isOpen ? '' : ' folded'}" style="${cvar(cat.id)}"><button type="button" class="group-head" data-group="${esc(cat.id)}" aria-expanded="${isOpen}"><h2>${esc(nm(cat.name))}</h2><span class="sub">${esc(nm(cat.groupName))}</span><span class="g-count">${inCat.length}</span><svg class="g-chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>`;
         for (const { key, kind, items } of ordered) {
           const gasOrder = { CO2: 0, CO2e: 0, CH4: 1, N2O: 2 };
           if (kind === 'yearly') items.sort((a, b) => b.year - a.year);
@@ -482,6 +504,7 @@
       body.innerHTML = detail(f);
       if (amount) { $('#calc-in', body).value = amount; calc(f); }
       drawer.classList.add('open');
+      drawer.style.cssText = cvar(f.category);
       drawer.setAttribute('aria-hidden', 'false');
       scrim.hidden = false;
       document.body.style.overflow = 'hidden';
@@ -745,6 +768,18 @@
     const st = { metric: 'total', from: 2005, year: latest.year, view: 'bars' };
     const src = sourceById();
 
+    // Progress from the base year to the target, drawn like a railway line with three stations.
+    function railHtml(r) {
+      const pctDone = Math.max(0, Math.min(100, ((base.total - r.total) / (base.total - target.value)) * 100));
+      const mid = Math.min(88, Math.max(12, pctDone));
+      return `<div class="ik ik-rail"><div class="rail" role="img" aria-label="${esc(L(`由 ${base.year} 年到 ${target.year} 年目標，已完成 ${Math.round(pctDone)}%`, `${Math.round(pctDone)}% of the way from ${base.year} to the ${target.year} target`))}">
+        <span class="done" style="width:${pctDone.toFixed(1)}%"></span>
+        <span class="st on" style="left:0%"></span><span class="lb l" style="left:0%">${base.year}</span><span class="lv l" style="left:0%">${esc(kt(base.total))}</span>
+        <span class="st on" style="left:${pctDone.toFixed(1)}%"></span><span class="lb" style="left:${mid.toFixed(1)}%">${esc(L(`${r.year} 年`, String(r.year)))}</span><span class="lv" style="left:${mid.toFixed(1)}%">${esc(kt(r.total))}</span>
+        <span class="st" style="left:100%"></span><span class="lb r" style="left:100%">${esc(L(`${target.year} 目標`, `${target.year} target`))}</span><span class="lv r" style="left:100%">${esc(kt(target.value))}</span>
+      </div></div>`;
+    }
+
     function renderKpis() {
       const r = all.find((x) => x.year === st.year) ?? latest;
       const remain = target ? r.total - target.value : 0;
@@ -761,7 +796,8 @@
           <b>${esc(remain > 0 ? kt(remain) : L('已達標', 'Met'))}</b>
           <i>${esc(remain > 0 ? L(`千公噸尚待減少（目標 ${kt(target.value)}，即 ${base.year} 年的一半）`, `kt still to cut (target ${kt(target.value)}, half of ${base.year})`) : L(`低於目標 ${kt(-remain)} 千公噸`, `${kt(-remain)} kt below target`))}</i>
           <span class="goal-bar" role="img" aria-label="${esc(L(`已完成 ${Math.round(done * 100)}%`, `${Math.round(done * 100)}% of the way`))}"><span style="width:${Math.max(0, Math.min(100, done * 100)).toFixed(1)}%"></span></span>
-          <i>${esc(L(`由 ${base.year} 年起計已完成 ${Math.max(0, Math.round(done * 100))}%`, `${Math.max(0, Math.round(done * 100))}% of the way since ${base.year}`))}${perYear ? esc(L(`；${r.year}–${target.year} 年平均每年要減 ${perYear.toFixed(1)}%`, `; needs about ${perYear.toFixed(1)}% a year, ${r.year}–${target.year}`)) : ''}</i></div>` : ''}`;
+          <i>${esc(L(`由 ${base.year} 年起計已完成 ${Math.max(0, Math.round(done * 100))}%`, `${Math.max(0, Math.round(done * 100))}% of the way since ${base.year}`))}${perYear ? esc(L(`；${r.year}–${target.year} 年平均每年要減 ${perYear.toFixed(1)}%`, `; needs about ${perYear.toFixed(1)}% a year, ${r.year}–${target.year}`)) : ''}</i></div>
+        ${railHtml(r)}` : ''}`;
       const ng = table.targets?.find((x) => x.kind === 'neutrality');
       $('#inv-goal-note').innerHTML = target ? esc(L(
         `香港政府《香港氣候行動藍圖2050》的目標：${target.year} 年前把總碳排放從 ${base.year} 年水平減半${ng ? `，${ng.year} 年前實現碳中和` : ''}。`,

@@ -5,9 +5,22 @@ import { t } from './layout.mjs';
 const index = (s) => `
 <section class="hero">
   <div class="wrap">
-    <div class="hero-top">
-      <p class="eyebrow">${t('香港本地排放系數庫', 'Hong Kong emission factor library')}</p>
-      <h1>${t('每一個數字，<span class="nb">都找得到出處。</span>', 'Every number, <span class="nb">traceable to its source.</span>')}</h1>
+    <div class="hb">
+      <h1>${t('香港碳排放<br>系數庫', 'Hong Kong<br>emission factors')}<small>${t(`每個數字都附原文頁碼 · ${s.factors} 個系數`, `Every number cites its page · ${s.factors} factors`)}</small></h1>
+      <div>
+        <form class="hsearch" id="hsearch" role="search">
+          <input id="hq" type="search" autocomplete="off" spellcheck="false" aria-label="Search">
+          <button type="submit">${t('搜尋', 'Search')}</button>
+        </form>
+        <div class="hchips" id="hchips">${t('常用：', 'Popular:')}
+          <button type="button" data-hq="中電">${t('中電用電', 'CLP')}</button>
+          <button type="button" data-hq="港燈">${t('港燈用電', 'HK Electric')}</button>
+          <button type="button" data-hq="煤氣">${t('煤氣', 'Town gas')}</button>
+          <button type="button" data-hq="港鐵">${t('港鐵', 'MTR')}</button>
+          <button type="button" data-hq="食水">${t('食水', 'Water')}</button>
+          <button type="button" data-hq="冷">${t('冷氣雪種', 'Refrigerants')}</button>
+        </div>
+      </div>
     </div>
     <div class="dash" id="dash">
       <div class="dash-tabs" id="dash-tabs" role="tablist" aria-label="${'Key factors'}"></div>
