@@ -39,6 +39,7 @@
     bind();
     render();
     new MutationObserver(render).observe(html, { attributes: true, attributeFilter: ['data-lang'] });
+    new ResizeObserver(() => render()).observe(svg);
   });
 
   /* ---------- helpers on the data ---------- */
@@ -113,18 +114,25 @@
       p.classList.toggle('sel', p.dataset.code === st.sel);
       p.classList.toggle('dim', !!st.sel && p.dataset.code !== st.sel);
     }
-    const scale = view[2] / full[2];
     for (const tx of $$('.dl', svg)) {
       const d = byCode.get(tx.dataset.code);
       tx.textContent = lang() === 'en' ? '' : labelFor(d);
-      tx.style.fontSize = `${Math.max(5, 12 * scale)}px`;
-      tx.style.strokeWidth = `${3 * scale}px`;
       tx.classList.toggle('hide', !!st.sel && tx.dataset.code !== st.sel);
     }
-    $$('.dist', svg).forEach((p) => p.style.setProperty('stroke-width', `${(p.classList.contains('sel') ? 2 : 1.1) * scale}px`));
+    sizes();
     renderLegend();
     renderPanel();
     renderNotes();
+  }
+
+  // Keep strokes and labels the same size on screen at any zoom: convert screen pixels to map units.
+  function sizes() {
+    const upp = view[2] / (svg.getBoundingClientRect().width || full[2]);
+    for (const tx of $$('.dl', svg)) {
+      tx.style.fontSize = `${(st.sel === tx.dataset.code ? 15 : 11) * upp}px`;
+      tx.style.strokeWidth = `${3 * upp}px`;
+    }
+    for (const p of $$('.dist', svg)) p.style.strokeWidth = `${(p.classList.contains('sel') ? 2.5 : 0.8) * upp}px`;
   }
 
   function renderLegend() {
@@ -158,13 +166,14 @@
   function zoomTo(target) {
     const from = [...view];
     const [W, H] = [full[2], full[3]];
-    const t0 = performance.now(), dur = reduce ? 0 : 650;
+    const t0 = performance.now(), dur = reduce ? 0 : matchMedia('(max-width: 900px)').matches ? 800 : 650;
     const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
     const step = (now) => {
       const k = dur ? Math.min(1, (now - t0) / dur) : 1;
       const e = ease(k);
       view = from.map((a, i) => a + (target[i] - a) * e);
       svg.setAttribute('viewBox', view.join(' '));
+      sizes();
       if (k < 1) requestAnimationFrame(step); else { view = target; render(); }
     };
     requestAnimationFrame(step);
@@ -186,7 +195,16 @@
     $('#map-back').hidden = !code;
     zoomTo(code ? boxFor(code) : [...full]);
     render();
-    if (code && matchMedia('(max-width: 900px)').matches) $('#map-panel').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    // Phones: keep the whole map on screen so the zoom can be seen; the details wait behind a button.
+    const phone = matchMedia('(max-width: 900px)').matches;
+    const more = $('#map-more');
+    more.hidden = !(code && phone);
+    if (code && phone) {
+      more.textContent = L(`查看${byCode.get(code).zh}詳情 ↓`, `${byCode.get(code).en} details ↓`);
+      const r = $('#map-stage').getBoundingClientRect();
+      const top = 70; // below the sticky header
+      if (r.top < top || r.bottom > innerHeight - 80) scrollTo({ top: scrollY + r.top - top, behavior: reduce ? 'auto' : 'smooth' });
+    }
   }
 
   /* ---------- side panel ---------- */
@@ -307,6 +325,7 @@
     svg.addEventListener('focusin', (e) => { const p = e.target.closest('.dist'); if (p) { const r = p.getBoundingClientRect(); setHover(p.dataset.code); showTip(p.dataset.code, r.left + r.width / 2, r.top + r.height / 2); } });
     svg.addEventListener('focusout', () => { setHover(null); tip.hidden = true; });
     $('#map-back').addEventListener('click', () => select(null));
+    $('#map-more').addEventListener('click', () => $('#map-panel').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && st.sel) select(null); });
     $('#map-layer').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.layer = b.dataset.layer; render(); } });
     $('#map-period').addEventListener('change', (e) => { if (st.layer === 'hke') st.hkePeriod = e.target.value; else st.solarMonth = e.target.value; render(); });

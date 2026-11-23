@@ -1225,3 +1225,9 @@ a:hover { color: var(--accent-ink); }
 .mp-sec:nth-of-type(1), .mp-sec:has(.mp-split) { --c: var(--ember-hi); }
 .mp-sec:has(.mp-years) { --c: var(--sun-hi); }
 .mp-split i, .mp-rank i { background: var(--ember-hi); }
+
+.map-more { display: none; }
+@media (max-width: 900px) {
+  .map-more:not([hidden]) { display: block; width: 100%; margin-top: 10px; padding: 12px; border: 0; border-radius: 6px; background: var(--rule); color: var(--bg); font: 800 15px var(--sans); cursor: pointer; animation: fade .3s ease .5s both; }
+  .map-panel { scroll-margin-top: 72px; }
+}

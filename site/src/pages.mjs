@@ -382,6 +382,7 @@ const map = () => `
       <div class="map-tip" id="map-tip" hidden></div>
       <div class="map-legend" id="map-legend"></div>
     </div>
+    <button type="button" class="map-more" id="map-more" hidden></button>
     <aside class="map-panel" id="map-panel" aria-live="polite"></aside>
   </div>
   <div class="map-notes" id="map-notes"></div>
