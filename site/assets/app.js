@@ -204,7 +204,7 @@
       if (!last) return '';
       const dl = deltaOf(items);
       return `<button type="button" class="dash-tab" role="tab" aria-selected="${i === dash.i}" data-i="${i}" style="${cvar(last.category)}">
-        <span class="t-label" data-g="${esc(L(...c.g))}">${esc(L(...c.label))}<small class="t-area">${esc(L(...c.area))}</small></span>
+        <span class="t-label">${esc(L(...c.label))}<small class="t-area">${esc(L(...c.area))}</small></span>
         <span class="t-value"><span class="num">${esc(last.value_text)}</span><span class="u">${esc(emissionFmt(last.unit))}</span></span>
         <span class="t-foot"><span class="t-year">${esc(yearFmt(last))}</span>${dl ? `<span class="delta ${dl.cls}">${dl.sign} ${Math.abs(dl.d).toFixed(1)}%</span>` : ''}</span>
       </button>`;

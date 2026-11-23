@@ -1111,3 +1111,4 @@ a:hover { color: var(--accent-ink); }
 .ik-rail { grid-column: 1 / -1; border-left: 0 !important; border-top: 1px solid var(--line); padding: 14px 28px 12px; }
 .filters-toggle { border-radius: 4px !important; border: 1.5px solid var(--rule) !important; font-weight: 700; }
 .group-head .g-count { background: var(--c, var(--rule)) !important; color: #fff !important; border-radius: 3px !important; }
+.t-label::before { content: none !important; display: none !important; }
