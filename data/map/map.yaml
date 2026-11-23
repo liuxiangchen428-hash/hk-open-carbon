@@ -1,0 +1,55 @@
+# Data behind the district carbon map (site page map.html).
+# Values are copied as published. Nothing here is derived except the simplified boundary shapes.
+status: draft
+updated: 2026-11-23
+
+boundaries:
+  file: hk-districts.json
+  source: src-censtatd-dc-2021
+  made_by: scripts/make-district-map.mjs
+  notes:
+    zh-Hant: 2021 年人口普查區議會分區界線（只含陸地），為網頁顯示簡化；人口（t_pop）及住戶數目（dh）照錄普查數字。
+    en: 2021 Census District Council district boundaries (land only), simplified for display; population (t_pop) and domestic households (dh) copied from the census.
+
+supply_areas:
+  # Which power company supplies each district. From the supply areas the companies describe:
+  # HK Electric serves Hong Kong Island, Ap Lei Chau and Lamma; CLP serves Kowloon, the New Territories and most outlying islands.
+  source_note:
+    zh-Hant: 港燈供電範圍為港島、鴨脷洲及南丫島；中電為九龍、新界及大部分離島。離島區由中電供電，只有南丫島由港燈供電。
+    en: HK Electric supplies Hong Kong Island, Ap Lei Chau and Lamma; CLP supplies Kowloon, the New Territories and most outlying islands. Islands District is CLP except Lamma (HK Electric).
+  HK-HKE: [A, B, C, D]
+  HK-CLP: [E, F, G, H, J, K, L, M, N, P, Q, R, S, T]
+
+tables:
+  - file: hke-district-consumption.csv
+    sources: [src-hke-district-consumption, src-hke-district-consumption-type]
+    period: half-year (H1 = January to June, H2 = July to December)
+    columns:
+      district: District code as in hk-districts.json; T-lamma = Islands District, Lamma Island only
+      consumption_gwh: Consumption, GWh (million kWh) — Aggregated Consumption by Districts
+      customers_k: Number of customers, thousands
+      avg_kwh: Average consumption per customer, kWh
+      residential_gwh: Residential consumption, GWh — by Districts and Customer Type
+      commercial_gwh: Commercial consumption, GWh
+      industrial_gwh: Industrial consumption, GWh
+      total_by_type_gwh: Consumption total as printed in the customer-type file, GWh
+  - file: clp-renewables-by-region.csv
+    sources: [src-clp-open-data-re]
+    period: month
+    columns:
+      region: kowloon or nt (New Territories) as published
+      solar_wind_kwh: Generation from customer solar and wind systems on CLP meters, kWh
+      other_kwh: Generation from other customer renewable sources (for example landfill gas), kWh
+      total_kwh: Total renewable generation, kWh
+      solar_wind_accounts: Customer accounts, solar and wind
+      other_accounts: Customer accounts, other renewable sources
+      total_accounts: Customer accounts, total
+    notes:
+      zh-Hant: 不包括只供自用的可再生能源系統（原文註明）。2020 年 7 月至 12 月部分數字原文帶小數，照錄。2022 年 6 月、7 月新界的「總計」客戶數目（13,322）小於太陽能及風能客戶數目，原文如此，照錄；網頁不使用這兩個月的總客戶數。
+      en: Excludes systems used only for self-consumption (stated in the source). Some figures for July to December 2020 are published with decimals and are copied as such. For June and July 2022 the New Territories total accounts (13,322) is smaller than the solar and wind accounts; copied as published, and the site does not use those two totals.
+
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-23
+    note: Tables written by script from the source files (HK Electric CSVs fetched via Actions; CLP CSV supplied by the maintainer). Row sums checked; the two CLP inconsistencies above are in the source.
