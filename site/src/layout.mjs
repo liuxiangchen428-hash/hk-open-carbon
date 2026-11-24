@@ -67,6 +67,10 @@ export function layout({ file, title, description, body, stats, script }) {
 <main id="main">
 ${body}
 </main>
+<div class="drawer-scrim" data-close hidden></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="d-title" role="dialog" tabindex="-1">
+  <div class="drawer-inner" id="drawer-body"></div>
+</aside>
 <footer class="site-footer">
   <div class="wrap footer-inner">
     <div>

@@ -328,9 +328,10 @@
   $('.site-nav [aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'center' });
   const page = document.body.dataset.page;
   if (page === 'index') dataReady.then(() => { initDash(); initBrowser(); initHomeSearch(); });
+  else if ($('#drawer')) dataReady.then(initDrawer);
   document.addEventListener('click', (e) => {
     const cl = e.target.closest('.drawer [data-copy-link]');
-    if (cl) { copyLink(cl); return; }
+    if (cl) { copyLink(cl, new URL(`index.html#f=${encodeURIComponent($('#drawer').dataset.id || '')}`, location.href).href); return; }
     const s = e.target.closest('[data-dl-series]');
     if (s && DATA) {
       const f = DATA.factors.find((x) => x.id === s.dataset.dlSeries);
@@ -641,6 +642,7 @@
       if (!drawer.classList.contains('open')) { lastFocus = document.activeElement; savedY = scrollY; }
       const amount = currentId && seriesOf(DATA.factors.find((x) => x.id === currentId) || f) === seriesOf(f) ? $('#calc-in', body)?.value : '';
       currentId = id;
+      drawer.dataset.id = id;
       body.innerHTML = detail(f);
       if (amount) { $('#calc-in', body).value = amount; calc(f); }
       drawer.classList.add('open');
@@ -679,15 +681,17 @@
     window.addEventListener('popstate', fromHash);
     // In-page links to a factor (#f=...) go through goFactor too.
     document.addEventListener('click', (e) => {
-      const a = e.target.closest('a[href^="#f="]');
-      if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      const a = e.target.closest('a[href^="#f="], a[href^="index.html#f="]');
+      if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+      const id = decodeURIComponent(a.getAttribute('href').split('#f=')[1] || '');
+      if (!DATA.factors.some((x) => x.id === id)) return;
       e.preventDefault();
-      goFactor(decodeURIComponent(a.getAttribute('href').slice(3)));
+      goFactor(id);
     });
     goFactor = (id, { replace = false } = {}) => {
       const url = `${location.pathname}${location.search}#f=${encodeURIComponent(id)}`;
       void replace;
-      history.replaceState(null, '', url);
+      if (page === 'index') history.replaceState(null, '', url);
       open(id);
     };
     scrim.addEventListener('click', close);
@@ -1331,8 +1335,8 @@
 
 
   /* ---------- share link and save chart as PNG (also used by map.js via window.HKOC) ---------- */
-  async function copyLink(btn) {
-    const url = location.href;
+  async function copyLink(btn, link) {
+    const url = link || location.href;
     try { await navigator.clipboard.writeText(url); } catch {
       const ta = Object.assign(document.createElement('textarea'), { value: url }); document.body.append(ta); ta.select();
       try { document.execCommand('copy'); } catch { /* ignore */ } ta.remove();

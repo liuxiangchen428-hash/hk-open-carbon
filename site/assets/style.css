@@ -1415,3 +1415,6 @@ body.has-cmp .ai { bottom: 84px; }
   .dash-actions { max-width: 100%; }
   .dash-actions .pill { max-width: 100%; white-space: normal; }
 }
+
+/* Factor comparison lives in the library; elsewhere the panel offers it there. */
+body:not([data-page="index"]) .drawer [data-cmp-toggle] { display: none; }
