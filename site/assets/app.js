@@ -1575,4 +1575,43 @@
     rerender.push(() => { if (!panel.hidden) render(false); });
   }
 
+  /* ---------- glass: panels lift and catch the light under the pointer ---------- */
+  (function glass() {
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (document.documentElement.dataset.embed) return;
+    const KINDS = [
+      ['tile', '.dash-tab, .source-card, .steps > li, .cmp-chip'],
+      ['card', '.series, .map-panel, .note-box, .trees'],
+      ['panel', '.dash-panel, .hh, .biz-out, .biz-sec, .inv-kpis, .inv-panel, .map-stage, .table-wrap, .site-footer .footer-inner'],
+    ];
+    const SEL = KINDS.map((k) => k[1]).join(', ');
+    let lit = null, frame = 0, last = null;
+    const kind = (el) => (KINDS.find(([, s]) => el.matches(s)) || [])[0];
+    const light = (el) => {
+      if (lit === el) return;
+      if (lit) lit.classList.remove('lit');
+      lit = el;
+      if (el) { if (!el.dataset.glass) el.dataset.glass = kind(el); el.classList.add('lit'); }
+    };
+    const root = document.documentElement.style;
+    const tick = () => {
+      frame = 0;
+      const e = last;
+      root.setProperty('--px', (e.clientX / innerWidth * 2 - 1).toFixed(3));
+      root.setProperty('--py', (e.clientY / innerHeight * 2 - 1).toFixed(3));
+      // the innermost glass element under the pointer, skipping ones the panel drawer covers
+      const el = e.target instanceof Element ? e.target.closest(SEL) : null;
+      light(el && !el.closest('.drawer, dialog') ? el : null);
+      if (lit) {
+        const r = lit.getBoundingClientRect();
+        lit.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        lit.style.setProperty('--my', `${e.clientY - r.top}px`);
+      }
+    };
+    document.addEventListener('pointermove', (e) => { last = e; if (!frame) frame = requestAnimationFrame(tick); }, { passive: true });
+    document.addEventListener('pointerleave', () => light(null));
+    window.addEventListener('blur', () => light(null));
+  })();
+
 })();
