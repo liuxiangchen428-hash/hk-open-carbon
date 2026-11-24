@@ -1404,7 +1404,7 @@
     await img.decode();
     const cv = Object.assign(document.createElement('canvas'), { width: (W + pad * 2) * scale, height: (H + head + foot) * scale });
     const ctx = cv.getContext('2d'); ctx.scale(scale, scale);
-    const bg = getComputedStyle(document.body).backgroundColor || '#fff', ink = getComputedStyle(document.body).color || '#111';
+    const bg = getComputedStyle(document.documentElement).backgroundColor || '#fff', ink = getComputedStyle(document.body).color || '#111';
     ctx.fillStyle = bg; ctx.fillRect(0, 0, W + pad * 2, H + head + foot);
     const font = getComputedStyle(document.body).fontFamily;
     if (title) { ctx.fillStyle = ink; ctx.font = `800 20px ${font}`; ctx.fillText(title, pad, 36); }

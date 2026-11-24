@@ -1777,3 +1777,9 @@ html[data-embed] #main > * { animation: none; }
 .biz-out[data-glass] { position: sticky; }
 /* Hover tips sit over busy maps and charts: make them nearly opaque so nothing shows through. */
 .map-tip, .lc-tip { background: var(--tip-bg); -webkit-backdrop-filter: blur(30px) saturate(160%); backdrop-filter: blur(30px) saturate(160%); }
+/* Home tiles: one look for all four. The chosen one is marked only by a whiter face and a thicker colour bar. */
+.dash-tab, .dash-tab:first-child, .dash-tab[aria-selected="true"] { background: var(--glass); box-shadow: var(--gshadow), inset 0 1px 0 var(--shine); border: 1px solid var(--edge); }
+.dash-tab::before, .dash-tab[aria-selected="true"]::before { display: block; content: ""; position: absolute; left: 18px; right: 18px; top: 0; bottom: auto; width: auto; height: 3px; border-radius: 0 0 3px 3px; background: var(--c, var(--c-gas)); transition: height .2s ease; }
+.dash-tab[aria-selected="true"] { background: var(--glass-hi); }
+.dash-tab[aria-selected="true"]::before { height: 5px; }
+.dash-tab[aria-selected="true"][data-glass].lit, .dash-tab[data-glass].lit { box-shadow: 0 0 0 6px var(--ring), var(--gshadow-up), inset 0 1px 0 var(--shine); }

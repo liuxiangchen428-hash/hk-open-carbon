@@ -225,7 +225,8 @@
   /* ---------- shareable data card (PNG): whole map + the numbers behind it ---------- */
   async function saveCard() {
     const cs = getComputedStyle(document.body);
-    const font = cs.fontFamily, BG = cs.backgroundColor, INK = cs.color;
+    // The page colour lives on <html> (the body is see-through over the glass light).
+    const font = cs.fontFamily, BG = getComputedStyle(document.documentElement).backgroundColor, INK = cs.color;
     const tmp = document.createElement('canvas').getContext('2d');
     const rgb = (css) => { const el = document.createElement('i'); el.style.color = css; document.body.append(el); const c = getComputedStyle(el).color; el.remove(); tmp.clearRect(0, 0, 1, 1); tmp.fillStyle = c; tmp.fillRect(0, 0, 1, 1); const [r, g, b, a] = tmp.getImageData(0, 0, 1, 1).data; return `rgba(${r},${g},${b},${(a / 255).toFixed(3)})`; };
     const MUTED = rgb(`color-mix(in srgb, ${INK} 60%, transparent)`), LINE = rgb(`color-mix(in srgb, ${INK} 14%, transparent)`);
