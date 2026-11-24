@@ -249,7 +249,7 @@
         ${dl ? `<div><span>${esc(L(`對比 ${yearFmt(dl.prev)}`, `vs ${yearFmt(dl.prev)}`))}</span><b class="delta-ink ${dl.cls}">${dl.sign} ${Math.abs(dl.d).toFixed(1)}%</b></div>` : ''}
         ${items.length > 2 ? `<div><span>${esc(L(`${yearFmt(first)} 至今`, `Since ${yearFmt(first)}`))}</span><b class="delta-ink ${change < 0 ? 'down' : change > 0 ? 'up' : 'flat'}">${change < 0 ? '↓' : change > 0 ? '↑' : '→'} ${Math.abs(change).toFixed(1)}%</b></div>` : ''}
       </div>
-      <a class="pill pill-solid" href="#f=${encodeURIComponent(last.id)}">${esc(L('查看最新系數', 'Open latest factor'))} →</a>`;
+      <div class="share-tools"><button type="button" class="pill pill-sm" data-save-chart>${esc(L('下載圖片', 'Save image'))} ↓</button><a class="pill pill-solid" href="#f=${encodeURIComponent(last.id)}">${esc(L('查看最新系數', 'Open latest factor'))} →</a></div>`;
     $('#dash').style.cssText = cvar(last.category);
     lineChart($('#dash-chart'), series);
   }
@@ -261,6 +261,10 @@
       const tab = e.target.closest('.dash-tab');
       if (tab) { dash.i = +tab.dataset.i; dash.compare = false; renderDash(); return; }
       if (e.target.closest('[data-compare]')) { dash.compare = !dash.compare; renderDash(); }
+      if (e.target.closest('[data-save-chart]')) {
+        const c = DASH[dash.i];
+        svgToPng($('#dash-chart svg'), { title: $('#dash-title').textContent, note: `${$('#dash-sub').textContent} · ${L('來源：電力公司及煤氣公司報告、政府指引（見系數庫）', 'Sources: utility reports and government guidelines (see the factor library)')}`, file: `${c.key}.png` });
+      }
     });
     $('#dash-tabs').addEventListener('keydown', (e) => {
       if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) return;
@@ -318,6 +322,8 @@
   const page = document.body.dataset.page;
   if (page === 'index') dataReady.then(() => { initDash(); initBrowser(); initHomeSearch(); });
   document.addEventListener('click', (e) => {
+    const cl = e.target.closest('.drawer [data-copy-link]');
+    if (cl) { copyLink(cl); return; }
     const s = e.target.closest('[data-dl-series]');
     if (s && DATA) {
       const f = DATA.factors.find((x) => x.id === s.dataset.dlSeries);
@@ -670,6 +676,7 @@
         <div class="cite">${esc(citation)}</div>
         <div class="links">
           <button class="pill pill-solid" type="button" data-copy="${esc(citation)}">${esc(L('複製引用', 'Copy citation'))}</button>
+          <button class="pill" type="button" data-copy-link>${esc(L('複製連結', 'Copy link'))}</button>
           <a class="pill" href="${esc(fileUrl)}" target="_blank" rel="noopener">${esc(L('原始資料檔', 'Data file'))} ↗</a>
           <button class="pill" type="button" data-dl-series="${esc(f.id)}">${esc(isYearly(f) ? L('下載歷年 CSV', 'Download all years (CSV)') : L('下載 CSV', 'Download CSV'))} ↓</button>
         </div>
@@ -796,6 +803,13 @@
     const tg = table.targets?.[0];
     const target = tg && base ? { ...tg, value: Math.round(base.total * (1 - tg.reduction)) } : null;
     const st = { metric: 'total', from: 2005, year: latest.year, view: 'bars' };
+    // Link state: #year=2014&metric=total&from=1990
+    const hp = new URLSearchParams(location.hash.slice(1));
+    if (all.some((r) => r.year === +hp.get('year'))) st.year = +hp.get('year');
+    if (['total', 'per_capita', 'intensity'].includes(hp.get('metric'))) st.metric = hp.get('metric');
+    if (['1990', '2005'].includes(hp.get('from'))) st.from = +hp.get('from');
+    if (st.year < st.from) st.from = 1990;
+    const syncHash = () => history.replaceState(null, '', `#year=${st.year}&metric=${st.metric}&from=${st.from}`);
     const src = sourceById();
 
     // Progress from the base year to the target, drawn like a railway line with three stations.
@@ -844,7 +858,7 @@
       const el = $('#inv-chart');
       el._redraw = null;
       if (st.metric === 'total') {
-        totalChart(el, rows, { base, target, selected: st.year, onSelect: (y) => { st.year = y; renderKpis(); renderChart(); renderSectors(); } });
+        totalChart(el, rows, { base, target, selected: st.year, onSelect: (y) => { st.year = y; syncHash(); renderKpis(); renderChart(); renderSectors(); } });
       } else {
         const dec = st.metric === 'intensity' ? 3 : 2;
         lineChart(el, [{ label: L(...m.label), cls: 's1', points: rows.map((r) => ({ x: String(r.year), value: r[st.metric], text: r[st.metric].toFixed(dec) })) }]);
@@ -920,8 +934,12 @@
     }
 
     const all4 = () => { renderKpis(); renderChart(); renderSectors(); renderNotes(); };
-    $('#inv-metric').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.metric = b.dataset.metric; renderChart(); } });
-    $('#inv-range').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.from = +b.dataset.from; if (st.year < st.from) st.year = latest.year; renderKpis(); renderChart(); renderSectors(); } });
+    $('#inv-metric').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.metric = b.dataset.metric; syncHash(); renderChart(); } });
+    $('#inv-share').addEventListener('click', (e) => {
+      if (e.target.closest('[data-copy-link]')) { syncHash(); copyLink(e.target.closest('[data-copy-link]')); }
+      if (e.target.closest('[data-save-chart]')) svgToPng($('#inv-chart svg'), { title: `${$('#inv-title').textContent} · ${$('#inv-sub').textContent}`, note: L('來源：環境及生態局《香港溫室氣體排放數據表》（2024 年，AR5）', 'Source: Environment and Ecology Bureau, Hong Kong GHG data tables (2024, AR5)'), file: `hk-ghg-${st.metric}.png` });
+    });
+    $('#inv-range').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.from = +b.dataset.from; if (st.year < st.from) st.year = latest.year; syncHash(); renderKpis(); renderChart(); renderSectors(); } });
     $('#sec-view').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.view = b.dataset.view; renderSectors(); } });
     all4();
     rerender.push(all4);
@@ -1162,6 +1180,51 @@
     rerender.push(render);
     render();
   }
+
+
+  /* ---------- share link and save chart as PNG (also used by map.js via window.HKOC) ---------- */
+  async function copyLink(btn) {
+    const url = location.href;
+    try { await navigator.clipboard.writeText(url); } catch {
+      const ta = Object.assign(document.createElement('textarea'), { value: url }); document.body.append(ta); ta.select();
+      try { document.execCommand('copy'); } catch { /* ignore */ } ta.remove();
+    }
+    if (btn) { const old = btn.innerHTML; btn.textContent = L('已複製連結 ✓', 'Link copied ✓'); setTimeout(() => { btn.innerHTML = old; }, 1600); }
+  }
+  // Copy computed styles into a clone so the SVG renders the same outside the page.
+  const STYLE_PROPS = ['fill', 'stop-color', 'stop-opacity', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray', 'stroke-linejoin', 'stroke-linecap', 'opacity', 'font-family', 'font-size', 'font-weight', 'text-anchor', 'dominant-baseline', 'paint-order', 'visibility', 'display'];
+  function inlineStyles(src, dst) {
+    const cs = getComputedStyle(src);
+    dst.setAttribute('style', STYLE_PROPS.map((k) => `${k}:${cs.getPropertyValue(k).replace(/url\("?[^#")]*(#[^")]+)"?\)/g, 'url($1)')}`).join(';'));
+    [...src.children].forEach((c, i) => dst.children[i] && inlineStyles(c, dst.children[i]));
+  }
+  async function svgToPng(svg, { title, note, file }) {
+    const r = svg.getBoundingClientRect();
+    const W = Math.round(r.width), H = Math.round(r.height), pad = 28, head = title ? 56 : 16, foot = 48, scale = 2;
+    const clone = svg.cloneNode(true);
+    inlineStyles(svg, clone);
+    clone.setAttribute('width', W); clone.setAttribute('height', H);
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.querySelectorAll('.lc-hit, .ib-hit').forEach((n) => n.remove());
+    const img = new Image();
+    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(clone))}`;
+    await img.decode();
+    const cv = Object.assign(document.createElement('canvas'), { width: (W + pad * 2) * scale, height: (H + head + foot) * scale });
+    const ctx = cv.getContext('2d'); ctx.scale(scale, scale);
+    const bg = getComputedStyle(document.body).backgroundColor || '#fff', ink = getComputedStyle(document.body).color || '#111';
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W + pad * 2, H + head + foot);
+    const font = getComputedStyle(document.body).fontFamily;
+    if (title) { ctx.fillStyle = ink; ctx.font = `800 20px ${font}`; ctx.fillText(title, pad, 36); }
+    ctx.drawImage(img, pad, head, W, H);
+    ctx.fillStyle = ink; ctx.globalAlpha = 0.65; ctx.font = `12px ${font}`;
+    ctx.fillText(note || '', pad, head + H + 22);
+    ctx.fillText(L('香港開源碳核算平台 · CC BY 4.0', 'HK Open Carbon Platform · CC BY 4.0'), pad, head + H + 40);
+    ctx.globalAlpha = 1;
+    const a = document.createElement('a');
+    a.href = cv.toDataURL('image/png'); a.setAttribute('download', file || 'chart.png');
+    document.body.append(a); a.click(); a.remove();
+  }
+  window.HKOC = { copyLink, svgToPng, L };
 
   /* ---------- AI assistant ---------- */
   function initAssistant(endpoint) {

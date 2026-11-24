@@ -1304,3 +1304,8 @@ a:hover { color: var(--accent-ink); }
 
 .results-tools { display: flex; gap: 8px; align-items: center; }
 .map-dl { margin-top: 6px; }
+
+.share-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+#inv-share { justify-content: flex-end; margin-top: 8px; }
+.map-right { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+@media (max-width: 720px) { .map-right { width: 100%; justify-content: space-between; } }

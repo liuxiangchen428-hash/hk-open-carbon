@@ -35,9 +35,15 @@
     st.solarMonth = [...new Set(M.clpRe.map((r) => r.month))].sort().at(-1);
     full = [...M.viewBox];
     view = [...full];
+    // Link state: #layer=hke&d=B&p=2025-H2&m=2026-09
+    const hp = new URLSearchParams(location.hash.slice(1));
+    if (['supply', 'hke', 'solar'].includes(hp.get('layer'))) st.layer = hp.get('layer');
+    if (periods.includes(hp.get('p'))) st.hkePeriod = hp.get('p');
+    if (M.clpRe.some((r) => r.month === hp.get('m'))) st.solarMonth = hp.get('m');
     draw();
     bind();
     render();
+    if (byCode.has(hp.get('d'))) select(hp.get('d'));
     new MutationObserver(render).observe(html, { attributes: true, attributeFilter: ['data-lang'] });
     new ResizeObserver(() => render()).observe(svg);
   });
@@ -92,7 +98,15 @@
     return '';
   }
 
+  const syncHash = () => {
+    const p = new URLSearchParams({ layer: st.layer });
+    if (st.sel) p.set('d', st.sel);
+    if (st.layer === 'hke') p.set('p', st.hkePeriod);
+    if (st.layer === 'solar') p.set('m', st.solarMonth);
+    history.replaceState(null, '', `#${p}`);
+  };
   function render() {
+    syncHash();
     // layer buttons and period selector
     $$('#map-layer button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.layer === st.layer)));
     const wrap = $('#map-period-wrap'), sel = $('#map-period');
@@ -326,6 +340,14 @@
     svg.addEventListener('focusin', (e) => { const p = e.target.closest('.dist'); if (p) { const r = p.getBoundingClientRect(); setHover(p.dataset.code); showTip(p.dataset.code, r.left + r.width / 2, r.top + r.height / 2); } });
     svg.addEventListener('focusout', () => { setHover(null); tip.hidden = true; });
     $('#map-back').addEventListener('click', () => select(null));
+    $('#map-share').addEventListener('click', (e) => {
+      if (e.target.closest('[data-copy-link]')) window.HKOC?.copyLink(e.target.closest('[data-copy-link]'));
+      if (e.target.closest('[data-save-chart]')) {
+        const d = st.sel && byCode.get(st.sel);
+        const layer = { supply: L('供電公司及每度電排放', 'Supplier and emissions per kWh'), hke: `${L('港燈分區用電', 'HK Electric consumption by district')} · ${periodName(st.hkePeriod)}`, solar: `${L('中電自家太陽能', 'CLP customer solar')} · ${monthName(st.solarMonth)}` }[st.layer];
+        window.HKOC?.svgToPng(svg, { title: `${L('香港碳地圖', 'Hong Kong carbon map')}${d ? ` · ${L(d.zh, d.en)}` : ''} · ${layer}`, note: L('地界：政府統計處 2021 年人口普查；數據：中電、港燈公佈（見來源）', 'Boundaries: C&SD 2021 Census; data as published by CLP and HK Electric (see sources)'), file: `hk-carbon-map-${st.layer}${st.sel ? `-${st.sel}` : ''}.png` });
+      }
+    });
     $('#map-more').addEventListener('click', () => $('#map-panel').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && st.sel) select(null); });
     $('#map-layer').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.layer = b.dataset.layer; render(); } });

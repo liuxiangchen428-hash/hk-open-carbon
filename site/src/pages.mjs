@@ -222,6 +222,7 @@ const inventory = () => `
         </div>
       </div>
       <div class="dash-chart inv-chart" id="inv-chart"></div>
+      <div class="share-tools" id="inv-share"><button type="button" class="pill pill-sm" data-copy-link>${t('複製連結', 'Copy link')}</button><button type="button" class="pill pill-sm" data-save-chart>${t('下載圖片', 'Save image')} ↓</button></div>
       <div class="dash-foot inv-foot" id="inv-foot"></div>
     </div>
     <p class="inv-goal-note" id="inv-goal-note"></p>
@@ -373,7 +374,10 @@ const map = () => `
       <button type="button" data-layer="hke" aria-pressed="false">${t('港島用電', 'HK Island use')}</button>
       <button type="button" data-layer="solar" aria-pressed="false">${t('自家太陽能', 'Rooftop solar')}</button>
     </div>
-    <label class="map-period" id="map-period-wrap" hidden><span id="map-period-label"></span><select id="map-period"></select></label>
+    <div class="map-right">
+      <label class="map-period" id="map-period-wrap" hidden><span id="map-period-label"></span><select id="map-period"></select></label>
+      <div class="share-tools" id="map-share"><button type="button" class="pill pill-sm" data-copy-link>${t('複製連結', 'Copy link')}</button><button type="button" class="pill pill-sm" data-save-chart>${t('下載圖片', 'Save image')} ↓</button></div>
+    </div>
   </div>
   <div class="map-grid">
     <div class="map-stage" id="map-stage">
