@@ -514,8 +514,100 @@
     });
 
     initDrawer();
+    initCompare();
     rerender.push(render);
     render();
+  }
+
+
+  /* ---------- compare: up to four series (or single factors) side by side ---------- */
+  const CMP_MAX = 4;
+  const cmp = { keys: [] };
+  const cmpKey = (f) => (isYearly(f) ? seriesOf(f) : f.id);
+  const cmpMembers = (key) => {
+    const items = seriesItems(key, { recent: true });
+    if (items.length) return items;
+    const f = DATA.factors.find((x) => x.id === key);
+    return f ? [f] : [];
+  };
+  const cmpLabel = (key) => { const last = cmpMembers(key).at(-1); return last ? stripYear(nm(last.name), last.year) : key; };
+  function cmpSync() {
+    const h = location.hash;
+    if (cmp.keys.length) { if (!h.startsWith('#f=')) history.replaceState(null, '', `#cmp=${cmp.keys.map(encodeURIComponent).join(',')}`); }
+    else if (h.startsWith('#cmp=')) history.replaceState(null, '', location.pathname + location.search);
+    try { sessionStorage.setItem('hkoc-cmp', JSON.stringify(cmp.keys)); } catch { /* ignore */ }
+    cmpTray();
+    $$('[data-cmp-toggle]').forEach((b) => { const on = cmp.keys.includes(b.dataset.cmpToggle); b.setAttribute('aria-pressed', String(on)); b.textContent = on ? L('✓ 已加入比較', '✓ In comparison') : L('＋ 加入比較', '+ Compare'); });
+  }
+  function cmpToggle(key) {
+    const i = cmp.keys.indexOf(key);
+    if (i >= 0) cmp.keys.splice(i, 1);
+    else { if (cmp.keys.length >= CMP_MAX) cmp.keys.shift(); cmp.keys.push(key); }
+    cmpSync();
+  }
+  function cmpTray() {
+    let tray = $('#cmp-tray');
+    if (!tray) {
+      tray = document.createElement('div'); tray.id = 'cmp-tray'; tray.className = 'cmp-tray';
+      document.body.append(tray);
+      tray.addEventListener('click', (e) => {
+        const x = e.target.closest('[data-cmp-x]'); if (x) { cmpToggle(x.dataset.cmpX); return; }
+        if (e.target.closest('[data-cmp-open]')) cmpOpen();
+        if (e.target.closest('[data-cmp-clear]')) { cmp.keys = []; cmpSync(); }
+      });
+    }
+    tray.hidden = !cmp.keys.length;
+    document.body.classList.toggle('has-cmp', cmp.keys.length > 0);
+    tray.innerHTML = `<div class="wrap cmp-tray-in"><span class="cmp-k">${esc(L('比較', 'Compare'))}</span>
+      <div class="cmp-chips">${cmp.keys.map((k, i) => `<span class="cmp-chip c${i + 1}"><i></i>${esc(cmpLabel(k))}<button type="button" data-cmp-x="${esc(k)}" aria-label="${esc(L('移除', 'Remove'))}">×</button></span>`).join('')}</div>
+      <button type="button" class="pill pill-sm" data-cmp-clear>${esc(L('清除', 'Clear'))}</button>
+      <button type="button" class="pill pill-solid" data-cmp-open${cmp.keys.length < 2 ? ' disabled' : ''}>${esc(cmp.keys.length < 2 ? L('再選一個', 'Pick one more') : L(`比較 ${cmp.keys.length} 項`, `Compare ${cmp.keys.length}`))}</button></div>`;
+  }
+  function cmpOpen() {
+    let dlg = $('#cmp-dlg');
+    if (!dlg) {
+      dlg = document.createElement('dialog'); dlg.id = 'cmp-dlg'; dlg.className = 'cmp-dlg';
+      document.body.append(dlg);
+      dlg.addEventListener('click', (e) => {
+        if (e.target === dlg || e.target.closest('[data-close-cmp]')) { dlg.close(); return; }
+        const link = e.target.closest('[data-copy-link]'); if (link) { cmpSync(); copyLink(link); }
+        if (e.target.closest('[data-save-chart]')) svgToPng($('#cmp-chart svg', dlg), { title: cmp.keys.map(cmpLabel).join(' · '), note: L('來源：見各系數的出處（香港開源碳核算平台系數庫）', 'Sources: see each factor in the HK Open Carbon Platform library'), file: 'hk-factor-comparison.png' });
+        const go = e.target.closest('a[href^="#f="]'); if (go) dlg.close();
+      });
+    }
+    const groups = cmp.keys.map((k, i) => ({ k, i, items: cmpMembers(k) })).filter((g) => g.items.length);
+    const units = [...new Set(groups.map((g) => g.items.at(-1).unit))];
+    const yearly = groups.filter((g) => g.items.length > 1);
+    const same = units.length === 1;
+    const row = (g) => {
+      const first = g.items[0], last = g.items.at(-1);
+      const ch = g.items.length > 1 && first.value ? ((last.value - first.value) / first.value) * 100 : null;
+      return `<tr><td><span class="cmp-sw c${g.i + 1}"></span><a href="#f=${encodeURIComponent(last.id)}">${esc(cmpLabel(g.k))}</a><small>${esc(L(...(STATUS[last.status] || ['', ''])))}</small></td>
+        <td class="n"><b>${esc(groupDigits(last.value_text))}</b></td><td>${esc(unitFmt(last.unit))}</td><td>${esc(yearFmt(last) || '—')}</td>
+        <td class="n">${ch === null ? '—' : `${esc(yearFmt(first))} → ${ch < 0 ? '↓' : ch > 0 ? '↑' : '→'} ${Math.abs(ch).toFixed(1)}%`}</td></tr>`;
+    };
+    dlg.innerHTML = `<div class="cmp-box">
+      <div class="embed-top"><h2>${esc(L('系數比較', 'Compare factors'))}</h2><button type="button" class="embed-x" data-close-cmp aria-label="${esc(L('關閉', 'Close'))}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+      ${same && yearly.length ? `<p class="muted">${esc(unitFmt(units[0]))}</p><div class="cmp-chart" id="cmp-chart"></div>` : `<p class="cmp-warn">${esc(!same ? L('這些系數的單位不同，不能放在同一張圖，只並列數字。', 'These factors use different units, so they are listed side by side rather than drawn on one chart.') : L('所選的都是單一數值（沒有歷年數據），只並列數字。', 'None of these has a yearly series, so the values are listed side by side.'))}</p>`}
+      <div class="cmp-table-wrap"><table class="cmp-table"><thead><tr><th>${esc(L('系數', 'Factor'))}</th><th>${esc(L('最新數值', 'Latest'))}</th><th>${esc(L('單位', 'Unit'))}</th><th>${esc(L('年份', 'Year'))}</th><th>${esc(L('變化', 'Change'))}</th></tr></thead><tbody>${groups.map(row).join('')}</tbody></table></div>
+      <p class="muted small">${esc(L('不同機構的系數口徑可能不同（例如是否扣除可再生能源證書），比較前請先看各系數的說明。', 'Factors from different publishers may be defined differently (for example with or without renewable certificates); read each factor’s notes before comparing.'))}</p>
+      <div class="embed-row"><button type="button" class="pill" data-copy-link>${esc(L('複製連結', 'Copy link'))}</button>${same && yearly.length ? `<button type="button" class="pill" data-save-chart>${esc(L('下載圖片', 'Save image'))} ↓</button>` : ''}</div>
+    </div>`;
+    dlg.showModal();
+    if (same && yearly.length) {
+      const toPoints = (arr) => arr.map((f) => ({ x: yearFmt(f), value: f.value, text: groupDigits(f.value_text), id: f.id }));
+      lineChart($('#cmp-chart', dlg), yearly.map((g) => ({ label: cmpLabel(g.k), cls: `c${g.i + 1}`, points: toPoints(g.items) })), { height: 300 });
+    }
+  }
+  function initCompare() {
+    const m = location.hash.match(/^#cmp=(.+)$/);
+    let keys = [];
+    if (m) keys = m[1].split(',').map(decodeURIComponent);
+    else { try { keys = JSON.parse(sessionStorage.getItem('hkoc-cmp') || '[]'); } catch { /* ignore */ } }
+    cmp.keys = keys.filter((k) => cmpMembers(k).length).slice(0, CMP_MAX);
+    cmpSync();
+    if (m && cmp.keys.length > 1) cmpOpen();
+    document.addEventListener('click', (e) => { const b = e.target.closest('[data-cmp-toggle]'); if (b) cmpToggle(b.dataset.cmpToggle); });
   }
 
   /* ---------- detail drawer ---------- */
@@ -534,6 +626,7 @@
       document.body.style.overflow = '';
       currentId = null;
       if (location.hash.startsWith('#f=')) history.replaceState(null, '', location.pathname + location.search);
+      if (cmp.keys.length) cmpSync();
       lastFocus?.focus?.();
     }
 
@@ -552,6 +645,7 @@
       document.body.style.overflow = 'hidden';
       drawer.scrollTop = 0;
       drawer.focus({ preventScroll: true });
+      cmpSync();
     }
 
     function calc(f) {
@@ -685,6 +779,7 @@
           <button class="pill pill-solid" type="button" data-copy="${esc(citation)}">${esc(L('複製引用', 'Copy citation'))}</button>
           <button class="pill" type="button" data-copy-link>${esc(L('複製連結', 'Copy link'))}</button>
           <a class="pill" href="${esc(fileUrl)}" target="_blank" rel="noopener">${esc(L('原始資料檔', 'Data file'))} ↗</a>
+          <button class="pill" type="button" data-cmp-toggle="${esc(isYearly(f) ? seriesOf(f) : f.id)}" aria-pressed="false">＋ ${esc(L('加入比較', 'Compare'))}</button>
           <button class="pill" type="button" data-dl-series="${esc(f.id)}">${esc(isYearly(f) ? L('下載歷年 CSV', 'Download all years (CSV)') : L('下載 CSV', 'Download CSV'))} ↓</button>
         </div>
       </div>`;
