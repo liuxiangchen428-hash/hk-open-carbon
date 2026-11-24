@@ -43,7 +43,8 @@ export function layout({ file, title, description, body, stats, script }) {
 <link rel="apple-touch-icon" href="assets/icon-180.png?v=${stats.v}">
 <meta name="theme-color" content="#0b1d18">
 <link rel="stylesheet" href="assets/style.css?v=${stats.v}">
-<script>try{var l=localStorage.getItem('hkoc-lang');if(l)document.documentElement.dataset.lang=l;}catch(e){}</script>
+<script>try{var l=localStorage.getItem('hkoc-lang');if(l)document.documentElement.dataset.lang=l;}catch(e){}
+(function(){var q=new URLSearchParams(location.search),h=document.documentElement;if(q.get('embed')==='1'){h.dataset.embed='1';var g=q.get('lang');if(g==='en'||g==='zh')h.dataset.lang=g;}})();</script>
 </head>
 <body data-page="${file.replace('.html', '')}" data-v="${stats.v}"${AI_ENDPOINT ? ` data-ai="${AI_ENDPOINT}"` : ''}>
 <a class="skip" href="#main">${t('跳到內容', 'Skip to content')}</a>

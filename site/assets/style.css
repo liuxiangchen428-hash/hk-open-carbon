@@ -1309,3 +1309,34 @@ a:hover { color: var(--accent-ink); }
 #inv-share { justify-content: flex-end; margin-top: 8px; }
 .map-right { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
 @media (max-width: 720px) { .map-right { width: 100%; justify-content: space-between; } }
+
+/* ---------- embed dialog ---------- */
+.embed-dlg { border: 2px solid var(--rule); border-radius: 0; padding: 0; width: min(560px, calc(100vw - 32px)); background: var(--bg); color: var(--ink); }
+.embed-dlg::backdrop { background: rgb(0 0 0 / .45); }
+.embed-box { padding: 22px 24px 20px; display: grid; gap: 12px; }
+.embed-top { display: flex; justify-content: space-between; align-items: center; }
+.embed-top h2 { margin: 0; font-size: 1.2rem; }
+.embed-x { width: 36px; height: 36px; border: 0; background: none; color: var(--ink); cursor: pointer; display: grid; place-items: center; }
+.embed-x svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
+.embed-box textarea { width: 100%; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; padding: 10px 12px; border: 1px solid var(--line); background: var(--bg-2, var(--bg)); color: var(--ink); resize: vertical; box-sizing: border-box; }
+.embed-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.embed-box .small { font-size: .82rem; margin: 0; }
+@media (max-width: 720px) { .embed-box textarea { font-size: 16px; } }
+
+/* ---------- inside an embedded frame: the chart only ---------- */
+html[data-embed] body { padding: 0 !important; min-height: 0; }
+html[data-embed] .skip, html[data-embed] .site-header, html[data-embed] .tabbar, html[data-embed] .site-footer,
+html[data-embed] .ai, html[data-embed] .hb, html[data-embed] .browser, html[data-embed] .dash-tabs,
+html[data-embed] .hero-top, html[data-embed] .inv-kpis, html[data-embed] .inv-goal-note, html[data-embed] .inv-body,
+html[data-embed] .page-head, html[data-embed] .map-notes, html[data-embed] .map-more,
+html[data-embed] .share-tools, html[data-embed] .drawer, html[data-embed] .drawer-backdrop { display: none !important; }
+html[data-embed] .hero, html[data-embed] .map-wrap { padding: 12px 0 0 !important; margin: 0 !important; border: 0 !important; background: none !important; }
+html[data-embed] .wrap { max-width: none; padding-left: 12px; padding-right: 12px; }
+html[data-embed] .dash, html[data-embed] .inv-panel { margin: 0 !important; }
+.embed-credit { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 10px 12px 12px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted, var(--ink-2)); }
+.embed-credit a { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--ink); text-decoration: none; }
+.embed-credit svg { width: 18px; height: 18px; }
+html[data-embed], html[data-embed] body { height: auto; min-height: 0 !important; }
+/* Embedded map: keep map and figures side by side down to 640px wide. */
+@media (min-width: 640px) { html[data-embed] .map-grid { grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; } html[data-embed] .map-legend { position: static; } }
+.embed-credit .mark { width: 18px; height: 18px; }

@@ -249,7 +249,7 @@
         ${dl ? `<div><span>${esc(L(`對比 ${yearFmt(dl.prev)}`, `vs ${yearFmt(dl.prev)}`))}</span><b class="delta-ink ${dl.cls}">${dl.sign} ${Math.abs(dl.d).toFixed(1)}%</b></div>` : ''}
         ${items.length > 2 ? `<div><span>${esc(L(`${yearFmt(first)} 至今`, `Since ${yearFmt(first)}`))}</span><b class="delta-ink ${change < 0 ? 'down' : change > 0 ? 'up' : 'flat'}">${change < 0 ? '↓' : change > 0 ? '↑' : '→'} ${Math.abs(change).toFixed(1)}%</b></div>` : ''}
       </div>
-      <div class="share-tools"><button type="button" class="pill pill-sm" data-save-chart>${esc(L('下載圖片', 'Save image'))} ↓</button><a class="pill pill-solid" href="#f=${encodeURIComponent(last.id)}">${esc(L('查看最新系數', 'Open latest factor'))} →</a></div>`;
+      <div class="share-tools"><button type="button" class="pill pill-sm" data-embed>${esc(L('嵌入', 'Embed'))} &lt;/&gt;</button><button type="button" class="pill pill-sm" data-save-chart>${esc(L('下載圖片', 'Save image'))} ↓</button><a class="pill pill-solid" href="#f=${encodeURIComponent(last.id)}">${esc(L('查看最新系數', 'Open latest factor'))} →</a></div>`;
     $('#dash').style.cssText = cvar(last.category);
     lineChart($('#dash-chart'), series);
   }
@@ -257,10 +257,17 @@
   function initDash() {
     const root = $('#dash');
     if (!root) return;
+    const q = new URLSearchParams(location.search);
+    const ki = DASH.findIndex((c) => c.key === q.get('k'));
+    if (ki >= 0) { dash.i = ki; dash.compare = q.get('cmp') === '1'; renderDash(); }
     root.addEventListener('click', (e) => {
       const tab = e.target.closest('.dash-tab');
       if (tab) { dash.i = +tab.dataset.i; dash.compare = false; renderDash(); return; }
       if (e.target.closest('[data-compare]')) { dash.compare = !dash.compare; renderDash(); }
+      if (e.target.closest('[data-embed]')) {
+        const c = DASH[dash.i];
+        openEmbed({ path: `index.html?k=${encodeURIComponent(c.key)}${dash.compare ? '&cmp=1' : ''}`, title: $('#dash-title').textContent, height: 640 });
+      }
       if (e.target.closest('[data-save-chart]')) {
         const c = DASH[dash.i];
         svgToPng($('#dash-chart svg'), { title: $('#dash-title').textContent, note: `${$('#dash-sub').textContent} · ${L('來源：電力公司及煤氣公司報告、政府指引（見系數庫）', 'Sources: utility reports and government guidelines (see the factor library)')}`, file: `${c.key}.png` });
@@ -937,6 +944,7 @@
     $('#inv-metric').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.metric = b.dataset.metric; syncHash(); renderChart(); } });
     $('#inv-share').addEventListener('click', (e) => {
       if (e.target.closest('[data-copy-link]')) { syncHash(); copyLink(e.target.closest('[data-copy-link]')); }
+      if (e.target.closest('[data-embed]')) { syncHash(); openEmbed({ path: `inventory.html${location.hash}`, title: $('#inv-title').textContent, height: 680 }); }
       if (e.target.closest('[data-save-chart]')) svgToPng($('#inv-chart svg'), { title: `${$('#inv-title').textContent} · ${$('#inv-sub').textContent}`, note: L('來源：環境及生態局《香港溫室氣體排放數據表》（2024 年，AR5）', 'Source: Environment and Ecology Bureau, Hong Kong GHG data tables (2024, AR5)'), file: `hk-ghg-${st.metric}.png` });
     });
     $('#inv-range').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.from = +b.dataset.from; if (st.year < st.from) st.year = latest.year; syncHash(); renderKpis(); renderChart(); renderSectors(); } });
@@ -1225,6 +1233,66 @@
     document.body.append(a); a.click(); a.remove();
   }
   window.HKOC = { copyLink, svgToPng, L };
+
+  /* ---------- embed: iframe code dialog, and behaviour inside an embedded frame ---------- */
+  const EMBED = document.documentElement.dataset.embed === '1';
+  function openEmbed({ path, title, height }) {
+    const url = new URL(path, location.href);
+    url.searchParams.set('embed', '1');
+    if (lang() === 'en') url.searchParams.set('lang', 'en');
+    const code = `<iframe data-hkoc src="${url.href}" title="${title} · ${L('香港開源碳核算平台', 'HK Open Carbon Platform')}" width="100%" height="${height}" style="border:0;max-width:100%" loading="lazy"></iframe>
+<script>addEventListener("message",function(e){var h=e.data&&e.data.hkocHeight;if(!h)return;document.querySelectorAll("iframe[data-hkoc]").forEach(function(f){if(f.contentWindow===e.source)f.style.height=h+"px"})});</script>`;
+    let dlg = $('#embed-dlg');
+    if (!dlg) {
+      dlg = document.createElement('dialog');
+      dlg.id = 'embed-dlg'; dlg.className = 'embed-dlg';
+      document.body.append(dlg);
+      dlg.addEventListener('click', (e) => {
+        if (e.target === dlg || e.target.closest('[data-close]')) dlg.close();
+        const cp = e.target.closest('[data-copy-embed]');
+        if (cp) {
+          const ta = $('textarea', dlg); ta.select();
+          (navigator.clipboard?.writeText(ta.value) || Promise.reject()).catch(() => document.execCommand('copy'));
+          cp.textContent = L('已複製 ✓', 'Copied ✓'); setTimeout(() => { cp.textContent = L('複製代碼', 'Copy code'); }, 1600);
+        }
+      });
+    }
+    dlg.innerHTML = `<div class="embed-box">
+      <div class="embed-top"><h2>${esc(L('嵌入到你的網站', 'Embed on your site'))}</h2><button type="button" class="embed-x" data-close aria-label="${esc(L('關閉', 'Close'))}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+      <p class="muted">${esc(L('把以下代碼貼到網頁或文章的 HTML 中。圖表會保持互動，並顯示目前選擇的狀態；數據更新後會自動跟着更新。', 'Paste this code into your page’s HTML. The chart stays interactive, opens in the state you see now and updates when the data does.'))}</p>
+      <textarea readonly rows="7" spellcheck="false">${esc(code)}</textarea>
+      <div class="embed-row"><button type="button" class="pill pill-solid" data-copy-embed>${esc(L('複製代碼', 'Copy code'))}</button><a class="pill" href="${esc(url.href)}" target="_blank" rel="noopener">${esc(L('預覽', 'Preview'))} ↗</a></div>
+      <p class="muted small">${esc(L('第二行的小段程式會讓框架高度自動配合內容；如果你的平台不接受 <script>，只貼第一行也可以，內容過長時會在框內捲動。數據以 CC BY 4.0 授權，請保留圖表下方的出處連結。', 'The short script on the second line makes the frame fit its content; if your platform does not allow <script>, the first line alone works and scrolls inside the frame when needed. Data is CC BY 4.0; please keep the credit link under the chart.'))}</p>
+    </div>`;
+    dlg.showModal();
+    $('textarea', dlg).select();
+  }
+  if (EMBED) {
+    // Credit line, and every link opens the full site in a new tab.
+    const full = new URL(location.href); full.searchParams.delete('embed'); full.searchParams.delete('lang');
+    const credit = document.createElement('p');
+    credit.className = 'embed-credit';
+    credit.innerHTML = `<a href="${esc(full.href)}" target="_blank" rel="noopener"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="8" fill="var(--mark-bg)"/><path d="M22.4 9.6A9 9 0 1 0 22.4 22.4" fill="none" stroke="var(--mark-c)" stroke-width="3" stroke-linecap="round"/><path d="M19.5 16C19.5 12.4 22.2 10 26 9.6 26 13.6 23.6 16 19.5 16Z" fill="var(--mark-leaf)"/></svg>${esc(L('香港開源碳核算平台', 'HK Open Carbon Platform'))}</a><span>${esc(L('數據 CC BY 4.0 · 照錄原文', 'Data CC BY 4.0 · as published'))}</span>`;
+    document.body.append(credit);
+    if (parent !== window) {
+      let lastH = 0;
+      const report = () => {
+        const h = Math.ceil(credit.getBoundingClientRect().bottom + scrollY + 12);
+        if (Math.abs(h - lastH) > 2) { lastH = h; parent.postMessage({ hkocHeight: h }, '*'); }
+      };
+      new ResizeObserver(report).observe(document.body);
+      addEventListener('load', report);
+    }
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href]');
+      if (!a || a.hasAttribute('download') || a.closest('.embed-credit')) return;
+      const u = new URL(a.getAttribute('href'), location.href);
+      u.searchParams.delete('embed'); u.searchParams.delete('lang');
+      e.preventDefault();
+      window.open(u.href, '_blank', 'noopener');
+    }, true);
+  }
+  window.HKOC.openEmbed = openEmbed;
 
   /* ---------- AI assistant ---------- */
   function initAssistant(endpoint) {

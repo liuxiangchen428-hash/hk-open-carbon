@@ -222,7 +222,7 @@ const inventory = () => `
         </div>
       </div>
       <div class="dash-chart inv-chart" id="inv-chart"></div>
-      <div class="share-tools" id="inv-share"><button type="button" class="pill pill-sm" data-copy-link>${t('複製連結', 'Copy link')}</button><button type="button" class="pill pill-sm" data-save-chart>${t('下載圖片', 'Save image')} ↓</button></div>
+      <div class="share-tools" id="inv-share"><button type="button" class="pill pill-sm" data-copy-link>${t('複製連結', 'Copy link')}</button><button type="button" class="pill pill-sm" data-embed>${t('嵌入', 'Embed')} &lt;/&gt;</button><button type="button" class="pill pill-sm" data-save-chart>${t('下載圖片', 'Save image')} ↓</button></div>
       <div class="dash-foot inv-foot" id="inv-foot"></div>
     </div>
     <p class="inv-goal-note" id="inv-goal-note"></p>
@@ -376,7 +376,7 @@ const map = () => `
     </div>
     <div class="map-right">
       <label class="map-period" id="map-period-wrap" hidden><span id="map-period-label"></span><select id="map-period"></select></label>
-      <div class="share-tools" id="map-share"><button type="button" class="pill pill-sm" data-copy-link>${t('複製連結', 'Copy link')}</button><button type="button" class="pill pill-sm" data-save-chart>${t('下載圖片', 'Save image')} ↓</button></div>
+      <div class="share-tools" id="map-share"><button type="button" class="pill pill-sm" data-copy-link>${t('複製連結', 'Copy link')}</button><button type="button" class="pill pill-sm" data-embed>${t('嵌入', 'Embed')} &lt;/&gt;</button><button type="button" class="pill pill-sm" data-save-chart>${t('下載圖片', 'Save image')} ↓</button></div>
     </div>
   </div>
   <div class="map-grid">

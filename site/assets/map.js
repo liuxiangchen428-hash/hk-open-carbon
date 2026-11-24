@@ -517,6 +517,7 @@
     $('#map-share').addEventListener('click', (e) => {
       if (e.target.closest('[data-copy-link]')) window.HKOC?.copyLink(e.target.closest('[data-copy-link]'));
       if (e.target.closest('[data-save-chart]')) saveCard();
+      if (e.target.closest('[data-embed]')) window.HKOC?.openEmbed({ path: `map.html${location.hash}`, title: L('香港碳地圖', 'Hong Kong carbon map'), height: 900 });
     });
     $('#map-more').addEventListener('click', () => $('#map-panel').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && st.sel) select(null); });
