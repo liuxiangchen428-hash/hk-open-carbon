@@ -510,7 +510,7 @@
         return;
       }
       const open = e.target.closest('[data-open]');
-      if (open) location.hash = `f=${encodeURIComponent(open.dataset.open)}`;
+      if (open) goFactor(open.dataset.open);
     });
 
     initDrawer();
@@ -611,6 +611,8 @@
   }
 
   /* ---------- detail drawer ---------- */
+  let goFactor = (id) => { location.hash = `f=${encodeURIComponent(id)}`; };
+  let savedY = null;
   function initDrawer() {
     const drawer = $('#drawer');
     const scrim = $('.drawer-scrim');
@@ -620,10 +622,13 @@
 
     function close() {
       if (!drawer.classList.contains('open')) return;
+      const y = savedY;
       drawer.classList.remove('open');
       drawer.setAttribute('aria-hidden', 'true');
       scrim.hidden = true;
       document.body.style.overflow = '';
+      if (y !== null && Math.abs(scrollY - y) > 2) scrollTo(0, y);
+      savedY = null;
       currentId = null;
       if (location.hash.startsWith('#f=')) history.replaceState(null, '', location.pathname + location.search);
       if (cmp.keys.length) cmpSync();
@@ -633,7 +638,7 @@
     function open(id) {
       const f = DATA.factors.find((x) => x.id === id);
       if (!f) return close();
-      if (!drawer.classList.contains('open')) lastFocus = document.activeElement;
+      if (!drawer.classList.contains('open')) { lastFocus = document.activeElement; savedY = scrollY; }
       const amount = currentId && seriesOf(DATA.factors.find((x) => x.id === currentId) || f) === seriesOf(f) ? $('#calc-in', body)?.value : '';
       currentId = id;
       body.innerHTML = detail(f);
@@ -645,6 +650,8 @@
       document.body.style.overflow = 'hidden';
       drawer.scrollTop = 0;
       drawer.focus({ preventScroll: true });
+      // Keep the page where it was behind the panel.
+      if (savedY !== null && Math.abs(scrollY - savedY) > 2) scrollTo(0, savedY);
       cmpSync();
     }
 
@@ -669,6 +676,20 @@
       if (m) open(decodeURIComponent(m[1])); else close();
     };
     window.addEventListener('hashchange', fromHash);
+    window.addEventListener('popstate', fromHash);
+    // In-page links to a factor (#f=...) go through goFactor too.
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="#f="]');
+      if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      goFactor(decodeURIComponent(a.getAttribute('href').slice(3)));
+    });
+    goFactor = (id, { replace = false } = {}) => {
+      const url = `${location.pathname}${location.search}#f=${encodeURIComponent(id)}`;
+      void replace;
+      history.replaceState(null, '', url);
+      open(id);
+    };
     scrim.addEventListener('click', close);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
     body.addEventListener('input', (e) => {
@@ -677,7 +698,7 @@
     body.addEventListener('click', async (e) => {
       if (e.target.closest('[data-close]')) return close();
       const openBtn = e.target.closest('[data-open]');
-      if (openBtn) { location.hash = `f=${encodeURIComponent(openBtn.dataset.open)}`; return; }
+      if (openBtn) { goFactor(openBtn.dataset.open, { replace: true }); return; }
       const preset = e.target.closest('[data-preset]');
       if (preset) { $('#calc-in', body).value = preset.dataset.preset; calc(DATA.factors.find((x) => x.id === currentId)); return; }
       const copy = e.target.closest('[data-copy]');
