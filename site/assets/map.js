@@ -221,6 +221,180 @@
     }
   }
 
+
+  /* ---------- shareable data card (PNG): whole map + the numbers behind it ---------- */
+  async function saveCard() {
+    const cs = getComputedStyle(document.body);
+    const font = cs.fontFamily, BG = cs.backgroundColor, INK = cs.color;
+    const tmp = document.createElement('canvas').getContext('2d');
+    const rgb = (css) => { const el = document.createElement('i'); el.style.color = css; document.body.append(el); const c = getComputedStyle(el).color; el.remove(); tmp.clearRect(0, 0, 1, 1); tmp.fillStyle = c; tmp.fillRect(0, 0, 1, 1); const [r, g, b, a] = tmp.getImageData(0, 0, 1, 1).data; return `rgba(${r},${g},${b},${(a / 255).toFixed(3)})`; };
+    const MUTED = rgb(`color-mix(in srgb, ${INK} 60%, transparent)`), LINE = rgb(`color-mix(in srgb, ${INK} 14%, transparent)`);
+    const ACC = st.layer === 'solar' ? rgb('var(--sun-hi)') : rgb('var(--ember-hi)');
+    const mapLine = rgb(getComputedStyle(svg.querySelector('.dist')).stroke);
+
+    // 1. The whole map, drawn fresh (not the zoomed view) so the district is seen in context.
+    const MW = 660, MH = Math.round(MW * full[3] / full[2]), upp = full[2] / MW;
+    const paths = M.districts.map((d) => {
+      const el = svg.querySelector(`.dist[data-code="${d.code}"]`);
+      const on = st.sel === d.code, dim = st.sel && !on;
+      return `<path d="${d.d}" fill="${rgb(getComputedStyle(el).fill)}" fill-opacity="${dim ? 0.4 : 1}" stroke="${on ? INK : mapLine}" stroke-width="${(on ? 3 : 0.8) * upp}" stroke-linejoin="round"/>`;
+    });
+    const sel = st.sel && M.districts.find((d) => d.code === st.sel);
+    const labels = lang() === 'en' ? [] : M.districts.filter((d) => (st.sel ? d.code === st.sel : st.layer !== 'hke' || supplierOf(d.code) === 'hke')).map((d) => {
+      const t = d.zh.replace('區', '');
+      const fs = (d.code === st.sel ? 15 : 11) * upp;
+      return `<text x="${d.label[0]}" y="${d.label[1]}" text-anchor="middle" dominant-baseline="middle" font-family="${esc(font)}" font-weight="700" font-size="${fs}" fill="${INK}" stroke="${BG}" stroke-width="${3 * upp}" paint-order="stroke">${esc(t)}</text>`;
+    });
+    // Draw the selected outline last so its border is not covered.
+    if (sel) { const i = M.districts.indexOf(sel); paths.push(paths.splice(i, 1)[0]); }
+    const svgText = `<svg xmlns="http://www.w3.org/2000/svg" width="${MW}" height="${MH}" viewBox="${full.join(' ')}">${paths.join('')}${labels.join('')}</svg>`;
+    const img = new Image();
+    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgText)}`;
+    await img.decode();
+
+    // 2. Layout: header, map left, facts right, footer.
+    const PAD = 40, GAP = 40, RW = 440, W = PAD * 2 + MW + GAP + RW, HEAD = 104, scale = 2;
+    const blocks = cardBlocks();
+    // Measure the right column first.
+    const measure = () => blocks.reduce((h, b) => h + b.h, 0);
+    const bodyH = Math.max(MH + 60, measure());
+    const H = HEAD + bodyH + 86;
+    const cv = Object.assign(document.createElement('canvas'), { width: W * scale, height: H * scale });
+    const c = cv.getContext('2d'); c.scale(scale, scale);
+    c.fillStyle = BG; c.fillRect(0, 0, W, H);
+    const text = (t, x, y, size, { w = 400, col = INK, align = 'left' } = {}) => { c.font = `${w} ${size}px ${font}`; c.fillStyle = col; c.textAlign = align; c.fillText(t, x, y); c.textAlign = 'left'; return c.measureText(t).width; };
+    // header
+    c.fillStyle = INK; c.fillRect(PAD, 24, 36, 5);
+    text(L('香港碳地圖', 'Hong Kong carbon map'), PAD, 64, 28, { w: 800 });
+    text(cardSubtitle(), PAD, 90, 15, { col: MUTED });
+    // map + legend
+    c.drawImage(img, PAD, HEAD, MW, MH);
+    let lx = PAD; const ly = HEAD + MH + 28;
+    for (const it of legendItems()) {
+      if (it.ramp) { const g = c.createLinearGradient(lx, 0, lx + 54, 0); g.addColorStop(0, rgb(`var(--${it.ramp}-lo)`)); g.addColorStop(1, rgb(`var(--${it.ramp}-hi)`)); c.fillStyle = g; c.fillRect(lx, ly - 11, 54, 12); lx += 62; }
+      else { c.fillStyle = rgb(it.color); c.fillRect(lx, ly - 11, 14, 12); lx += 20; }
+      lx += text(it.label, lx, ly, 13, { col: MUTED }) + 18;
+    }
+    // right column
+    const X = PAD + MW + GAP;
+    let y = HEAD + 4;
+    for (const b of blocks) { b.draw(c, X, y, RW, { text, INK, MUTED, LINE, ACC, rgb }); y += b.h; }
+    // footer
+    c.fillStyle = LINE; c.fillRect(PAD, H - 70, W - PAD * 2, 1);
+    text(cardSource(), PAD, H - 44, 13, { col: MUTED });
+    text(L('香港開源碳核算平台 · liuxiangchen428-hash.github.io/hk-open-carbon · 數據 CC BY 4.0', 'HK Open Carbon Platform · liuxiangchen428-hash.github.io/hk-open-carbon · data CC BY 4.0'), PAD, H - 22, 13, { col: MUTED });
+    const a = document.createElement('a');
+    a.href = cv.toDataURL('image/png');
+    a.setAttribute('download', `hk-carbon-map-${st.layer}${st.sel ? `-${st.sel}` : ''}.png`);
+    document.body.append(a); a.click(); a.remove();
+  }
+
+  function cardSubtitle() {
+    const layer = { supply: L('供電公司及每度電排放', 'Supplier and emissions per kWh'), hke: `${L('港燈分區用電', 'HK Electric consumption by district')} · ${periodName(st.hkePeriod)}`, solar: `${L('中電客戶自家太陽能及風能', 'CLP customer solar and wind')} · ${monthName(st.solarMonth)}` }[st.layer];
+    return st.sel ? `${L(byCode.get(st.sel).zh, byCode.get(st.sel).en)} · ${layer}` : layer;
+  }
+  function cardSource() {
+    const parts = [L('地界：政府統計處 2021 年人口普查', 'Boundaries: C&SD 2021 Census')];
+    parts.push(L('每度電排放：中電、港燈可持續發展報告', 'Per kWh: CLP and HK Electric sustainability reports'));
+    if (st.layer === 'hke' || ['A', 'B', 'C', 'D'].includes(st.sel)) parts.push(L('分區用電：港燈開放數據', 'District use: HK Electric open data'));
+    if (st.layer === 'solar' || (st.sel && regionOf(st.sel))) parts.push(L('太陽能：中電開放數據', 'Solar: CLP open data'));
+    return `${parts.join(L('；', '; '))}${L('。照錄原文，不作推算。', '. Copied as published, nothing estimated.')}`;
+  }
+  function legendItems() {
+    if (st.layer === 'supply') return [{ color: fillFor('E'), label: L(`中電 ${latestFactor('clp').text}`, `CLP ${latestFactor('clp').text}`) }, { color: fillFor('A'), label: L(`港燈 ${latestFactor('hke').text} kg CO₂e/度`, `HK Electric ${latestFactor('hke').text} kg CO₂e/kWh`) }];
+    if (st.layer === 'hke') return [{ ramp: 'ember', label: L('用電量，越深越多', 'Consumption, darker = more') }, { color: 'var(--map-off)', label: L('中電區沒有分區數據', 'No district data (CLP)') }];
+    return [{ ramp: 'sun', label: L('發電量，越深越多', 'Generation, darker = more') }, { color: 'var(--map-off)', label: L('沒有數據', 'No data') }];
+  }
+
+  // Right-column blocks: each has a height and a draw function.
+  function cardBlocks() {
+    const out = [];
+    const kicker = (k, h = 28) => ({ h, draw: (c, x, y, w, u) => { u.text(k, x, y + 14, 13, { w: 700, col: u.MUTED }); } });
+    const title = (t, sub) => ({ h: sub ? 78 : 52, draw: (c, x, y, w, u) => { u.text(t, x, y + 30, 30, { w: 800 }); if (sub) u.text(sub, x, y + 58, 14, { col: u.MUTED }); } });
+    const big = (head, value, unit, note) => ({ h: note ? 112 : 92, draw: (c, x, y, w, u) => {
+      c.fillStyle = u.INK; c.fillRect(x, y, w, 2);
+      u.text(head, x, y + 26, 14, { w: 700 });
+      const vw = u.text(value, x, y + 72, 40, { w: 800 });
+      u.text(unit, x + vw + 10, y + 72, 14, { col: u.MUTED });
+      if (note) u.text(note, x, y + 98, 13, { col: u.MUTED });
+    } });
+    const barsB = (items, shared) => ({ h: 112, draw: (c, x, y, w, u) => {
+      const max = shared || Math.max(...items.map((i) => i.v)) || 1, n = items.length, bw = w / n, ch = 62, top = y + 18;
+      const every = Math.ceil(n / 12);
+      items.forEach((it, i) => {
+        const h = Math.max(2, (it.v / max) * ch), bx = x + i * bw + bw * 0.18;
+        c.fillStyle = it.on ? u.ACC : u.LINE; c.fillRect(bx, top + ch - h, bw * 0.64, h);
+        if (it.on) u.text(it.text, bx + bw * 0.32, top + ch - h - 6, 12, { w: 700, align: 'center' });
+        if (i % every === 0 || it.on) u.text(it.short, bx + bw * 0.32, top + ch + 18, 11, { col: it.on ? u.INK : u.MUTED, w: it.on ? 700 : 400, align: 'center' });
+      });
+    } });
+    const rows = (items, unit) => ({ h: 26 + items.length * 34, draw: (c, x, y, w, u) => {
+      c.fillStyle = u.INK; c.fillRect(x, y, w, 2);
+      const max = Math.max(...items.map((i) => i.v)) || 1;
+      items.forEach((it, i) => {
+        const ry = y + 30 + i * 34;
+        u.text(it.label, x, ry + 4, 14, { w: it.on ? 800 : 500 });
+        u.text(it.text, x + w, ry + 4, 14, { w: 700, align: 'right' });
+        c.fillStyle = it.color ? u.rgb(it.color) : it.on ? u.ACC : u.LINE; c.fillRect(x, ry + 11, Math.max(2, (it.v / max) * w), 6);
+      });
+      if (unit) u.text(unit, x, y + 30 + items.length * 34 - 2, 12, { col: u.MUTED });
+    } });
+    const gap = (h) => ({ h, draw: () => {} });
+    const yrBars = (series, cur, shared) => barsB(series.slice(-12).map((f) => ({ v: f.value, text: f.text, short: `'${String(f.year).slice(2)}`, on: f.year === cur })), shared);
+    const kwh = L('kg CO₂e / 度', 'kg CO₂e / kWh');
+
+    if (!st.sel) {
+      out.push(kicker(st.layer === 'hke' ? L('港島及南丫島', 'HK Island and Lamma') : st.layer === 'solar' ? L('中電供電區', 'CLP supply area') : L('全港', 'All of Hong Kong')));
+      if (st.layer === 'supply') {
+        const cf = latestFactor('clp'), hf = latestFactor('hke');
+        const top = Math.max(...[...F.clp, ...F.hke].slice(-24).map((f) => f.value));
+        out.push(big(L('中電 · 九龍、新界、大部分離島', 'CLP · Kowloon, NT, most islands'), cf.text, `${kwh} · ${cf.year}`), yrBars(F.clp, cf.year, top), gap(8));
+        out.push(big(L('港燈 · 港島、鴨脷洲、南丫島', 'HK Electric · HK Island, Ap Lei Chau, Lamma'), hf.text, `${kwh} · ${hf.year}`), yrBars(F.hke, hf.year, top));
+      } else if (st.layer === 'hke') {
+        const rs = ['A', 'B', 'C', 'D', 'T-lamma'].map((c) => ({ c, r: hkeRow(c, st.hkePeriod) })).filter((x) => x.r).sort((a, b) => b.r.consumption_gwh - a.r.consumption_gwh);
+        const tot = rs.reduce((t, x) => t + x.r.consumption_gwh, 0);
+        out.push(title(L('港島各區用電', 'Consumption by district'), periodName(st.hkePeriod)));
+        out.push(rows(rs.map(({ c, r }) => ({ color: c === 'T-lamma' ? ramp('ember', 0.15) : fillFor(c), label: c === 'T-lamma' ? L('南丫島', 'Lamma') : L(byCode.get(c).zh, byCode.get(c).en), v: r.consumption_gwh, text: num(r.consumption_gwh) })), L(`百萬度（GWh）· 五項合計 ${num(tot)}`, `GWh · five areas together ${num(tot)}`)));
+        out.push(gap(16), kicker(L('中電沒有公佈分區用電，九龍、新界不能按區比較。', 'CLP does not publish district consumption.'), 24));
+      } else {
+        const k = solarRow('kowloon', st.solarMonth), n = solarRow('nt', st.solarMonth);
+        out.push(big(L('新界', 'New Territories'), num(n.solar_wind_kwh / 1e6, 2), `${L('百萬度', 'GWh')} · ${monthName(st.solarMonth)}`, L(`${num(n.solar_wind_accounts)} 個太陽能及風能客戶`, `${num(n.solar_wind_accounts)} accounts`)));
+        out.push(solarBars('nt'), gap(8));
+        out.push(big(L('九龍', 'Kowloon'), num(k.solar_wind_kwh / 1e6, 2), `${L('百萬度', 'GWh')} · ${monthName(st.solarMonth)}`, L(`${num(k.solar_wind_accounts)} 個太陽能及風能客戶`, `${num(k.solar_wind_accounts)} accounts`)));
+        out.push(solarBars('kowloon'));
+      }
+      return out;
+    }
+    const d = byCode.get(st.sel), sup = supplierOf(st.sel), series = F[sup] || [];
+    const fy = series.find((x) => x.year === st.factorYear) || series.at(-1);
+    out.push(kicker(L('地區', 'District')));
+    out.push(title(L(d.zh, d.en), L(`${d.en} · 人口 ${num(d.population)} · 住戶 ${num(d.households)}（2021 年普查）`, `Population ${num(d.population)} · households ${num(d.households)} (2021 Census)`)));
+    out.push(gap(6), big(L(`${SUP[sup][0]}供電 · 每度電排放`, `${SUP[sup][1]} · emissions per kWh`), fy.text, `${kwh} · ${fy.year}`), yrBars(series, fy.year));
+    const hkeCode = sup === 'hke' ? st.sel : st.sel === 'T' ? 'T-lamma' : null;
+    if (hkeCode) {
+      const rs = M.hke.filter((r) => r.district === hkeCode).sort((a, b) => `${a.year}${a.half}`.localeCompare(`${b.year}${b.half}`));
+      const r = rs.find((x) => `${x.year}-${x.half}` === st.hkePeriod) || rs.at(-1);
+      const p = `${r.year}-${r.half}`;
+      const split = [['residential_gwh', L('住宅', 'Res.')], ['commercial_gwh', L('商業', 'Comm.')], ['industrial_gwh', L('工業', 'Ind.')]].map(([k, n]) => `${n} ${Math.round((r[k] / r.total_by_type_gwh) * 100)}%`).join(' · ');
+      out.push(gap(10), big(L(hkeCode === 'T-lamma' ? '南丫島用電（港燈）' : '用電量（港燈）', 'Consumption (HK Electric)'), num(r.consumption_gwh), `${L('百萬度', 'GWh')} · ${periodName(p)}`, `${split} · ${L(`平均每戶 ${num(r.avg_kwh)} 度`, `${num(r.avg_kwh)} kWh per customer`)}`));
+      out.push(barsB(rs.map((x) => ({ v: x.consumption_gwh, text: num(x.consumption_gwh), short: `${String(x.year).slice(2)}${x.half === 'H1' ? L('上', 'a') : L('下', 'b')}`, on: `${x.year}-${x.half}` === p }))));
+    }
+    const reg = regionOf(st.sel);
+    if (reg) {
+      const r = solarRow(reg, st.solarMonth);
+      out.push(gap(10), big(L(`自家太陽能及風能 · 整個${REGION[reg][0]}`, `Customer solar and wind · all of ${REGION[reg][1]}`), num(r.solar_wind_kwh / 1e6, 2), `${L('百萬度', 'GWh')} · ${monthName(r.month)}`, L(`${num(r.solar_wind_accounts)} 個客戶；中電只分九龍、新界公佈`, `${num(r.solar_wind_accounts)} accounts; CLP publishes Kowloon / NT only`)));
+      out.push(solarBars(reg));
+    }
+    return out;
+
+    function solarBars(region) {
+      const all = M.clpRe.filter((r) => r.region === region).sort((a, b) => a.month.localeCompare(b.month));
+      const cur = (all.find((x) => x.month === st.solarMonth) || all.at(-1)).month;
+      const yr = all.filter((x) => x.month.slice(0, 4) === cur.slice(0, 4));
+      return barsB(yr.map((x) => ({ v: x.solar_wind_kwh, text: num(x.solar_wind_kwh / 1e6, 1), short: String(+x.month.slice(5)), on: x.month === cur })));
+    }
+  }
+
   /* ---------- side panel ---------- */
   function bars(items, cur, attr) {
     const max = Math.max(...items.map((x) => x.v)) || 1;
@@ -342,11 +516,7 @@
     $('#map-back').addEventListener('click', () => select(null));
     $('#map-share').addEventListener('click', (e) => {
       if (e.target.closest('[data-copy-link]')) window.HKOC?.copyLink(e.target.closest('[data-copy-link]'));
-      if (e.target.closest('[data-save-chart]')) {
-        const d = st.sel && byCode.get(st.sel);
-        const layer = { supply: L('供電公司及每度電排放', 'Supplier and emissions per kWh'), hke: `${L('港燈分區用電', 'HK Electric consumption by district')} · ${periodName(st.hkePeriod)}`, solar: `${L('中電自家太陽能', 'CLP customer solar')} · ${monthName(st.solarMonth)}` }[st.layer];
-        window.HKOC?.svgToPng(svg, { title: `${L('香港碳地圖', 'Hong Kong carbon map')}${d ? ` · ${L(d.zh, d.en)}` : ''} · ${layer}`, note: L('地界：政府統計處 2021 年人口普查；數據：中電、港燈公佈（見來源）', 'Boundaries: C&SD 2021 Census; data as published by CLP and HK Electric (see sources)'), file: `hk-carbon-map-${st.layer}${st.sel ? `-${st.sel}` : ''}.png` });
-      }
+      if (e.target.closest('[data-save-chart]')) saveCard();
     });
     $('#map-more').addEventListener('click', () => $('#map-panel').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && st.sel) select(null); });
