@@ -1624,7 +1624,7 @@
     const KINDS = [
       ['tile', '.dash-tab, .source-card, .steps > li, .cmp-chip'],
       ['card', '.series, .map-panel, .note-box, .trees'],
-      ['panel', '.dash-panel, .hh, .biz-out, .biz-sec, .inv-kpis, .inv-panel, .map-stage, .table-wrap, .site-footer .footer-inner'],
+      ['panel', '.dash-panel, .hh, .biz-out, .biz-sec, .inv-kpis, .inv-panel, .map-stage, .table-wrap'],
     ];
     const SEL = KINDS.map((k) => k[1]).join(', ');
     let lit = null, frame = 0, last = null;

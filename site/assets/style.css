@@ -1550,7 +1550,7 @@ a:hover { color: var(--accent); }
 /* ---------- the glass material ---------- */
 .site-header, .tabbar, .dash-tab, .dash-panel, .hsearch, .series, .drawer, .hh, .biz-out, .inv-kpis, .inv-panel,
 .source-card, .table-wrap, .map-stage, .map-panel, .ai-panel, .ai-fab, .cmp-tray, .cmp-dlg, .embed-dlg, .note-box,
-.lc-tip, .map-tip, .filters .search input, .site-footer .footer-inner, .steps > li, .biz-sec, .calc-switch, .seg, .seg-band,
+.lc-tip, .map-tip, .filters .search input, .steps > li, .biz-sec, .calc-switch, .seg, .seg-band,
 .trees, .cmp-warn, .bo-empty, .page-jump {
   background: var(--glass);
   -webkit-backdrop-filter: blur(26px) saturate(180%);
@@ -1707,8 +1707,13 @@ input, select, textarea { accent-color: var(--c-gas); }
 .embed-box textarea { border-radius: 12px; background: var(--fill); }
 
 /* ---------- footer ---------- */
-.site-footer { background: none; border-top: 0; }
-.site-footer .footer-inner { border-radius: 26px; padding: 26px 28px; margin-bottom: 24px; }
+.site-footer { background: none; border-top: 0; color: var(--muted); }
+/* Small print at the foot of every page, as on most sites. */
+.site-footer .footer-inner { border-top: 1px solid var(--line); margin-top: 56px; padding: 18px 0 28px; gap: 6px 32px; font-size: 12px; line-height: 1.6; align-items: flex-start; }
+.site-footer .footer-inner p { margin: 0 0 2px; }
+.site-footer .footer-title { font-size: 12px; font-weight: 600; color: var(--ink-2); margin-bottom: 2px; }
+.site-footer .muted, .site-footer .footer-meta { color: var(--muted); }
+.site-footer a { color: var(--ink-2); }
 
 /* phone */
 @media (max-width: 760px) {
@@ -1716,7 +1721,7 @@ input, select, textarea { accent-color: var(--c-gas); }
   .site-header .header-inner { height: 54px; }
   .hh-form { border-right: 0; border-bottom: 1px solid var(--line); }
   .drawer { border-radius: 24px 24px 0 0; }
-  .site-footer .footer-inner { padding: 20px; }
+  .site-footer .footer-inner { margin-top: 40px; padding: 16px 0 24px; }
 }
 /* No backdrop blur: keep panels readable. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
