@@ -14,6 +14,21 @@
   const TOPIC = [['energy/electricity', 'elec'], ['energy/town-gas', 'gas'], ['energy/fuel', 'fuel'], ['transport', 'move'], ['water', 'water'], ['waste', 'waste'], ['buildings', 'bldg'], ['land', 'land']];
   const topicOf = (cat) => (TOPIC.find(([p]) => String(cat || '').startsWith(p)) || [null, 'ink'])[1];
   const cvar = (cat) => `--c:var(--c-${topicOf(cat)})`;
+  /** Save rows as a UTF-8 CSV (with BOM so Excel reads Chinese correctly). */
+  function saveCsv(name, head, rows) {
+    const q = (x) => { const v = String(x ?? ''); return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v; };
+    const text = `\uFEFF${[head, ...rows].map((r) => r.map(q).join(',')).join('\n')}\n`;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
+    a.setAttribute('download', name);
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  const FACTOR_COLS = ['id', 'name_zh', 'name_en', 'category', 'value', 'unit', 'year', 'region', 'gas', 'gwp', 'scope', 'quality', 'status', 'source_id', 'source_title', 'page', 'table'];
+  function factorRows(list) {
+    const src = sourceById();
+    return list.map((f) => [f.id, f.name['zh-Hant'], f.name.en, f.category, f.value_text, f.unit, f.year ?? '', f.region ?? '', f.gas ?? '', f.gwp ?? f.gwp_used ?? '', f.scope ?? '', f.quality, f.status, f.source.id, src.get(f.source.id)?.title ?? '', f.source.page ?? '', f.source.table ?? '']);
+  }
   const nm = (obj) => (obj ? (lang() === 'en' ? obj.en : obj['zh-Hant']) ?? obj.en ?? '' : '');
   const rerender = [];
   document.addEventListener('click', (e) => {
@@ -302,6 +317,14 @@
   $('.site-nav [aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'center' });
   const page = document.body.dataset.page;
   if (page === 'index') dataReady.then(() => { initDash(); initBrowser(); initHomeSearch(); });
+  document.addEventListener('click', (e) => {
+    const s = e.target.closest('[data-dl-series]');
+    if (s && DATA) {
+      const f = DATA.factors.find((x) => x.id === s.dataset.dlSeries);
+      const list = isYearly(f) ? DATA.factors.filter((x) => isYearly(x) && seriesOf(x) === seriesOf(f)).sort((a, b) => a.year - b.year) : [f];
+      saveCsv(`${isYearly(f) ? seriesOf(f) : f.id}.csv`, FACTOR_COLS, factorRows(list));
+    }
+  });
   if (page === 'sources') dataReady.then(initSources);
   if (page === 'inventory') dataReady.then(initInventory);
   if (page === 'calculator') dataReady.then(initCalculator);
@@ -309,6 +332,11 @@
 
   function initBrowser() {
     const state = { cat: 'all', status: 'all', q: '', charts: new Set(), expanded: new Set() };
+    $('#dl-list')?.addEventListener('click', () => {
+      const list = state.last || DATA.factors;
+      const tag = state.cat !== 'all' ? state.cat.replace('/', '-') : 'all';
+      saveCsv(`hk-factors-${tag}-${DATA.built}.csv`, FACTOR_COLS, factorRows(list));
+    });
     const q = $('#q');
     const catList = $('#cat-list');
     const groupsEl = $('#groups');
@@ -342,6 +370,7 @@
       q.placeholder = L('搜尋系數，例如 柴油', 'Search, e.g. diesel');
       renderCats();
       const list = DATA.factors.filter(matches);
+      state.last = list;
       countEl.textContent = L(`顯示 ${list.length} / ${DATA.factors.length} 個系數`, `Showing ${list.length} of ${DATA.factors.length} factors`);
       emptyEl.hidden = list.length > 0;
 
@@ -642,6 +671,7 @@
         <div class="links">
           <button class="pill pill-solid" type="button" data-copy="${esc(citation)}">${esc(L('複製引用', 'Copy citation'))}</button>
           <a class="pill" href="${esc(fileUrl)}" target="_blank" rel="noopener">${esc(L('原始資料檔', 'Data file'))} ↗</a>
+          <button class="pill" type="button" data-dl-series="${esc(f.id)}">${esc(isYearly(f) ? L('下載歷年 CSV', 'Download all years (CSV)') : L('下載 CSV', 'Download CSV'))} ↓</button>
         </div>
       </div>`;
   }

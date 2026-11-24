@@ -1301,3 +1301,6 @@ a:hover { color: var(--accent-ink); }
 .bo-table caption { display: table-caption; }
 .bo-table caption span { float: right; }
 .biz-row.ref { grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr)) 32px; }
+
+.results-tools { display: flex; gap: 8px; align-items: center; }
+.map-dl { margin-top: 6px; }

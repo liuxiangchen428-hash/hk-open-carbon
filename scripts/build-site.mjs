@@ -87,6 +87,7 @@ cpSync(join(root, 'site', 'assets'), join(out, 'assets'), { recursive: true });
 
 writeFileSync(join(out, 'assets', 'data.json'), JSON.stringify(data));
 writeFileSync(join(out, 'assets', 'map.json'), JSON.stringify(mapData));
+for (const f of ['hke-district-consumption.csv', 'clp-renewables-by-region.csv']) cpSync(join(mapDir, f), join(out, 'api', 'v1', f));
 // Public, stable API files (same content as the release bundle).
 writeFileSync(join(out, 'api', 'v1', 'factors.json'), JSON.stringify(data.factors.map(({ value_text, file, ...f }) => f), null, 2));
 writeFileSync(join(out, 'api', 'v1', 'inventory.json'), JSON.stringify(inventory, null, 2));

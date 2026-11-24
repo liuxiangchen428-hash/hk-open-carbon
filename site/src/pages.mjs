@@ -81,7 +81,10 @@ const index = (s) => `
   <div class="results">
     <div class="results-bar">
       <p id="count" class="muted" aria-live="polite"></p>
-      <button class="filters-toggle" type="button" data-filters-toggle>${t('篩選', 'Filters')}</button>
+      <div class="results-tools">
+        <button class="pill pill-sm" type="button" id="dl-list">${t('下載 CSV', 'Download CSV')} ↓</button>
+        <button class="filters-toggle" type="button" data-filters-toggle>${t('篩選', 'Filters')}</button>
+      </div>
     </div>
     <div id="groups"></div>
     <p id="empty" class="empty" hidden>${t('沒有符合條件的系數。', 'No factors match these filters.')}</p>

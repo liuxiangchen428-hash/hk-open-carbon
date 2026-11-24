@@ -286,7 +286,8 @@
   function renderNotes() {
     const draft = M.status !== 'reviewed';
     $('#map-notes').innerHTML = `<p>${draft ? `<span class="status draft">${esc(L('草稿', 'Draft'))}</span> ${esc(L('地圖數據已由 AI 助手從原文讀取，待維護者核對。', 'Map data read from the sources by the AI assistant, awaiting the maintainer’s check.'))} ` : ''}${esc(L('地界：政府統計處 2021 年人口普查區議會分區界線（為顯示簡化）。', 'Boundaries: Census and Statistics Department, 2021 Census District Council districts (simplified for display).'))}
-      <a href="sources.html#registry">${esc(L('全部來源', 'All sources'))} →</a></p>`;
+      <a href="sources.html#registry">${esc(L('全部來源', 'All sources'))} →</a></p>
+      <p class="map-dl">${esc(L('下載數據：', 'Download data:'))} <a href="api/v1/hke-district-consumption.csv" download>${esc(L('港燈分區用電 CSV', 'HK Electric by district (CSV)'))}</a> · <a href="api/v1/clp-renewables-by-region.csv" download>${esc(L('中電自家太陽能 CSV', 'CLP customer solar (CSV)'))}</a></p>`;
   }
 
   /* ---------- events ---------- */
