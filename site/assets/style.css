@@ -1630,7 +1630,7 @@ a:hover { color: var(--accent); }
 .site-header, .tabbar, .dash-tab, .dash-panel, .hsearch, .series, .drawer, .hh, .biz-out, .inv-kpis, .inv-panel,
 .source-card, .table-wrap, .map-stage, .map-panel, .ai-panel, .ai-fab, .cmp-tray, .cmp-dlg, .embed-dlg, .note-box,
 .lc-tip, .map-tip, .filters .search input, .steps > li, .biz-sec, .calc-switch, .seg, .seg-band,
-.trees, .cmp-warn, .bo-empty, .page-jump {
+.trees, .cmp-warn, .bo-empty {
   background: var(--glass);
   -webkit-backdrop-filter: blur(26px) saturate(180%);
   backdrop-filter: blur(26px) saturate(180%);
@@ -1884,3 +1884,12 @@ body:has(.drawer.open) .tabbar, body:has(.drawer.open) .ai, body:has(.drawer.ope
 .theme-toggle[data-mode="auto"] .ti-auto, .theme-toggle[data-mode="light"] .ti-light, .theme-toggle[data-mode="dark"] .ti-dark { display: inline; }
 .theme-toggle:not([data-mode]) .ti-auto { display: inline; }
 @media (min-width: 721px) { .header-inner .theme-toggle + .lang-toggle { margin-left: -20px; } }
+.hb > * { min-width: 0; }
+/* Detail panel: the change figure reads on the light face. */
+.d-value .d-delta.down { color: var(--accent-ink); }
+.d-value .d-delta.up { color: var(--up); }
+.d-value .d-delta.flat { color: var(--muted); }
+/* Section links under a page title: plain links, no panel. */
+.page-jump { background: none; border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; padding: 0; }
+/* Labels on the inventory chart stay readable where they cross a bar. */
+.ib-ref-t { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
