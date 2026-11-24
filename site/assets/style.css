@@ -1788,3 +1788,11 @@ html[data-embed] #main > * { animation: none; }
 .dash-tab[aria-selected="true"] { background: var(--glass-hi); }
 .dash-tab[aria-selected="true"]::before { height: 5px; }
 .dash-tab[aria-selected="true"][data-glass].lit, .dash-tab[data-glass].lit { box-shadow: 0 0 0 6px var(--ring), var(--gshadow-up), inset 0 1px 0 var(--shine); }
+/* Phone: the factor panel covers the tab bar and assistant button; the floating tab bar needs room below the page. */
+.ai-fab svg { stroke: var(--c-gas); }
+.tabbar, .ai { transition: opacity .25s ease, transform .25s ease; }
+body:has(.drawer.open) .tabbar, body:has(.drawer.open) .ai, body:has(.drawer.open) .cmp-tray { opacity: 0; transform: translateY(24px); pointer-events: none; }
+@media (max-width: 720px) {
+  body { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
+  .ai { bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
+}
