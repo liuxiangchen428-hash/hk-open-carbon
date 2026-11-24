@@ -17,6 +17,7 @@ Claude 每次開始工作前先讀這份文件。它記錄項目背景、已作�
 
 | 日期 | 決定 | 原因 |
 | --- | --- | --- |
+| 2026-11-24 | 網站自帶字型「HKOC Sans」：Noto Sans TC（SIL OFL 1.1，授權在 `site/assets/fonts/OFL.txt`）按網站用到的字截取，常規及粗體各約 150 KB；排在系統字型之後，蘋果設備仍用蘋方、不會下載，Windows 等設備顯示一致。加了新文字後在本地執行 `scripts/make-font-subset.py` 重新截取（需要 fonttools、brotli 及 `@expo-google-fonts/noto-sans-tc` 的 TTF；缺字會自動用系統字型）。首頁搜尋即時提示；手機上系數詳情改為底部抽屜，可向下拖關閉 | 維護者選擇建議 1、3、7 |
 | 2026-11-24 | 頁頂加「外觀」按鈕：跟隨裝置 → 淺色 → 深色循環，選擇存在瀏覽器（`hkoc-theme`）；預設跟隨裝置。CSS 深色規則同時寫成 `:root:where(:not([data-theme="light"]))`（媒體查詢內）和 `:root:where([data-theme="dark"])` | 維護者發現不同時間、不同應用打開顏色不一樣，選擇加切換按鈕 |
 | 2026-11-24 | 網站改為「玻璃」風格（style.css 末尾 Theme C）：半透明磨砂面板、蘋果系統字和系統色、背景柔和光暈緩慢流動並隨滑鼠輕微移動；電腦上滑鼠移到面板會稍微浮起、外圍多一圈玻璃邊（不用 scale，避免文字變模糊）並有跟隨滑鼠的反光；懸停提示框不透明（app.js `glass()`，觸控設備、減少動態設定及嵌入模式不啟用）；深淺色都有；另加換頁淡入（view transitions，不支援的瀏覽器用載入淡入）、數字由上次顯示值滾動到新值（`roll()`，最後一定顯示原文數字）、走勢圖由左至右畫出、柱狀圖由底部長出 | 維護者從 11 套方案中選方案 1，並要求加互動效果 |
 | 2026-11-24 | 本輪功能：家庭計算器用電與中電住宅客戶每季平均比較（`data/benchmarks/`，中電開放數據 2020-Q1 至 2026-Q3，`scripts/import-clp-segment.mjs` 每季更新；只並列原文數字，不相加；status draft 待維護者抽查）；企業計算器每個報告年份分開保存並逐年比較；系數庫可選最多 4 個系列同圖比較（`#cmp=` 連結）；英文版逐頁檢查（下拉選項、出版機構名稱、地圖區名、手機排版） | 維護者選擇清單第 9、10、11、12 項 |
@@ -71,6 +72,7 @@ npm run validate           # 校驗所有數據
 npm test                   # 測試
 npm run build              # 生成 dist/
 npm run site               # 生成網站到 site-dist/（加 -- --serve 在 http://localhost:4173 預覽）
+python3 scripts/make-font-subset.py <字型資料夾>  # 網站加了新字後重新截取字型（先 npm run site）
 node scripts/fetch-source.mjs <src-id> [--pages 10-25] [--archive]
                            # 經 GitHub Actions 取得原始文件文字，存到 .cache/sources/
 ```

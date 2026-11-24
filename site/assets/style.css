@@ -1,5 +1,11 @@
 /* HK Open Carbon Platform — site styles. No external fonts or libraries. */
 
+/* Noto Sans TC (SIL OFL 1.1, fonts/OFL.txt), cut to the characters the site uses by
+   scripts/make-font-subset.py. Listed after the system fonts, so Apple devices keep PingFang
+   and never download it; Windows and others get the same look as on Apple. */
+@font-face { font-family: "HKOC Sans"; src: url("fonts/hkoc-sans-400.woff2") format("woff2"); font-weight: 100 549; font-style: normal; font-display: swap; }
+@font-face { font-family: "HKOC Sans"; src: url("fonts/hkoc-sans-700.woff2") format("woff2"); font-weight: 550 1000; font-style: normal; font-display: swap; }
+
 /* Design: "Hong Kong signage" — white page, black rules, heavy type, one colour per topic. */
 :root {
   --bg: #ffffff;
@@ -1502,8 +1508,8 @@ body:not([data-page="index"]) .drawer [data-cmp-toggle] { display: none; }
   --blob-1: #9fe3c9; --blob-2: #a9d4ff; --blob-3: #ffd7b0; --blob-4: #d7c8ff;
   --radius: 18px;
   --r-sm: 10px;
-  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Segoe UI", sans-serif;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang TC", "HKOC Sans", "Noto Sans TC", "Microsoft JhengHei", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang TC", "HKOC Sans", "Noto Sans TC", "Microsoft JhengHei", "Segoe UI", sans-serif;
   --mark-bg: #0b1d18; --mark-line: transparent; --mark-c: #f4f3ee; --mark-leaf: #6fd3ae;
   --map-sea: rgb(255 255 255 / .35); --map-line: rgb(255 255 255 / .9);
 }
