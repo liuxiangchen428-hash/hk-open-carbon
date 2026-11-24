@@ -72,6 +72,7 @@ ${body}
 </main>
 <div class="drawer-scrim" data-close hidden></div>
 <aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="d-title" role="dialog" tabindex="-1">
+  <div class="d-grip" aria-hidden="true"><span></span></div>
   <div class="drawer-inner" id="drawer-body"></div>
 </aside>
 <footer class="site-footer">

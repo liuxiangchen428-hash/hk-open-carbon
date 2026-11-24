@@ -1897,3 +1897,39 @@ body:has(.drawer.open) .tabbar, body:has(.drawer.open) .ai, body:has(.drawer.ope
 .biz-sec .biz-legend { grid-column: 1 / -1; margin: 0 0 2px; font-size: 17px; font-weight: 700; letter-spacing: -.01em; line-height: 1.35; }
 .biz-sec { position: relative; box-shadow: var(--gshadow), inset 0 1px 0 var(--shine); }
 .biz-sec::before { content: ""; position: absolute; left: 18px; right: 18px; top: 0; height: 3px; border-radius: 0 0 3px 3px; background: var(--c, var(--c-gas)); }
+/* Assistant panel close button: visible on the light glass head. */
+.ai-x { color: var(--ink-2); background: var(--fill); border-radius: 999px; }
+.ai-x:hover { color: var(--ink); background: var(--fill-2); }
+
+/* ---------- search suggestions (home) ---------- */
+.hs-wrap { position: relative; }
+.hsugg { position: absolute; left: 0; right: 0; z-index: 15; margin-top: 8px; padding: 6px; border-radius: 18px; background: var(--tip-bg); border: 1px solid var(--edge); box-shadow: var(--gshadow-up); max-height: min(420px, 60vh); overflow: auto; animation: page-in .18s ease backwards; }
+.hsugg button { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 0; border-radius: 12px; background: none; color: var(--ink); text-align: left; cursor: pointer; font: inherit; font-size: 14px; }
+.hsugg button:hover, .hsugg button[aria-selected="true"] { background: var(--fill); }
+.hs-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--c-gas)); }
+.hs-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hs-val { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+.hs-val b { color: var(--ink); font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.hsugg .hs-all { display: block; color: var(--c-gas); font-weight: 600; font-size: 13.5px; border-top: 1px solid var(--line); border-radius: 0 0 12px 12px; margin-top: 4px; }
+.hs-none { margin: 0; padding: 12px; color: var(--muted); font-size: 14px; }
+@media (max-width: 720px) {
+  .hsugg button { grid-template-columns: 10px minmax(0, 1fr); }
+  .hs-val { grid-column: 2; }
+  .hs-name { white-space: normal; }
+}
+
+/* ---------- phone: factor panel as a bottom sheet ---------- */
+.d-grip { display: none; }
+@media (max-width: 720px) {
+  .drawer {
+    top: auto; left: 0; right: 0; bottom: 0; width: 100%;
+    height: calc(100dvh - 44px - env(safe-area-inset-top, 0px)); max-height: none;
+    transform: translateY(100%); border-left: 0; border-radius: 26px 26px 0 0;
+    box-shadow: 0 -18px 50px rgb(0 0 0 / .22); overscroll-behavior: contain;
+    transition: transform .38s cubic-bezier(.2, .85, .25, 1), visibility 0s linear .38s;
+  }
+  .drawer.open { transform: none; transition: transform .38s cubic-bezier(.2, .85, .25, 1); }
+  .d-grip { display: flex; justify-content: center; position: sticky; top: 0; z-index: 2; padding: 10px 0 6px; margin-bottom: -16px; touch-action: none; cursor: grab; }
+  .d-grip span { width: 40px; height: 5px; border-radius: 3px; background: var(--line-strong); }
+  .drawer-inner { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
+}

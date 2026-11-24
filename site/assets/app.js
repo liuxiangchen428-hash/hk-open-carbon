@@ -333,8 +333,72 @@
     };
     const ph = () => { input.placeholder = L('搜一個系數，例如：港燈 2024', 'Search a factor, e.g. HK Electric 2024'); };
     ph(); rerender.push(ph);
-    form.addEventListener('submit', (e) => { e.preventDefault(); go(input.value.trim()); });
-    $('#hchips').addEventListener('click', (e) => { const b = e.target.closest('[data-hq]'); if (b) { input.value = b.dataset.hq; go(b.dataset.hq); } });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const on = !list.hidden && list.querySelector('[aria-selected="true"]');
+      if (on) { choose(on); return; }
+      hide(); go(input.value.trim());
+    });
+    $('#hchips').addEventListener('click', (e) => { const b = e.target.closest('[data-hq]'); if (b) { input.value = b.dataset.hq; hide(); go(b.dataset.hq); } });
+
+    // Suggestions as you type: the best matching factors, newest and reviewed first.
+    const list = document.createElement('div');
+    list.className = 'hsugg'; list.id = 'hsugg'; list.setAttribute('role', 'listbox'); list.hidden = true;
+    form.after(list);
+    form.parentElement.classList.add('hs-wrap');
+    input.setAttribute('role', 'combobox'); input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-controls', 'hsugg'); input.setAttribute('aria-expanded', 'false');
+    const hay = (f) => {
+      const src = sourceById().get(f.source.id);
+      return [f.id, f.name['zh-Hant'], f.name.en, f.category, String(f.year), f.unit, (f.tags || []).join(' '), src?.title, src?.title_zh, src?.publisher].join(' ').toLowerCase();
+    };
+    const rank = (f) => (f.status === 'reviewed' ? 0 : 1e6) + (f.tags?.includes('historical') || f.tags?.includes('superseded') ? 1e5 : 0) - (Number(f.year) || 0);
+    function hide() { list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); }
+    function choose(el) {
+      hide();
+      if (el.dataset.all !== undefined) { go(input.value.trim()); return; }
+      goFactor(el.dataset.id);
+    }
+    function suggest() {
+      const q = input.value.trim().toLowerCase();
+      if (!q) { hide(); return; }
+      const words = q.split(/\s+/);
+      // a word that is the factor's own year ranks it first ("港燈 2024" → the 2024 factor, not every 2024 report)
+      const yearHit = (f) => (words.includes(String(f.year)) ? -1e7 : 0);
+      const hits = DATA.factors.filter((f) => { const h = hay(f); return words.every((w) => h.includes(w)); }).sort((x, y) => (rank(x) + yearHit(x)) - (rank(y) + yearHit(y)));
+      if (!hits.length) {
+        list.innerHTML = `<p class="hs-none">${esc(L('沒有找到相符的系數', 'No matching factors'))}</p>`;
+      } else {
+        list.innerHTML = hits.slice(0, 6).map((f, i) => `<button type="button" role="option" id="hs-${i}" aria-selected="false" data-id="${esc(f.id)}" style="${cvar(f.category)}">
+            <span class="hs-dot"></span>
+            <span class="hs-name">${esc(nm(f.name))}</span>
+            <span class="hs-val"><b>${esc(groupDigits(f.value_text))}</b> ${esc(unitFmt(f.unit))}</span>
+          </button>`).join('') +
+          `<button type="button" role="option" id="hs-all" aria-selected="false" data-all class="hs-all">${esc(L(`在系數庫查看全部 ${hits.length} 個結果`, `See all ${hits.length} results in the library`))} →</button>`;
+      }
+      list.hidden = false; input.setAttribute('aria-expanded', 'true');
+    }
+    const move = (d) => {
+      const opts = [...list.querySelectorAll('[role="option"]')];
+      if (!opts.length) return;
+      let i = opts.findIndex((o) => o.getAttribute('aria-selected') === 'true');
+      if (i >= 0) opts[i].setAttribute('aria-selected', 'false');
+      i = (i + d + opts.length) % opts.length;
+      opts[i].setAttribute('aria-selected', 'true');
+      input.setAttribute('aria-activedescendant', opts[i].id);
+      opts[i].scrollIntoView({ block: 'nearest' });
+    };
+    input.addEventListener('input', suggest);
+    input.addEventListener('focus', () => { if (input.value.trim()) suggest(); });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (list.hidden) suggest(); move(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
+      else if (e.key === 'Escape') hide();
+    });
+    list.addEventListener('mousedown', (e) => e.preventDefault()); // keep focus in the box while clicking
+    list.addEventListener('click', (e) => { const b = e.target.closest('[role="option"]'); if (b) choose(b); });
+    document.addEventListener('click', (e) => { if (!e.target.closest('.hs-wrap')) hide(); });
+    rerender.push(() => { if (!list.hidden) suggest(); });
   }
 
   /* ---------- grouping of factor cards ---------- */
@@ -715,6 +779,39 @@
     };
     window.addEventListener('hashchange', fromHash);
     window.addEventListener('popstate', fromHash);
+    // Phone: the panel is a bottom sheet; drag it down (from the handle, or from the top of its content) to close.
+    const sheet = matchMedia('(max-width: 720px)');
+    let drag = null;
+    drawer.addEventListener('touchstart', (e) => {
+      if (!sheet.matches || e.touches.length !== 1) return;
+      const fromGrip = !!e.target.closest('.d-grip');
+      if (!fromGrip && drawer.scrollTop > 0) return;
+      drag = { y0: e.touches[0].clientY, t0: performance.now(), dy: 0, fromGrip };
+    }, { passive: true });
+    drawer.addEventListener('touchmove', (e) => {
+      if (!drag) return;
+      const dy = e.touches[0].clientY - drag.y0;
+      if (dy <= 0 && !drag.moving) { drag = null; return; } // scrolling up: let the content scroll
+      e.preventDefault();
+      drag.moving = true;
+      drag.dy = Math.max(0, dy);
+      drawer.style.transition = 'none';
+      drawer.style.transform = `translateY(${drag.dy}px)`;
+      scrim.style.opacity = String(Math.max(0.2, 1 - drag.dy / 500));
+    }, { passive: false });
+    const endDrag = () => {
+      if (!drag) return;
+      const { dy, t0, moving } = drag;
+      drag = null;
+      if (!moving) return;
+      const fast = dy / (performance.now() - t0) > 0.6;
+      drawer.style.transition = '';
+      drawer.style.transform = '';
+      scrim.style.opacity = '';
+      if (dy > 110 || (fast && dy > 30)) close();
+    };
+    drawer.addEventListener('touchend', endDrag);
+    drawer.addEventListener('touchcancel', endDrag);
     // In-page links to a factor (#f=...) go through goFactor too.
     document.addEventListener('click', (e) => {
       const a = e.target.closest('a[href^="#f="], a[href^="index.html#f="]');
