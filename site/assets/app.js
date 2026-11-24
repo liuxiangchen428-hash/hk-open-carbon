@@ -762,7 +762,7 @@
         <h3>${esc(L('出處', 'Source'))}</h3>
         <div class="source-card">
           <div class="title">${esc(lang() === 'en' ? src.title : src.title_zh || src.title)}</div>
-          <div class="pub">${esc(src.publisher)}${src.edition ? ` · ${esc(src.edition)}` : ''}</div>
+          <div class="pub">${esc(pubName(src.publisher))}${src.edition ? ` · ${esc(src.edition)}` : ''}</div>
           ${loc ? `<div class="loc">${esc(loc)}</div>` : ''}
           <div class="links">
             ${src.url ? `<a class="pill" href="${esc(src.url)}" target="_blank" rel="noopener">${esc(L('原文', 'Original'))} ↗</a>` : ''}
@@ -1026,7 +1026,7 @@
         if (!s) return '';
         return `<div class="inv-src">
           <p class="doc-title">${esc(lang() === 'en' ? s.title : s.title_zh || s.title)}</p>
-          <p class="muted">${esc(s.publisher)} · ${esc(s.edition)} · ${esc(L('頁', 'p.'))} ${esc(String(it.page))}</p>
+          <p class="muted">${esc(pubName(s.publisher))} · ${esc(s.edition)} · ${esc(L('頁', 'p.'))} ${esc(String(it.page))}</p>
           ${it.quote ? `<blockquote>“${esc(it.quote)}”</blockquote>` : ''}
           <div class="links">
             ${s.url ? `<a class="pill" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(L('原文', 'Original'))} ↗</a>` : ''}
@@ -1294,7 +1294,7 @@
         <tr>
           <td><div class="doc-title">${esc(lang() === 'en' ? s.title : s.title_zh || s.title)}</div>
               <div class="doc-zh">${esc(lang() === 'en' ? s.title_zh : s.title)}</div></td>
-          <td>${esc(s.publisher)}</td>
+          <td>${esc(pubName(s.publisher))}</td>
           <td class="ed">${esc(s.edition)}</td>
           <td><div class="links">
             ${s.url ? `<a class="pill" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(L('原文', 'Original'))} ↗</a>` : ''}
@@ -1362,6 +1362,12 @@
     return `<div class="trees">${TREE_ICON}<p><b>${esc(label)}${esc(L(`約 ${shown} 棵樹`, `About ${shown} trees`))}</b><span>${esc(L(`一年吸收的二氧化碳，才等於這個排放量（每棵新種樹木每年吸收 ${f.value_text} 千克）。`, `would take a year to absorb this much CO₂ (${f.value_text} kg per newly planted tree per year).`))} <a href="index.html#f=${encodeURIComponent(f.id)}">${esc(L('系數出處', 'Factor source'))}</a></span><small>${esc(note || L('只作直觀比較，不代表種樹可以抵銷這些排放。', 'A comparison only; it does not mean planting trees cancels these emissions.'))}</small></p></div>`;
   }
   window.HKOC = { copyLink, svgToPng, L, treesHtml };
+  // <option> cannot hide one language with CSS, so set its text from data-zh / data-en.
+  const localizeOptions = () => $$('option[data-zh]').forEach((o) => { o.textContent = lang() === 'en' ? o.dataset.en : o.dataset.zh; });
+  localizeOptions();
+  new MutationObserver(localizeOptions).observe(document.documentElement, { attributes: true, attributeFilter: ['data-lang'] });
+  // Publisher names are stored bilingually ("CLP Holdings 中電控股"); show the English part in English.
+  const pubName = (p) => { if (lang() !== 'en') return p || ''; const e = String(p || '').replace(/[\u3400-\u9fff「」（）、]+/g, ' ').replace(/\s+/g, ' ').trim(); return e || p || ''; };
 
   /* ---------- embed: iframe code dialog, and behaviour inside an embedded frame ---------- */
   const EMBED = document.documentElement.dataset.embed === '1';

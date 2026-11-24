@@ -256,10 +256,10 @@ const inventory = () => `
 `;
 
 const period = (name) => `<select class="calc-period" data-period="${name}" aria-label="Billing period">
-  <option value="1">${'每月 / month'}</option>
-  <option value="2">${'每兩個月 / 2 months'}</option>
-  <option value="4">${'每四個月 / 4 months'}</option>
-  <option value="12">${'全年 / year'}</option>
+  <option value="1" data-zh="每月" data-en="every month">每月</option>
+  <option value="2" data-zh="每兩個月" data-en="every 2 months">每兩個月</option>
+  <option value="4" data-zh="每四個月" data-en="every 4 months">每四個月</option>
+  <option value="12" data-zh="全年" data-en="whole year">全年</option>
 </select>`;
 
 const calculator = () => `
@@ -328,7 +328,7 @@ const calculator = () => `
             <label class="hh-field grow"><span>${t('私家車：每月入油（公升）', 'Car: fuel per month (litres)')}</span>
               <input type="number" id="hh-fuel" min="0" step="any" inputmode="decimal" placeholder="0"></label>
             <label class="hh-field"><span>${t('燃料', 'Fuel')}</span>
-              <select id="hh-fuel-type"><option value="petrol">汽油 / Petrol</option><option value="diesel">柴油 / Diesel</option></select></label>
+              <select id="hh-fuel-type"><option value="petrol" data-zh="汽油" data-en="Petrol">汽油</option><option value="diesel" data-zh="柴油" data-en="Diesel">柴油</option></select></label>
           </div>
           <p class="hh-pending" id="hh-pending" hidden></p>
         </fieldset>
@@ -443,7 +443,7 @@ const business = () => `
     <fieldset class="biz-sec" style="--c:var(--c-water)">
       <legend>${t('範圍 3（自願申報）· 食水、污水、紙張', 'Scope 3 (optional) · Water, sewage, paper')}</legend>
       <label class="bf"><span>${t('食水用量（立方米）', 'Fresh water (m³)')}</span><input data-k="water" type="number" min="0" step="any" inputmode="decimal"></label>
-      <label class="bf"><span>${t('污水計算方法', 'Sewage')}</span><select data-k="sewage"><option value="1">${t('食水用量 × 100%（一般商業、住宅、機構）', 'Water × 100% (most premises)')}</option><option value="0.7">${t('食水用量 × 70%（食肆及飲食業）', 'Water × 70% (restaurants and catering)')}</option><option value="0">${t('不計', 'Exclude')}</option></select></label>
+      <label class="bf"><span>${t('污水計算方法', 'Sewage')}</span><select data-k="sewage"><option value="1" data-zh="食水用量 × 100%（一般商業、住宅、機構）" data-en="Water × 100% (most premises)">食水用量 × 100%（一般商業、住宅、機構）</option><option value="0.7" data-zh="食水用量 × 70%（食肆及飲食業）" data-en="Water × 70% (restaurants and catering)">食水用量 × 70%（食肆及飲食業）</option><option value="0" data-zh="不計" data-en="Exclude">不計</option></select></label>
       <label class="bf"><span>${t('紙張：期初存量（公斤）', 'Paper: stock at start (kg)')}</span><input data-k="p-start" type="number" min="0" step="any" inputmode="decimal"></label>
       <label class="bf"><span>${t('紙張：本期購入（公斤）', 'Paper: purchased (kg)')}</span><input data-k="p-buy" type="number" min="0" step="any" inputmode="decimal"></label>
       <label class="bf"><span>${t('紙張：交回收（公斤）', 'Paper: sent for recycling (kg)')}</span><input data-k="p-recycle" type="number" min="0" step="any" inputmode="decimal"></label>

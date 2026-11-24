@@ -377,7 +377,7 @@
       const p = `${r.year}-${r.half}`;
       const split = [['residential_gwh', L('住宅', 'Res.')], ['commercial_gwh', L('商業', 'Comm.')], ['industrial_gwh', L('工業', 'Ind.')]].map(([k, n]) => `${n} ${Math.round((r[k] / r.total_by_type_gwh) * 100)}%`).join(' · ');
       out.push(gap(10), big(L(hkeCode === 'T-lamma' ? '南丫島用電（港燈）' : '用電量（港燈）', 'Consumption (HK Electric)'), num(r.consumption_gwh), `${L('百萬度', 'GWh')} · ${periodName(p)}`, `${split} · ${L(`平均每戶 ${num(r.avg_kwh)} 度`, `${num(r.avg_kwh)} kWh per customer`)}`));
-      out.push(barsB(rs.map((x) => ({ v: x.consumption_gwh, text: num(x.consumption_gwh), short: `${String(x.year).slice(2)}${x.half === 'H1' ? L('上', 'a') : L('下', 'b')}`, on: `${x.year}-${x.half}` === p }))));
+      out.push(barsB(rs.map((x) => ({ v: x.consumption_gwh, text: num(x.consumption_gwh), short: `${L(`${String(x.year).slice(2)}${x.half === 'H1' ? '上' : '下'}`, `${String(x.year).slice(2)}${x.half}`)}`, on: `${x.year}-${x.half}` === p }))));
     }
     const reg = regionOf(st.sel);
     if (reg) {
@@ -408,7 +408,7 @@
     const d = byCode.get(st.sel), sup = supplierOf(st.sel);
     const series = F[sup] || [];
     const fy = series.find((x) => x.year === st.factorYear) || series.at(-1);
-    let out = `<p class="mp-k">${esc(L('地區', 'District'))}</p><h2>${esc(d.zh)}</h2><p class="mp-en">${esc(d.en)}</p>
+    let out = `<p class="mp-k">${esc(L('地區', 'District'))}</p><h2>${esc(L(d.zh, d.en))}</h2><p class="mp-en">${esc(L(d.en, d.zh))}</p>
       <dl class="mp-facts"><div><dt>${esc(L('人口', 'Population'))}</dt><dd>${esc(num(d.population))}</dd></div><div><dt>${esc(L('住戶', 'Households'))}</dt><dd>${esc(num(d.households))}</dd></div></dl>
       <p class="mp-src">${esc(L('2021 年人口普查', '2021 Population Census'))}</p>
       <section class="mp-sec"><h3>${esc(L(`${SUP[sup][0]}供電 · 每度電排放`, `${SUP[sup][1]} · emissions per kWh`))}</h3>
@@ -425,7 +425,7 @@
       const p = `${r.year}-${r.half}`;
       out += `<section class="mp-sec"><h3>${esc(L(hkeCode === 'T-lamma' ? '南丫島用電（港燈）' : '用電量（港燈）', hkeCode === 'T-lamma' ? 'Lamma consumption (HK Electric)' : 'Consumption (HK Electric)'))}</h3>
         <p class="mp-big">${esc(num(r.consumption_gwh))} <span>${esc(L('百萬度', 'GWh'))} · ${esc(periodName(p))}</span></p>
-        ${bars(rows.map((x) => ({ k: `${x.year}-${x.half}`, v: x.consumption_gwh, text: num(x.consumption_gwh), short: `${String(x.year).slice(2)}${x.half === 'H1' ? L('上', 'a') : L('下', 'b')}`, label: periodName(`${x.year}-${x.half}`) })), p, 'data-hp')}
+        ${bars(rows.map((x) => ({ k: `${x.year}-${x.half}`, v: x.consumption_gwh, text: num(x.consumption_gwh), short: `${L(`${String(x.year).slice(2)}${x.half === 'H1' ? '上' : '下'}`, `${String(x.year).slice(2)}${x.half}`)}`, label: periodName(`${x.year}-${x.half}`) })), p, 'data-hp')}
         <div class="mp-split">${[['residential_gwh', ['住宅', 'Residential']], ['commercial_gwh', ['商業', 'Commercial']], ['industrial_gwh', ['工業', 'Industrial']]].map(([k, n]) => `<div><span>${esc(L(...n))}</span><b>${esc(num(r[k]))}</b><i style="width:${((r[k] / r.total_by_type_gwh) * 100).toFixed(1)}%"></i></div>`).join('')}</div>
         <p class="mp-src">${esc(L(`${num(r.customers_k)} 千客戶，平均每戶 ${num(r.avg_kwh)} 度。來源：港燈開放數據（DATA.GOV.HK）。`, `${num(r.customers_k)}k customers, ${num(r.avg_kwh)} kWh each on average. Source: HK Electric open data (DATA.GOV.HK).`))}</p>
       </section>`;
