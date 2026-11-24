@@ -205,6 +205,7 @@
             <td>${esc(fmt(l.qty, l.qty < 10 ? 2 : 0))} ${esc(l.unit)}</td>
             <td><a href="index.html#f=${encodeURIComponent(l.f.id)}">${esc(l.f.value_text)} ${esc(l.f.unit)}</a>${l.gwp ? ` × GWP ${l.gwp}` : ''}<small>${esc(srcById.get(l.f.source.id)?.[lang() === 'en' ? 'title' : 'title_zh'] || l.f.source.id)}${l.f.year ? ` · ${l.f.year}` : ''}</small></td>
             <td class="n">${esc(kgFmt(l.kg))}</td></tr>`).join('')}</tbody></table>`;
+    window.HKOC?.roll?.(out, '.bo-tot b', { dur: 450 });
       }).join('') : `<p class="bo-empty">${esc(L('填上全年用量，結果會即時顯示。', 'Enter your yearly usage; the result updates as you type.'))}</p>`}
       ${compareHtml()}
       <div class="bo-notes">

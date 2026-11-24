@@ -1730,3 +1730,40 @@ html[data-embed] body::before { opacity: .5; }
 .d-value .unitdef { border-top-color: var(--line); }
 .d-value .num { font-family: var(--display); font-weight: 700; letter-spacing: -.035em; }
 .dash-tab[aria-selected="true"]::before { display: block; }
+
+/* ---------- motion: page change, charts drawing in ---------- */
+@view-transition { navigation: auto; }
+.site-header { view-transition-name: site-header; }
+.tabbar { view-transition-name: tabbar; }
+::view-transition-old(root) { animation: vt-out .18s ease both; }
+::view-transition-new(root) { animation: vt-in .34s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes vt-out { to { opacity: 0; transform: scale(.992); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(10px); } }
+/* Content settles in on load (also where view transitions are not supported). */
+#main > * { animation: page-in .55s cubic-bezier(.2, .8, .2, 1) backwards; }
+#main > *:nth-child(2) { animation-delay: .06s; }
+#main > *:nth-child(3) { animation-delay: .12s; }
+#main > *:nth-child(n+4) { animation-delay: .18s; }
+@keyframes page-in { from { opacity: 0; transform: translateY(14px); } }
+
+/* line charts: the line draws from left to right, then the fill, points and end label appear */
+.lc-line { animation: draw 1.1s cubic-bezier(.35, .1, .2, 1) both; }
+.lc-line.c2, .lc-line.c3, .lc-line.c4 { animation-delay: .15s; }
+.lc-line.s2 { animation: fade .6s ease .5s both; stroke-dasharray: 5 4; }
+.lc-area { animation: fade .7s ease .55s both; }
+.lc-pt { animation: fade .35s ease .85s both; }
+.lc-end { animation: fade .35s ease 1s both; }
+/* bars grow from the baseline */
+@keyframes bar-grow { from { transform: scaleY(0); } }
+.bc-bar > span { transform-origin: bottom; animation: bar-grow .55s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 18ms); }
+.bc-col { --i: 0; }
+.bc-col .bc-bar > span { animation-delay: calc(var(--i) * 18ms); }
+svg.intro .ib-bar, svg.intro .ib-goal { transform-box: fill-box; transform-origin: bottom; animation: bar-grow .6s cubic-bezier(.2, .8, .2, 1) both; }
+svg.intro .ib-ref, svg.intro .ib-ref-t { animation: fade .4s ease .5s both; }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  #main > *, .lc-line, .lc-line.s2, .lc-area, .lc-pt, .lc-end, .bc-bar > span, svg.intro .ib-bar, svg.intro .ib-goal, svg.intro .ib-ref, svg.intro .ib-ref-t { animation: none !important; }
+}
+html[data-embed] #main > * { animation: none; }
+@media print { #main > * { animation: none !important; } }

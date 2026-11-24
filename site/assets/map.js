@@ -447,6 +447,7 @@
       out += `<section class="mp-sec"><h3>${esc(L('自家太陽能及風能', 'Customer solar and wind'))}</h3><p class="mp-src">${esc(L('中電的數字只分九龍、新界，沒有註明離島計入哪一區。', 'CLP splits its figures into Kowloon and the New Territories and does not say where the islands are counted.'))}</p></section>`;
     }
     el.innerHTML = out;
+    window.HKOC?.roll?.(el, '.mp-big', { dur: 600 });
   }
 
   function overview() {

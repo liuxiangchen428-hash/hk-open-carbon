@@ -5,6 +5,39 @@
   const html = document.documentElement;
   const $ = (sel, el = document) => el.querySelector(sel);
   const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
+  /* Numbers roll from their last shown value (or 0) to the new one. Only the first number in an
+     element's first text node changes; the final text is always the exact original. */
+  const CALM = matchMedia('(prefers-reduced-motion: reduce)');
+  const rolled = new WeakMap();
+  function roll(root, sel, { dur = 750 } = {}) {
+    if (!root) return;
+    const mem = rolled.get(root) || new Map();
+    rolled.set(root, mem);
+    [...root.querySelectorAll(sel)].forEach((el, i) => {
+      const node = [...el.childNodes].find((n) => n.nodeType === 3 && /\d/.test(n.nodeValue));
+      if (!node) return;
+      const text = node.nodeValue;
+      const m = text.match(/\d[\d,]*(?:\.\d+)?/);
+      const to = parseFloat(m[0].replace(/,/g, ''));
+      const key = `${sel}|${i}`;
+      const from = mem.get(key) ?? 0;
+      mem.set(key, to);
+      if (CALM.matches || from === to || !isFinite(to) || document.documentElement.dataset.embed) return;
+      const dec = (m[0].split('.')[1] || '').length;
+      const comma = m[0].includes(',');
+      const pre = text.slice(0, m.index), post = text.slice(m.index + m[0].length);
+      const fmt = (v) => { const t = v.toFixed(dec); if (!comma) return t; const [a, b] = t.split('.'); return a.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (b ? `.${b}` : ''); };
+      const t0 = performance.now();
+      const step = (now) => {
+        if (!node.isConnected) return;
+        const k = Math.min(1, (now - t0) / dur);
+        const e = 1 - Math.pow(1 - k, 3);
+        node.nodeValue = k < 1 ? pre + fmt(from + (to - from) * e) + post : text;
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   /* ---------- language ---------- */
@@ -185,7 +218,7 @@
     const labelled = (i) => every === 1 || i === 0 || i === n - 1 || i === ci || (i % every === 0 && n - 1 - i >= every && (ci < 0 || Math.abs(i - ci) > 1));
     return `<div class="bc${every > 1 ? ' dense' : ''}" style="--h:${height}px">${items.map((f, i) => {
       const h = Math.max(2, (Math.abs(f.value) / max) * 100);
-      return `<button type="button" class="bc-col${f.id === current ? ' cur' : ''}${f.tags?.includes('historical') ? ' hist' : ''}${labelled(i) ? ' lab' : ''}" data-open="${esc(f.id)}"
+      return `<button type="button" style="--i:${i}" class="bc-col${f.id === current ? ' cur' : ''}${f.tags?.includes('historical') ? ' hist' : ''}${labelled(i) ? ' lab' : ''}" data-open="${esc(f.id)}"
         aria-label="${esc(`${yearFmt(f)}: ${f.value_text} ${unitFmt(f.unit)}`)}">
         <span class="bc-val">${esc(groupDigits(f.value_text))}</span>
         <span class="bc-bar"><span style="height:${h.toFixed(1)}%"></span></span>
@@ -224,6 +257,7 @@
         <span class="t-foot"><span class="t-year">${esc(yearFmt(last))}</span>${dl ? `<span class="delta ${dl.cls}">${dl.sign} ${Math.abs(dl.d).toFixed(1)}%</span>` : ''}</span>
       </button>`;
     }).join('');
+    roll(tabs, '.t-value .num', { dur: 900 });
 
     const c = DASH[dash.i];
     const items = seriesItems(c.key, { recent: true });
@@ -252,6 +286,7 @@
       <div class="share-tools"><button type="button" class="pill pill-sm" data-embed>${esc(L('嵌入', 'Embed'))} &lt;/&gt;</button><button type="button" class="pill pill-sm" data-save-chart>${esc(L('下載圖片', 'Save image'))} ↓</button><a class="pill pill-solid" href="#f=${encodeURIComponent(last.id)}">${esc(L('查看最新系數', 'Open latest factor'))} →</a></div>`;
     $('#dash').style.cssText = cvar(last.category);
     lineChart($('#dash-chart'), series);
+    roll($('#dash-foot'), '.kpis b');
   }
 
   function initDash() {
@@ -644,6 +679,7 @@
       currentId = id;
       drawer.dataset.id = id;
       body.innerHTML = detail(f);
+      roll(drawer, '.d-value .num', { dur: 600 });
       if (amount) { $('#calc-in', body).value = amount; calc(f); }
       drawer.classList.add('open');
       drawer.style.cssText = cvar(f.category);
@@ -878,6 +914,7 @@
       });
       svg += '</svg>';
       el.innerHTML = `${svg}<div class="lc-tip" hidden></div>`;
+      if (!el._grown) { el._grown = true; $('svg', el)?.classList.add('intro'); }
       const tip = $('.lc-tip', el);
       const show = (i) => {
         const c = cols[i];
@@ -969,6 +1006,7 @@
           <span class="goal-bar" role="img" aria-label="${esc(L(`已完成 ${Math.round(done * 100)}%`, `${Math.round(done * 100)}% of the way`))}"><span style="width:${Math.max(0, Math.min(100, done * 100)).toFixed(1)}%"></span></span>
           <i>${esc(L(`由 ${base.year} 年起計已完成 ${Math.max(0, Math.round(done * 100))}%`, `${Math.max(0, Math.round(done * 100))}% of the way since ${base.year}`))}${perYear ? esc(L(`；${r.year}–${target.year} 年平均每年要減 ${perYear.toFixed(1)}%`, `; needs about ${perYear.toFixed(1)}% a year, ${r.year}–${target.year}`)) : ''}</i></div>
         ${railHtml(r)}` : ''}`;
+      roll($('#inv-kpis'), '.ik > b');
       const ng = table.targets?.find((x) => x.kind === 'neutrality');
       $('#inv-goal-note').innerHTML = target ? esc(L(
         `香港政府《香港氣候行動藍圖2050》的目標：${target.year} 年前把總碳排放從 ${base.year} 年水平減半${ng ? `，${ng.year} 年前實現碳中和` : ''}。`,
@@ -1003,6 +1041,7 @@
           ${st.metric === 'total' ? '' : `<div><span>${esc(L('峰值', 'Peak'))}</span><b>${esc(fmtv(Math.max(...rows.map(v))))} · ${esc(String(rows.reduce((a, r) => (v(r) > v(a) ? r : a)).year))}</b></div>`}
         </div>
         ${st.metric === 'total' && target ? `<p class="inv-legend"><span class="sw b"></span>${esc(L(`${base.year} 年水平`, `${base.year} level`))}<span class="sw g"></span>${esc(L(`香港 ${target.year} 年目標（${base.year} 年的一半）`, `HK ${target.year} target (half of ${base.year})`))}<span class="muted-b">${esc(L('點選柱可查看該年分項', 'Click a bar for its breakdown'))}</span></p>` : ''}`;
+      roll($('#inv-foot'), '.kpis b');
     }
 
     function renderSectors() {
@@ -1199,6 +1238,8 @@
           <p class="hr-note">${esc(L('全港人均包括交通、工商業、廢物等所有本地排放，不只家居；兩者不是同一範圍，只作參考。', 'The Hong Kong figure covers all local emissions — transport, business, waste and more — not just homes, so this is a rough reference, not a like-for-like comparison.'))}</p>
         </div>` : ''}
         ${elecCmp()}`;
+      roll($('#hh-result'), '.hr-total b', { dur: 450 });
+      roll(bar, 'b', { dur: 450 });
     }
 
     // Household electricity next to CLP's published mean per residential customer (last four quarters).
@@ -1386,7 +1427,7 @@
     const shown = n < 1 ? L('不足 1', 'Under 1') : Math.round(n).toLocaleString('en-US');
     return `<div class="trees">${TREE_ICON}<p><b>${esc(label)}${esc(L(`約 ${shown} 棵樹`, `About ${shown} trees`))}</b><span>${esc(L(`一年吸收的二氧化碳，才等於這個排放量（每棵新種樹木每年吸收 ${f.value_text} 千克）。`, `would take a year to absorb this much CO₂ (${f.value_text} kg per newly planted tree per year).`))} <a href="index.html#f=${encodeURIComponent(f.id)}">${esc(L('系數出處', 'Factor source'))}</a></span><small>${esc(note || L('只作直觀比較，不代表種樹可以抵銷這些排放。', 'A comparison only; it does not mean planting trees cancels these emissions.'))}</small></p></div>`;
   }
-  window.HKOC = { copyLink, svgToPng, L, treesHtml };
+  window.HKOC = { copyLink, svgToPng, L, treesHtml, roll };
   // <option> cannot hide one language with CSS, so set its text from data-zh / data-en.
   const localizeOptions = () => $$('option[data-zh]').forEach((o) => { o.textContent = lang() === 'en' ? o.dataset.en : o.dataset.zh; });
   localizeOptions();
