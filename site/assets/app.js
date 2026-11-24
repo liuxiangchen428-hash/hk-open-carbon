@@ -1061,6 +1061,7 @@
           <div class="hr-total"><b>${esc(tFmt(total))}</b><span>${esc(L('公噸二氧化碳當量', 't CO₂e'))}</span></div>
           <p class="hr-sub">${esc(L(`即 ${kgFmt(total)} 千克 · 每人 ${tFmt(per)} 公噸（${people} 人）`, `${kgFmt(total)} kg · ${tFmt(per)} t per person (${people} ${people === 1 ? 'person' : 'people'})`))}</p>
         </div>
+        ${treesHtml(total, DATA.factors)}
         ${empty ? `<p class="hr-empty">${esc(L('填上帳單用量，結果會即時顯示。', 'Enter the usage from your bills; the result updates as you type.'))}</p>` : `
         <div class="hr-bars">${ls.filter((l) => l.kg > 0).map((l) => `
           <div class="hr-bar"><span class="n"><i class="hh-ico ${l.group}"></i>${esc(L(...l.name))}</span>
@@ -1232,7 +1233,17 @@
     a.href = cv.toDataURL('image/png'); a.setAttribute('download', file || 'chart.png');
     document.body.append(a); a.click(); a.remove();
   }
-  window.HKOC = { copyLink, svgToPng, L };
+  /* Put a total into trees: how many newly planted trees, one year each, would take up the same CO2.
+     Uses the reviewed 2010 guideline factor (Table 4, 23 kg per tree per year). */
+  const TREE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c-3 0-5.2 2.4-5.2 5.1-1.6.6-2.8 2.2-2.8 4 0 2.4 2 4.3 4.4 4.3h7.2c2.4 0 4.4-1.9 4.4-4.3 0-1.8-1.2-3.4-2.8-4 0-2.7-2.2-5.1-5.2-5.1z"/><path d="M12 10v11.5M12 15l-2.6-2.2M12 13.2l2.4-2"/></svg>';
+  function treesHtml(kg, factors, { label = '', note } = {}) {
+    const f = factors.find((x) => x.id === 'hk.land.trees.removal.emsd2010' && x.status === 'reviewed');
+    if (!f || !(kg > 0)) return '';
+    const n = kg / f.value;
+    const shown = n < 1 ? L('不足 1', 'Under 1') : Math.round(n).toLocaleString('en-US');
+    return `<div class="trees">${TREE_ICON}<p><b>${esc(label)}${esc(L(`約 ${shown} 棵樹`, `About ${shown} trees`))}</b><span>${esc(L(`一年吸收的二氧化碳，才等於這個排放量（每棵新種樹木每年吸收 ${f.value_text} 千克）。`, `would take a year to absorb this much CO₂ (${f.value_text} kg per newly planted tree per year).`))} <a href="index.html#f=${encodeURIComponent(f.id)}">${esc(L('系數出處', 'Factor source'))}</a></span><small>${esc(note || L('只作直觀比較，不代表種樹可以抵銷這些排放。', 'A comparison only; it does not mean planting trees cancels these emissions.'))}</small></p></div>`;
+  }
+  window.HKOC = { copyLink, svgToPng, L, treesHtml };
 
   /* ---------- embed: iframe code dialog, and behaviour inside an embedded frame ---------- */
   const EMBED = document.documentElement.dataset.embed === '1';

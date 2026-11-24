@@ -179,6 +179,7 @@
           <div style="--c:var(--c-water)" class="opt"><span>${esc(L('範圍 3（自願）', 'Scope 3 (optional)'))}</span><b>${esc(tFmt(s3))}</b></div>
         </div>
         <p class="bo-unit">${esc(L('公噸二氧化碳當量（tCO₂e）', 'tonnes CO₂e'))}</p>
+        ${window.HKOC?.treesHtml ? window.HKOC.treesHtml(s1 + s2, D.factors, { label: L('範圍 1 + 2 ≈ ', 'Scope 1 + 2 ≈ '), note: L('只作直觀比較；種樹不計入範圍 1、2，也不能用來抵銷申報的排放。', 'A comparison only; trees are not part of scope 1 or 2 and cannot offset reported emissions.') }) : ''}
         <div class="bo-actions"><button type="button" class="pill pill-solid" data-csv${ls.length ? '' : ' disabled'}>${esc(L('下載 CSV', 'Download CSV'))}</button><button type="button" class="pill" data-print${ls.length ? '' : ' disabled'}>${esc(L('列印／存成 PDF', 'Print / save as PDF'))}</button></div>
       </div>
       ${ls.length ? [1, 2, 3].map((s) => {

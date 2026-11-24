@@ -1340,3 +1340,12 @@ html[data-embed], html[data-embed] body { height: auto; min-height: 0 !important
 /* Embedded map: keep map and figures side by side down to 640px wide. */
 @media (min-width: 640px) { html[data-embed] .map-grid { grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; } html[data-embed] .map-legend { position: static; } }
 .embed-credit .mark { width: 18px; height: 18px; }
+
+/* ---------- trees comparison ---------- */
+.trees { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; margin: 14px 0 4px; padding: 12px 14px; border-left: 4px solid var(--c-land); background: color-mix(in srgb, var(--c-land) 8%, var(--bg)); }
+.trees svg { width: 34px; height: 34px; fill: color-mix(in srgb, var(--c-land) 30%, transparent); stroke: var(--c-land); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.trees p { margin: 0; display: grid; gap: 3px; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+.trees b { font-size: 17px; color: var(--ink); font-weight: 800; }
+.trees small { font-size: 11.5px; color: var(--muted, var(--ink-2)); }
+.trees a { color: inherit; }
+@media print { .trees { background: none; } }
