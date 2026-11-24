@@ -361,10 +361,6 @@ const map = () => `
 <section class="page-head map-head"><div class="wrap">
   <p class="eyebrow">${t('香港碳地圖', 'Hong Kong carbon map')}</p>
   <h1>${t('十八區，<span class="nb">用電與發電。</span>', '18 districts, <span class="nb">power used and made.</span>')}</h1>
-  <p class="lede">${t(
-    '把滑鼠移到地區上看數字，點一下放大並查看歷年數據。所有數字照錄自電力公司及政府公佈，不作推算。',
-    'Hover over a district to see its figures; click to zoom in and step through the years. Every number is copied from what the power companies and government publish; nothing is estimated.',
-  )}</p>
 </div></section>
 <section class="wrap map-wrap">
   <div class="map-bar">
