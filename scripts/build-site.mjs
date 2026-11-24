@@ -66,8 +66,24 @@ const mapData = {
   sources: [mapMeta.boundaries.source, ...mapMeta.tables.flatMap((t) => t.sources)],
 };
 
+// Published averages for comparison (see data/benchmarks/benchmarks.yaml).
+const benchDir = join(root, 'data', 'benchmarks');
+const benchMeta = yaml.load(readFileSync(join(benchDir, 'benchmarks.yaml'), 'utf8'));
+const segRows = (() => {
+  const [head, ...rows] = readFileSync(join(benchDir, 'clp-sales-by-segment.csv'), 'utf8').trim().split('\n');
+  const cols = head.split(',');
+  return rows.map((r) => Object.fromEntries(r.split(',').map((v, i) => [cols[i], /^-?\d+(\.\d+)?$/.test(v) ? Number(v) : v])));
+})();
+const benchmarks = {
+  status: benchMeta.status,
+  clpResidential: segRows.filter((r) => r.segment === 'residential').map(({ quarter, mean_kwh, customers_k }) => ({ quarter, mean_kwh, customers_k })),
+  source: benchMeta.tables[0].source,
+  notes: benchMeta.tables[0].notes,
+};
+
 const usedSources = new Set(factors.map((f) => f.source.id));
 for (const s of mapData.sources) usedSources.add(s);
+usedSources.add(benchmarks.source);
 for (const t of inventory) for (const c of [...Object.values(t.columns), ...(t.targets ?? [])]) usedSources.add(c.source);
 const data = {
   built: new Date().toISOString().slice(0, 10),
@@ -78,6 +94,7 @@ const data = {
     .sort((a, b) => a.category.localeCompare(b.category) || a.id.localeCompare(b.id)),
   sources: sources.map((s) => ({ ...s, used: usedSources.has(s.id) })),
   inventory,
+  benchmarks,
 };
 
 rmSync(out, { recursive: true, force: true });
@@ -88,6 +105,7 @@ cpSync(join(root, 'site', 'assets'), join(out, 'assets'), { recursive: true });
 writeFileSync(join(out, 'assets', 'data.json'), JSON.stringify(data));
 writeFileSync(join(out, 'assets', 'map.json'), JSON.stringify(mapData));
 for (const f of ['hke-district-consumption.csv', 'clp-renewables-by-region.csv']) cpSync(join(mapDir, f), join(out, 'api', 'v1', f));
+cpSync(join(benchDir, 'clp-sales-by-segment.csv'), join(out, 'api', 'v1', 'clp-sales-by-segment.csv'));
 // Public, stable API files (same content as the release bundle).
 writeFileSync(join(out, 'api', 'v1', 'factors.json'), JSON.stringify(data.factors.map(({ value_text, file, ...f }) => f), null, 2));
 writeFileSync(join(out, 'api', 'v1', 'inventory.json'), JSON.stringify(inventory, null, 2));

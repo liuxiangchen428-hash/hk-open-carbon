@@ -1077,7 +1077,30 @@
           <div class="cmp-row hk"><span>${esc(L(`全港人均（${hkLatest.year} 年，所有排放）`, `Hong Kong average (${hkLatest.year}, all emissions)`))}</span><b>${esc(hkLatest.per_capita.toFixed(2))}</b>
             <span class="t"><span style="width:${((hkPer / cmpMax) * 100).toFixed(1)}%"></span></span></div>
           <p class="hr-note">${esc(L('全港人均包括交通、工商業、廢物等所有本地排放，不只家居；兩者不是同一範圍，只作參考。', 'The Hong Kong figure covers all local emissions — transport, business, waste and more — not just homes, so this is a rough reference, not a like-for-like comparison.'))}</p>
-        </div>` : ''}`;
+        </div>` : ''}
+        ${elecCmp()}`;
+    }
+
+    // Household electricity next to CLP's published mean per residential customer (last four quarters).
+    function elecCmp() {
+      const kwh = num(st.kwh) * (12 / st.p_kwh);
+      if (!(kwh > 0)) return '';
+      if (st.supplier !== 'clp') return `<div class="hr-cmp"><p class="hr-cmp-t">${esc(L('用電與住宅平均比較', 'Electricity vs the average home'))}</p><p class="hr-note">${esc(L('港燈沒有公佈住宅客戶的平均用電量，所以只能比較中電供電區。', 'HK Electric does not publish the average use of residential customers, so this comparison is for the CLP area only.'))}</p></div>`;
+      const B = DATA.benchmarks;
+      const qs = (B?.clpResidential || []).slice(-4);
+      if (!qs.length) return '';
+      const mine = kwh / 4;
+      const max = Math.max(mine, ...qs.map((q) => q.mean_kwh));
+      const qName = (q) => { const [y, n] = q.split('-Q'); return L(`${y} 年第 ${n} 季`, `Q${n} ${y}`); };
+      const draft = B.status !== 'reviewed' ? `<span class="status draft">${esc(L('草稿', 'Draft'))}</span> ` : '';
+      return `<div class="hr-cmp hr-elec">
+        <p class="hr-cmp-t">${esc(L('每季用電，度', 'Electricity per quarter, kWh'))}</p>
+        <div class="cmp-row you"><span>${esc(L('你家（全年 ÷ 4）', 'Your home (year ÷ 4)'))}</span><b>${esc(Math.round(mine).toLocaleString('en-US'))}</b>
+          <span class="t"><span style="width:${((mine / max) * 100).toFixed(1)}%"></span></span></div>
+        ${qs.map((q) => `<div class="cmp-row hk"><span>${esc(L(`中電住宅客戶平均 · ${qName(q.quarter)}`, `CLP average home · ${qName(q.quarter)}`))}</span><b>${esc(q.mean_kwh.toLocaleString('en-US'))}</b>
+          <span class="t"><span style="width:${((q.mean_kwh / max) * 100).toFixed(1)}%"></span></span></div>`).join('')}
+        <p class="hr-note">${draft}${esc(L(`中電公佈的每季住宅客戶平均用電（${Math.round(qs.at(-1).customers_k).toLocaleString('en-US')} 千戶）。夏季用電較多，冬季較少；平均數包括一人住戶和大家庭。來源：中電開放數據。`, `CLP's published mean use per residential customer each quarter (${Math.round(qs.at(-1).customers_k).toLocaleString('en-US')} thousand homes). Summer is higher, winter lower; the average covers one-person homes and large families alike. Source: CLP open data.`))} <a href="api/v1/clp-sales-by-segment.csv" download>CSV</a></p>
+      </div>`;
     }
 
     function renderLines() {

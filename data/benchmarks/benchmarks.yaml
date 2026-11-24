@@ -1,0 +1,25 @@
+# Published averages used for comparison in the household calculator (site page calculator.html).
+# Values are copied as published. The calculator only shows them next to the user's own figure;
+# nothing here is used to calculate emissions.
+status: draft
+updated: 2026-11-24
+
+tables:
+  - file: clp-sales-by-segment.csv
+    source: src-clp-open-data-segment
+    made_by: scripts/import-clp-segment.mjs (re-run with each quarter's new CSV from CLP)
+    period: calendar quarter (2026-Q3 = July to September 2026)
+    columns:
+      segment: residential, manufacturing, commercial, infrastructure_public (Infrastructure & Public Services), local_total (Local Sales) as published
+      sales_gwh: Sales, GWh (million kWh)
+      customers_k: Number of customers, thousands
+      mean_kwh: Mean consumption per customer in the quarter, kWh
+    notes:
+      zh-Hant: 中電開放數據「按客戶類別的售電量」，每季更新，只包括中電供電區。港燈沒有公佈住宅客戶平均用電。
+      en: CLP open data "sales by customer segment", updated quarterly, CLP supply area only. HK Electric does not publish mean residential consumption.
+
+verification:
+  - by: claude
+    method: text-extract
+    date: 2026-11-24
+    note: Table written by scripts/import-clp-segment.mjs from the CSV supplied by the maintainer (2020-Q1 to 2026-Q3, 27 quarters). Checked that the four segments add up to Local Sales (within 3 GWh rounding) and that sales ÷ customers matches the mean for residential in every quarter.
