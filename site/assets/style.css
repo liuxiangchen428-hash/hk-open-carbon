@@ -1350,3 +1350,18 @@ html[data-embed], html[data-embed] body { height: auto; min-height: 0 !important
 .trees a { color: inherit; }
 @media print { .trees { background: none; } }
 .hr-elec { margin-top: 18px; }
+
+/* ---------- business: year on year ---------- */
+.bo-yoy { margin-top: 26px; }
+.bo-yoy h3 { margin: 0 0 8px; font-size: 1.05rem; }
+.bo-table.yoy td:first-child { display: flex; align-items: center; gap: 10px; min-width: 130px; }
+.bo-table.yoy tr.on td { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.yoy-y { border: 0; background: none; padding: 0; font: inherit; font-weight: 800; color: var(--ink); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.yoy-bar { flex: 1; height: 6px; background: var(--line); min-width: 50px; }
+.yoy-bar i { display: block; height: 100%; background: var(--ink); }
+.bo-table.yoy .up { color: var(--up); font-weight: 700; }
+.bo-table.yoy .down { color: var(--accent); font-weight: 700; }
+.bo-copy, .bo-hint { margin: 16px 0 0; font-size: 13px; color: var(--ink-2); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.linkish { border: 0; background: none; padding: 0; font: inherit; color: var(--ink); text-decoration: underline; cursor: pointer; }
+@media (max-width: 720px) { .bo-table.yoy { font-size: 12.5px; } .bo-table.yoy td:first-child { min-width: 0; } .yoy-bar { display: none; } }
+@media print { .bo-copy, .bo-hint, .linkish { display: none; } }
