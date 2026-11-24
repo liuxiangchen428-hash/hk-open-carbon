@@ -408,43 +408,43 @@ const business = () => `
       <label class="bf"><span>${t('報告年份', 'Reporting year')}</span><select id="bz-year"></select></label>
     </div>
 
-    <fieldset class="biz-sec" style="--c:var(--c-elec)">
-      <legend>${t('範圍 2 · 外購電力及煤氣', 'Scope 2 · Purchased electricity and town gas')}</legend>
+    <section class="biz-sec" role="group" aria-labelledby="bz-s1" style="--c:var(--c-elec)">
+      <h3 class="biz-legend" id="bz-s1">${t('範圍 2 · 外購電力及煤氣', 'Scope 2 · Purchased electricity and town gas')}</h3>
       <label class="bf"><span>${t('中電供電區用電（度 / kWh）', 'Electricity, CLP area (kWh)')}</span><input data-k="clp" type="number" min="0" step="any" inputmode="decimal"></label>
       <label class="bf"><span>${t('港燈供電區用電（度 / kWh）', 'Electricity, HK Electric area (kWh)')}</span><input data-k="hke" type="number" min="0" step="any" inputmode="decimal"></label>
       <label class="bf"><span>${t('煤氣用量（度 / 單位，1 單位 = 48 兆焦耳）', 'Town gas (units; 1 unit = 48 MJ)')}</span><input data-k="gas" type="number" min="0" step="any" inputmode="decimal"></label>
       <p class="bf-note">${t('煤氣用量同時計入範圍 1（在處所內燃燒）和範圍 2（煤氣生產），與指引做法一致。', 'Town gas counts in scope 1 (burnt on site) and scope 2 (its production), as in the guidelines.')}</p>
-    </fieldset>
+    </section>
 
-    <fieldset class="biz-sec" style="--c:var(--c-fuel)">
-      <legend>${t('範圍 1 · 固定燃燒（例如後備發電機、鍋爐）', 'Scope 1 · Stationary combustion (e.g. generators, boilers)')}</legend>
+    <section class="biz-sec" role="group" aria-labelledby="bz-s2" style="--c:var(--c-fuel)">
+      <h3 class="biz-legend" id="bz-s2">${t('範圍 1 · 固定燃燒（例如後備發電機、鍋爐）', 'Scope 1 · Stationary combustion (e.g. generators, boilers)')}</h3>
       <label class="bf"><span>${t('柴油（公升）', 'Diesel (litres)')}</span><input data-k="st-diesel" type="number" min="0" step="any" inputmode="decimal"></label>
       <label class="bf"><span>${t('石油氣（公斤）', 'LPG (kg)')}</span><input data-k="st-lpg" type="number" min="0" step="any" inputmode="decimal"></label>
       <label class="bf"><span>${t('火水（公升）', 'Kerosene (litres)')}</span><input data-k="st-kerosene" type="number" min="0" step="any" inputmode="decimal"></label>
-    </fieldset>
+    </section>
 
-    <fieldset class="biz-sec" style="--c:var(--c-move)">
-      <legend>${t('範圍 1 · 機構車輛及流動機械', 'Scope 1 · Company vehicles and mobile machinery')}</legend>
+    <section class="biz-sec" role="group" aria-labelledby="bz-s3" style="--c:var(--c-move)">
+      <h3 class="biz-legend" id="bz-s3">${t('範圍 1 · 機構車輛及流動機械', 'Scope 1 · Company vehicles and mobile machinery')}</h3>
       <div id="bz-veh" class="biz-rows"></div>
       <button type="button" class="pill pill-sm" data-add="veh">+ ${t('加一類車輛', 'Add a vehicle type')}</button>
-    </fieldset>
+    </section>
 
-    <fieldset class="biz-sec" style="--c:var(--c-bldg)">
-      <legend>${t('範圍 1 · 冷氣及製冷的冷媒', 'Scope 1 · Refrigerants in air-conditioning and refrigeration')}</legend>
+    <section class="biz-sec" role="group" aria-labelledby="bz-s4" style="--c:var(--c-bldg)">
+      <h3 class="biz-legend" id="bz-s4">${t('範圍 1 · 冷氣及製冷的冷媒', 'Scope 1 · Refrigerants in air-conditioning and refrigeration')}</h3>
       <p class="bf-note">${t('按指引：排放 =（期初存量 + 本期購入 − 環保處置 − 期末存量）× GWP。存量指倉存，不包括已在設備內的冷媒。', 'Per the guidelines: emissions = (stock at start + purchased − disposed responsibly − stock at end) × GWP. Stock means storage, not refrigerant already in equipment.')}</p>
       <div id="bz-ref" class="biz-rows"></div>
       <button type="button" class="pill pill-sm" data-add="ref">+ ${t('加一種冷媒', 'Add a refrigerant')}</button>
-    </fieldset>
+    </section>
 
-    <fieldset class="biz-sec" style="--c:var(--c-water)">
-      <legend>${t('範圍 3（自願申報）· 食水、污水、紙張', 'Scope 3 (optional) · Water, sewage, paper')}</legend>
+    <section class="biz-sec" role="group" aria-labelledby="bz-s5" style="--c:var(--c-water)">
+      <h3 class="biz-legend" id="bz-s5">${t('範圍 3（自願申報）· 食水、污水、紙張', 'Scope 3 (optional) · Water, sewage, paper')}</h3>
       <label class="bf"><span>${t('食水用量（立方米）', 'Fresh water (m³)')}</span><input data-k="water" type="number" min="0" step="any" inputmode="decimal"></label>
       <label class="bf"><span>${t('污水計算方法', 'Sewage')}</span><select data-k="sewage"><option value="1" data-zh="食水用量 × 100%（一般商業、住宅、機構）" data-en="Water × 100% (most premises)">食水用量 × 100%（一般商業、住宅、機構）</option><option value="0.7" data-zh="食水用量 × 70%（食肆及飲食業）" data-en="Water × 70% (restaurants and catering)">食水用量 × 70%（食肆及飲食業）</option><option value="0" data-zh="不計" data-en="Exclude">不計</option></select></label>
       <label class="bf"><span>${t('紙張：期初存量（公斤）', 'Paper: stock at start (kg)')}</span><input data-k="p-start" type="number" min="0" step="any" inputmode="decimal"></label>
       <label class="bf"><span>${t('紙張：本期購入（公斤）', 'Paper: purchased (kg)')}</span><input data-k="p-buy" type="number" min="0" step="any" inputmode="decimal"></label>
       <label class="bf"><span>${t('紙張：交回收（公斤）', 'Paper: sent for recycling (kg)')}</span><input data-k="p-recycle" type="number" min="0" step="any" inputmode="decimal"></label>
       <label class="bf"><span>${t('紙張：期末存量（公斤）', 'Paper: stock at end (kg)')}</span><input data-k="p-end" type="number" min="0" step="any" inputmode="decimal"></label>
-    </fieldset>
+    </section>
     <div class="biz-actions"><button type="button" class="pill" data-example>${t('填入示例', 'Try an example')}</button><button type="button" class="pill" data-clear>${t('清除', 'Clear')}</button></div>
   </form>
 

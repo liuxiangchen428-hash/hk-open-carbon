@@ -1893,3 +1893,7 @@ body:has(.drawer.open) .tabbar, body:has(.drawer.open) .ai, body:has(.drawer.ope
 .page-jump { background: none; border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; padding: 0; }
 /* Labels on the inventory chart stay readable where they cross a bar. */
 .ib-ref-t { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
+/* Business calculator sections: a heading, not a <legend>, so Safari cannot draw it on the border. */
+.biz-sec .biz-legend { grid-column: 1 / -1; margin: 0 0 2px; font-size: 17px; font-weight: 700; letter-spacing: -.01em; line-height: 1.35; }
+.biz-sec { position: relative; box-shadow: var(--gshadow), inset 0 1px 0 var(--shine); }
+.biz-sec::before { content: ""; position: absolute; left: 18px; right: 18px; top: 0; height: 3px; border-radius: 0 0 3px 3px; background: var(--c, var(--c-gas)); }
