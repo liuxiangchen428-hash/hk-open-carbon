@@ -262,6 +262,7 @@ const calculator = () => `
 <section class="hero calc-hero">
   <div class="wrap">
     <div class="hero-top">
+      <nav class="calc-switch" aria-label="Calculator"><a href="calculator.html" aria-current="page">${t('家庭', 'Household')}</a><a href="business.html">${t('企業／機構', 'Business')}</a></nav>
       <p class="eyebrow">${t('家庭碳足跡計算器', 'Household carbon calculator')}</p>
       <h1>${t('你家一年，<span class="nb">排放多少？</span>', 'How much does your home <span class="nb">emit in a year?</span>')}</h1>
       <p class="hero-lede">${t('拿出電費、煤氣費和水費單，填上用量和帳單涵蓋的時間。計算只在你的瀏覽器進行，不會上傳。', 'Take your electricity, gas and water bills and enter the usage and billing period. Everything is calculated in your browser; nothing is uploaded.')}</p>
@@ -385,6 +386,69 @@ const map = () => `
 </section>
 `;
 
+
+const business = () => `
+<section class="hero calc-hero biz-hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <nav class="calc-switch" aria-label="Calculator"><a href="calculator.html">${t('家庭', 'Household')}</a><a href="business.html" aria-current="page">${t('企業／機構', 'Business')}</a></nav>
+      <p class="eyebrow">${t('企業及機構碳排放計算器', 'Business carbon calculator')}</p>
+      <h1>${t('範圍 1、2 排放，<span class="nb">一張表算清。</span>', 'Scope 1 and 2 emissions, <span class="nb">on one sheet.</span>')}</h1>
+      <p class="hero-lede">${t('按機電署及環保署《香港建築物溫室氣體排放核算指引》的分類，填上報告期內的全年用量。只用本平台已審核的系數，每一行都附出處。可下載 CSV 或列印成 PDF，放進 ESG 報告。輸入只存在你的瀏覽器。', 'Following the categories of the EMSD/EPD building GHG guidelines, enter your usage for the reporting year. Only reviewed factors are used and every line cites its source. Download a CSV or print to PDF for your ESG report. Inputs stay in your browser.')}</p>
+    </div>
+  </div>
+</section>
+<section class="wrap biz">
+  <form class="biz-form" id="biz-form" autocomplete="off">
+    <div class="biz-top">
+      <label class="bf"><span>${t('機構名稱（選填）', 'Organisation (optional)')}</span><input id="bz-org" type="text" maxlength="80"></label>
+      <label class="bf"><span>${t('報告年份', 'Reporting year')}</span><select id="bz-year"></select></label>
+    </div>
+
+    <fieldset class="biz-sec" style="--c:var(--c-elec)">
+      <legend>${t('範圍 2 · 外購電力及煤氣', 'Scope 2 · Purchased electricity and town gas')}</legend>
+      <label class="bf"><span>${t('中電供電區用電（度 / kWh）', 'Electricity, CLP area (kWh)')}</span><input data-k="clp" type="number" min="0" step="any" inputmode="decimal"></label>
+      <label class="bf"><span>${t('港燈供電區用電（度 / kWh）', 'Electricity, HK Electric area (kWh)')}</span><input data-k="hke" type="number" min="0" step="any" inputmode="decimal"></label>
+      <label class="bf"><span>${t('煤氣用量（度 / 單位，1 單位 = 48 兆焦耳）', 'Town gas (units; 1 unit = 48 MJ)')}</span><input data-k="gas" type="number" min="0" step="any" inputmode="decimal"></label>
+      <p class="bf-note">${t('煤氣用量同時計入範圍 1（在處所內燃燒）和範圍 2（煤氣生產），與指引做法一致。', 'Town gas counts in scope 1 (burnt on site) and scope 2 (its production), as in the guidelines.')}</p>
+    </fieldset>
+
+    <fieldset class="biz-sec" style="--c:var(--c-fuel)">
+      <legend>${t('範圍 1 · 固定燃燒（例如後備發電機、鍋爐）', 'Scope 1 · Stationary combustion (e.g. generators, boilers)')}</legend>
+      <label class="bf"><span>${t('柴油（公升）', 'Diesel (litres)')}</span><input data-k="st-diesel" type="number" min="0" step="any" inputmode="decimal"></label>
+      <label class="bf"><span>${t('石油氣（公斤）', 'LPG (kg)')}</span><input data-k="st-lpg" type="number" min="0" step="any" inputmode="decimal"></label>
+      <label class="bf"><span>${t('火水（公升）', 'Kerosene (litres)')}</span><input data-k="st-kerosene" type="number" min="0" step="any" inputmode="decimal"></label>
+    </fieldset>
+
+    <fieldset class="biz-sec" style="--c:var(--c-move)">
+      <legend>${t('範圍 1 · 機構車輛及流動機械', 'Scope 1 · Company vehicles and mobile machinery')}</legend>
+      <div id="bz-veh" class="biz-rows"></div>
+      <button type="button" class="pill pill-sm" data-add="veh">+ ${t('加一類車輛', 'Add a vehicle type')}</button>
+    </fieldset>
+
+    <fieldset class="biz-sec" style="--c:var(--c-bldg)">
+      <legend>${t('範圍 1 · 冷氣及製冷的冷媒', 'Scope 1 · Refrigerants in air-conditioning and refrigeration')}</legend>
+      <p class="bf-note">${t('按指引：排放 =（期初存量 + 本期購入 − 環保處置 − 期末存量）× GWP。存量指倉存，不包括已在設備內的冷媒。', 'Per the guidelines: emissions = (stock at start + purchased − disposed responsibly − stock at end) × GWP. Stock means storage, not refrigerant already in equipment.')}</p>
+      <div id="bz-ref" class="biz-rows"></div>
+      <button type="button" class="pill pill-sm" data-add="ref">+ ${t('加一種冷媒', 'Add a refrigerant')}</button>
+    </fieldset>
+
+    <fieldset class="biz-sec" style="--c:var(--c-water)">
+      <legend>${t('範圍 3（自願申報）· 食水、污水、紙張', 'Scope 3 (optional) · Water, sewage, paper')}</legend>
+      <label class="bf"><span>${t('食水用量（立方米）', 'Fresh water (m³)')}</span><input data-k="water" type="number" min="0" step="any" inputmode="decimal"></label>
+      <label class="bf"><span>${t('污水計算方法', 'Sewage')}</span><select data-k="sewage"><option value="1">${t('食水用量 × 100%（一般商業、住宅、機構）', 'Water × 100% (most premises)')}</option><option value="0.7">${t('食水用量 × 70%（食肆及飲食業）', 'Water × 70% (restaurants and catering)')}</option><option value="0">${t('不計', 'Exclude')}</option></select></label>
+      <label class="bf"><span>${t('紙張：期初存量（公斤）', 'Paper: stock at start (kg)')}</span><input data-k="p-start" type="number" min="0" step="any" inputmode="decimal"></label>
+      <label class="bf"><span>${t('紙張：本期購入（公斤）', 'Paper: purchased (kg)')}</span><input data-k="p-buy" type="number" min="0" step="any" inputmode="decimal"></label>
+      <label class="bf"><span>${t('紙張：交回收（公斤）', 'Paper: sent for recycling (kg)')}</span><input data-k="p-recycle" type="number" min="0" step="any" inputmode="decimal"></label>
+      <label class="bf"><span>${t('紙張：期末存量（公斤）', 'Paper: stock at end (kg)')}</span><input data-k="p-end" type="number" min="0" step="any" inputmode="decimal"></label>
+    </fieldset>
+    <div class="biz-actions"><button type="button" class="pill" data-example>${t('填入示例', 'Try an example')}</button><button type="button" class="pill" data-clear>${t('清除', 'Clear')}</button></div>
+  </form>
+
+  <section class="biz-out" id="biz-out" aria-live="polite"></section>
+</section>
+`;
+
 export const pages = [
   {
     file: 'index.html',
@@ -397,6 +461,13 @@ export const pages = [
     title: { zh: '計算器', en: 'Calculator' },
     description: 'Estimate your household carbon footprint from electricity, town gas and water bills, using Hong Kong factors.',
     body: calculator,
+  },
+  {
+    file: 'business.html',
+    title: { zh: '企業計算器', en: 'Business calculator' },
+    description: 'Scope 1 and 2 emissions for Hong Kong businesses and organisations, with every factor cited. Export CSV or print to PDF.',
+    body: business,
+    script: 'biz.js',
   },
   {
     file: 'inventory.html',

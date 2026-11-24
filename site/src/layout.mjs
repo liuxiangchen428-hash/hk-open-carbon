@@ -26,10 +26,10 @@ const mark = `<svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
 
 export function layout({ file, title, description, body, stats, script }) {
   const links = nav
-    .map((n) => `<a href="${n.file}"${n.file === file ? ' aria-current="page"' : ''}>${t(n.zh, n.en)}</a>`)
+    .map((n) => `<a href="${n.file}"${n.file === file || (n.file === 'calculator.html' && file === 'business.html') ? ' aria-current="page"' : ''}>${t(n.zh, n.en)}</a>`)
     .join('');
   const tabs = nav
-    .map((n) => `<a href="${n.file}"${n.file === file ? ' aria-current="page"' : ''}><svg viewBox="0 0 20 20" aria-hidden="true">${n.icon}</svg>${t(...n.short)}</a>`)
+    .map((n) => `<a href="${n.file}"${n.file === file || (n.file === 'calculator.html' && file === 'business.html') ? ' aria-current="page"' : ''}><svg viewBox="0 0 20 20" aria-hidden="true">${n.icon}</svg>${t(...n.short)}</a>`)
     .join('');
   return `<!doctype html>
 <html lang="zh-Hant" data-lang="zh">
