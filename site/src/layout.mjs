@@ -43,7 +43,7 @@ export function layout({ file, title, description, body, stats, script }) {
 <link rel="apple-touch-icon" href="assets/icon-180.png?v=${stats.v}">
 <meta name="theme-color" content="#0b1d18">
 <link rel="stylesheet" href="assets/style.css?v=${stats.v}">
-<script>try{var l=localStorage.getItem('hkoc-lang');if(l)document.documentElement.dataset.lang=l;}catch(e){}
+<script>try{var l=localStorage.getItem('hkoc-lang');if(l)document.documentElement.dataset.lang=l;var m=localStorage.getItem('hkoc-theme');if(m==='light'||m==='dark')document.documentElement.dataset.theme=m;}catch(e){}
 (function(){var q=new URLSearchParams(location.search),h=document.documentElement;if(q.get('embed')==='1'){h.dataset.embed='1';var g=q.get('lang');if(g==='en'||g==='zh')h.dataset.lang=g;}})();</script>
 </head>
 <body data-page="${file.replace('.html', '')}" data-v="${stats.v}"${AI_ENDPOINT ? ` data-ai="${AI_ENDPOINT}"` : ''}>
@@ -58,6 +58,9 @@ export function layout({ file, title, description, body, stats, script }) {
       </span>
     </a>
     <nav class="site-nav" aria-label="Main">${links}</nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="外觀 / Appearance">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><g class="ti-auto"><circle cx="10" cy="10" r="6.5"/><path d="M10 3.5v13a6.5 6.5 0 0 0 0-13z" fill="currentColor" stroke="none"/></g><g class="ti-light"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.2v2M10 15.8v2M2.2 10h2M15.8 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4"/></g><g class="ti-dark"><path d="M15.6 12.6A6.6 6.6 0 0 1 7.4 4.4a6.6 6.6 0 1 0 8.2 8.2z"/></g></svg>
+    </button>
     <button class="lang-toggle" type="button" data-lang-toggle aria-label="Switch language / 切換語言">
       <span class="l-zh">EN</span><span class="l-en">繁</span>
     </button>

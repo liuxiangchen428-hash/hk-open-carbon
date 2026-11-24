@@ -50,7 +50,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:where(:not([data-theme="light"])) {
     --bg: #0e0e0e;
     --surface: #161616;
     --surface-2: #1c1c1c;
@@ -84,6 +84,39 @@
     color-scheme: dark;
   }
 }
+:root:where([data-theme="dark"]) {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --surface-2: #1c1c1c;
+    --ink: #f2f2f2;
+    --ink-2: #cdcdcd;
+    --muted: #9a9a9a;
+    --line: #2a2a2a;
+    --line-strong: #3c3c3c;
+    --rule: #f2f2f2;
+    --accent: #47c174;
+    --accent-ink: #6fd396;
+    --accent-soft: #15301f;
+    --on-accent: #0e0e0e;
+    --draft: #f0b55c;
+    --draft-soft: #33270f;
+    --up: #ff7a63;
+    --brass: #ff7a63;
+    --c-elec: #ff5a4f;
+    --c-gas: #5b9bf0;
+    --c-fuel: #b88ae0;
+    --c-move: #47c174;
+    --c-water: #ffb23d;
+    --c-waste: #c9a273;
+    --c-bldg: #34c6cf;
+    --c-land: #93c452;
+    --qA: #6fd396; --qA-bg: #15301f;
+    --qB: #8fb8f0; --qB-bg: #15243a;
+    --qC: #d6c28d; --qC-bg: #2b2617;
+    --qD: #ff9a86; --qD-bg: #36201b;
+    --shadow-lg: 0 24px 60px -24px rgb(0 0 0 / .8);
+    color-scheme: dark;
+  }
 
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -1121,8 +1154,9 @@ a:hover { color: var(--accent-ink); }
   --sun-lo: #fbeec2; --sun-hi: #c77a00;       /* solar: pale butter to amber */
 }
 @media (prefers-color-scheme: dark) {
-  :root { --map-sea: #121416; --map-off: #2b2a27; --map-line: #121416; --ember-lo: #4a2a1f; --ember-hi: #ff7b5c; --sun-lo: #3d3214; --sun-hi: #ffc94d; }
+  :root:where(:not([data-theme="light"])) { --map-sea: #121416; --map-off: #2b2a27; --map-line: #121416; --ember-lo: #4a2a1f; --ember-hi: #ff7b5c; --sun-lo: #3d3214; --sun-hi: #ffc94d; }
 }
+:root:where([data-theme="dark"]) { --map-sea: #121416; --map-off: #2b2a27; --map-line: #121416; --ember-lo: #4a2a1f; --ember-hi: #ff7b5c; --sun-lo: #3d3214; --sun-hi: #ffc94d; }
 .map-wrap { padding: 28px 0 88px; }
 .map-bar { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 16px; }
 .map-period { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; }
@@ -1474,7 +1508,7 @@ body:not([data-page="index"]) .drawer [data-cmp-toggle] { display: none; }
   --map-sea: rgb(255 255 255 / .35); --map-line: rgb(255 255 255 / .9);
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:where(:not([data-theme="light"])) {
     --bg: #0b0c0f;
     --surface: rgb(44 44 46 / .55);
     --surface-2: rgb(118 118 128 / .18);
@@ -1520,6 +1554,51 @@ body:not([data-page="index"]) .drawer [data-cmp-toggle] { display: none; }
     --map-sea: rgb(255 255 255 / .03); --map-line: rgb(0 0 0 / .5);
   }
 }
+:root:where([data-theme="dark"]) {
+    --bg: #0b0c0f;
+    --surface: rgb(44 44 46 / .55);
+    --surface-2: rgb(118 118 128 / .18);
+    --ink: #f5f5f7;
+    --ink-2: #d1d1d6;
+    --muted: #a1a1a6;
+    --line: rgb(235 235 245 / .12);
+    --line-strong: rgb(235 235 245 / .22);
+    --rule: #f5f5f7;
+    --accent: #30d158;
+    --accent-ink: #4ade80;
+    --accent-soft: rgb(48 209 88 / .16);
+    --draft: #ffb340;
+    --draft-soft: rgb(255 159 10 / .16);
+    --up: #ff6961;
+    --brass: #ff6961;
+    --c-elec: #ff453a;
+    --c-gas: #0a84ff;
+    --c-fuel: #bf5af2;
+    --c-move: #30d158;
+    --c-water: #ff9f0a;
+    --c-waste: #ac8e68;
+    --c-bldg: #40c8e0;
+    --c-land: #7dc95e;
+    --qA: #4ade80; --qA-bg: rgb(48 209 88 / .16);
+    --qB: #64b5ff; --qB-bg: rgb(10 132 255 / .18);
+    --qC: #ffd60a; --qC-bg: rgb(255 214 10 / .14);
+    --qD: #ff8a80; --qD-bg: rgb(255 69 58 / .16);
+    --glass: rgb(40 40 44 / .50);
+    --glass-hi: rgb(80 80 86 / .55);
+    --glass-solid: rgb(28 28 31 / .94);
+    --edge: rgb(255 255 255 / .10);
+    --gshadow: 0 1px 2px rgb(0 0 0 / .3), 0 12px 32px rgb(0 0 0 / .35);
+    --gshadow-up: 0 2px 6px rgb(0 0 0 / .35), 0 22px 50px rgb(0 0 0 / .5);
+    --shine: rgb(255 255 255 / .10);
+    --fill: rgb(118 118 128 / .24);
+    --ring: rgb(255 255 255 / .07);
+    --tip-bg: #1f1f23;
+    --glow: rgb(255 255 255 / .07);
+    --fill-2: rgb(118 118 128 / .36);
+    --blob-1: #0f5a48; --blob-2: #183a6b; --blob-3: #5a3a1c; --blob-4: #3a2a63;
+    --mark-bg: #f4f3ee; --mark-c: #0b1d18; --mark-leaf: #1f9d6e;
+    --map-sea: rgb(255 255 255 / .03); --map-line: rgb(0 0 0 / .5);
+  }
 
 /* ---------- ground: soft light that drifts and leans toward the pointer ---------- */
 html { background: var(--bg); }
@@ -1726,7 +1805,8 @@ input, select, textarea { accent-color: var(--c-gas); }
 /* No backdrop blur: keep panels readable. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   :root { --glass: rgb(255 255 255 / .9); --glass-hi: #fff; }
-  @media (prefers-color-scheme: dark) { :root { --glass: rgb(36 36 40 / .94); --glass-hi: rgb(58 58 62); } }
+  @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) { --glass: rgb(36 36 40 / .94); --glass-hi: rgb(58 58 62); } }
+:root:where([data-theme="dark"]) { --glass: rgb(36 36 40 / .94); --glass-hi: rgb(58 58 62); }
 }
 @media (prefers-reduced-motion: reduce) {
   body::before { animation: none; transition: none; transform: none; }
@@ -1796,3 +1876,11 @@ body:has(.drawer.open) .tabbar, body:has(.drawer.open) .ai, body:has(.drawer.ope
   body { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
   .ai { bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
 }
+/* Appearance button: auto (half circle) → light (sun) → dark (moon) */
+.theme-toggle { border: 0; background: var(--fill); border-radius: 999px; width: 34px; height: 34px; display: grid; place-items: center; color: var(--ink); cursor: pointer; flex: none; transition: background-color .2s; }
+.theme-toggle:hover { background: var(--fill-2); }
+.theme-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.theme-toggle g { display: none; }
+.theme-toggle[data-mode="auto"] .ti-auto, .theme-toggle[data-mode="light"] .ti-light, .theme-toggle[data-mode="dark"] .ti-dark { display: inline; }
+.theme-toggle:not([data-mode]) .ti-auto { display: inline; }
+@media (min-width: 721px) { .header-inner .theme-toggle + .lang-toggle { margin-left: -20px; } }

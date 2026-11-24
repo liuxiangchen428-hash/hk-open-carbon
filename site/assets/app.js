@@ -1616,6 +1616,24 @@
     rerender.push(() => { if (!panel.hidden) render(false); });
   }
 
+  /* ---------- appearance: follow the device, or always light / always dark (remembered) ---------- */
+  (function theme() {
+    const btn = $('[data-theme-toggle]');
+    if (!btn) return;
+    const ORDER = ['auto', 'light', 'dark'];
+    const NAME = { auto: ['外觀：跟隨裝置', 'Appearance: match device'], light: ['外觀：淺色', 'Appearance: light'], dark: ['外觀：深色', 'Appearance: dark'] };
+    const cur = () => document.documentElement.dataset.theme || 'auto';
+    const show = () => { const m = cur(); btn.dataset.mode = m; const t = L(...NAME[m]); btn.title = t; btn.setAttribute('aria-label', t); };
+    btn.addEventListener('click', () => {
+      const next = ORDER[(ORDER.indexOf(cur()) + 1) % ORDER.length];
+      if (next === 'auto') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = next;
+      try { if (next === 'auto') localStorage.removeItem('hkoc-theme'); else localStorage.setItem('hkoc-theme', next); } catch {}
+      show();
+    });
+    show();
+    new MutationObserver(show).observe(document.documentElement, { attributes: true, attributeFilter: ['data-lang'] });
+  })();
+
   /* ---------- glass: panels lift and catch the light under the pointer ---------- */
   (function glass() {
     if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
