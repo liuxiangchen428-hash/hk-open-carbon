@@ -1,7 +1,7 @@
 # Published averages used for comparison in the household calculator (site page calculator.html).
 # Values are copied as published. The calculator only shows them next to the user's own figure;
 # nothing here is used to calculate emissions.
-status: draft
+status: reviewed
 updated: 2026-11-24
 
 tables:
@@ -23,3 +23,7 @@ verification:
     method: text-extract
     date: 2026-11-24
     note: Table written by scripts/import-clp-segment.mjs from the CSV supplied by the maintainer (2020-Q1 to 2026-Q3, 27 quarters). Checked that the four segments add up to Local Sales (within 3 GWh rounding) and that sales ÷ customers matches the mean for residential in every quarter.
+  - by: maintainer
+    method: pdf-visual
+    date: 2026-11-24
+    note: 'Spot-checked against the CLP CSV and confirmed ("对"): 2026-Q3 residential mean 1,301 kWh and 2,564 thousand customers; 2020-Q1 residential mean 704 kWh and 2,309 thousand customers.'

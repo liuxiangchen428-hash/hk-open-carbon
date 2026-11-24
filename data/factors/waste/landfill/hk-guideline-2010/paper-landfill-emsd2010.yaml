@@ -4,7 +4,7 @@ name:
   en: Paper waste disposed at landfill, emission factor (2010 HK guidelines)
 category: waste/landfill
 gas: CO2e
-gwp: not-stated
+gwp: AR2
 value: 4.8
 unit: kgCO2e/kg
 year: 2010
@@ -32,5 +32,5 @@ verification:
     note: Checked by the maintainer on guidelines page 24 (screenshot shared in the working session).
 tags: [hk-guideline-2010, paper]
 notes:
-  zh-Hant: 香港官方簡化系數：假設紙張在堆填區分解產生的甲烷全部在當期排放，而且未扣除堆填區收集及利用沼氣的部分，所以是偏保守（偏高）的估算。用法：排放 = （期初存紙 + 期內購入 − 回收 − 期末存紙）× 4.8。環保署 2024 年上載的《低碳辦公室指南》仍採用同一數值。
-  en: Simplified official factor. Assumes all methane from paper decomposing at landfill is emitted in the reporting period and does not deduct landfill gas collected and used, so it is a conservative (high) estimate. Emissions = (paper in stock at start + purchased - recycled - in stock at end) x 4.8. EPD's Guide to Low Carbon Office (uploaded 2024) uses the same value.
+  zh-Hant: 香港官方簡化系數：假設紙張在堆填區分解產生的甲烷全部在當期排放，而且未扣除堆填區收集及利用沼氣的部分，所以是偏保守（偏高）的估算。用法：排放 = （期初存紙 + 期內購入 − 回收 − 期末存紙）× 4.8。環保署 2024 年上載的《低碳辦公室指南》仍採用同一數值。GWP：指引只說系數「已考慮甲烷的 GWP」，同一文件把甲烷 GWP 定為 21（IPCC 第二次評估報告），按維護者決定（2026-11-24）標為 AR2。
+  en: Simplified official factor. Assumes all methane from paper decomposing at landfill is emitted in the reporting period and does not deduct landfill gas collected and used, so it is a conservative (high) estimate. Emissions = (paper in stock at start + purchased - recycled - in stock at end) x 4.8. EPD's Guide to Low Carbon Office (uploaded 2024) uses the same value. GWP: the guidelines say the factor takes into account the GWP of CH4, and the same document gives CH4 a GWP of 21 (IPCC Second Assessment); marked AR2 by maintainer decision (2026-11-24).
